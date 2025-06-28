@@ -1,7 +1,9 @@
-<div class="project-card">
-  <div class="project-image">
-    <img src="<%= project.image %>" alt="<%= project.title %>">
+<a class="project-card-link" href="<%= project.link %>">
+  <div class="project-card">
+    <div class="project-image">
+      <img src="<%= project.image %>" alt="<%= project.title %>">
+    </div>
+    <div class="project-title"><%= project.title %></div>
+    <div class="project-description"><%= project.description %></div>
   </div>
-  <div class="project-title"><%= project.title %></div>
-  <div class="project-description"><%= project.description %></div>
-</div> 
+</a> 
