@@ -25,5 +25,11 @@
       "image": "/project-open-data.png",
       "link": "/projects/open-data"
     }
-  ]
+  ],
+  "bannerAds": {
+    "overconsumption": "Cumpara mai mult! Fii fericit cu lucruri de care nu ai nevoie. Fericirea e la un click distanta!",
+    "subscriptions": "Aboneaza-te acum! De ce sa detii cand poti sa inchiriezi? 10 abonamente pentru orice. Nu vei detine nimic si o sa iti placa!",
+    "overconsumptionCta": "Cumpara acum",
+    "subscriptionsCta": "Aboneaza-te acum"
+  }
 } 

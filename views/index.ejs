@@ -943,6 +943,44 @@
       filter: blur(2px) brightness(1.5) saturate(2);
       transition: box-shadow 0.2s, border-color 0.2s, opacity 0.2s;
     }
+    @media (min-width: 1000px) {
+      .side-banners { 
+        display: flex !important; 
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 50;
+        width: 320px;
+        max-width: 22vw;
+      }
+      .side-banners:first-of-type {
+        left: 0;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        align-items: flex-start;
+      }
+      .side-banners:last-of-type {
+        right: 0;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        align-items: flex-end;
+      }
+      .projects-list-wrapper {
+        margin-left: 340px !important;
+        margin-right: 340px !important;
+        width: auto !important;
+      }
+      .projects-list { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+    }
+    @media (max-width: 999px) {
+      .side-banners { display: none !important; }
+      .mobile-banners { display: flex !important; }
+      .projects-list { grid-template-columns: 1fr; }
+      .projects-list-wrapper {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -972,10 +1010,27 @@
     </section>
     <section class="projects-section">
       <div class="projects-title"><%= t.projectsHeading %></div>
-      <div class="projects-list">
-        <% t.projects.forEach(function(project) { %>
-          <%- include('project-card.ejs', { project }) %>
-        <% }); %>
+      <div class="projects-list-wrapper" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 100%;">
+        <!-- Desktop left banner -->
+        <div class="side-banners" style="display: none; flex-direction: column; gap: 2rem; margin-right: 2rem;">
+          <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
+        </div>
+        <div class="projects-list" style="flex: 1;">
+          <% t.projects.forEach(function(project, idx) { %>
+            <% if (idx === 1) { %>
+              <!-- Mobile banners after first project -->
+              <div class="mobile-banners" style="display: none; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;">
+                <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
+                <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
+              </div>
+            <% } %>
+            <%- include('project-card.ejs', { project }) %>
+          <% }); %>
+        </div>
+        <!-- Desktop right banner -->
+        <div class="side-banners" style="display: none; flex-direction: column; gap: 2rem; margin-left: 2rem;">
+          <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
+        </div>
       </div>
     </section>
   </div>

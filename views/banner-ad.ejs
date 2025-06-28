@@ -1,0 +1,79 @@
+<div class="banner-ad banner-ad-<%= type %>">
+  <div class="banner-ad-icon">
+    <% if (type === 'overconsumption') { %>
+      🛒
+    <% } else if (type === 'subscriptions') { %>
+      💸
+    <% } %>
+  </div>
+  <button class="banner-ad-cta">
+    <%= t.bannerAds[type + 'Cta'] %>
+  </button>
+  <div class="banner-ad-content">
+    <div class="banner-ad-text">
+      <%= t.bannerAds[type] %>
+    </div>
+  </div>
+</div>
+<style>
+.banner-ad {
+  background: linear-gradient(90deg, #ffd32a 0%, #f53b57 100%);
+  color: #1a0033;
+  border-radius: 18px;
+  box-shadow: 0 0 24px 4px #ffd32a, 0 0 8px 2px #f53b57;
+  margin: 1.5rem 0;
+  padding: 2.2rem 1.2rem 2.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  min-width: 120px;
+  max-width: 180px;
+  width: 100%;
+  min-height: 340px;
+  justify-content: center;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.banner-ad-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  height: 100%;
+  justify-content: center;
+}
+.banner-ad-icon {
+  font-size: 2.7rem;
+  margin-bottom: 1.2rem;
+}
+.banner-ad-text {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  text-align: center;
+}
+.banner-ad-cta {
+  display: block;
+  width: 100%;
+  margin-bottom: 1.2rem;
+  padding: 0.7rem 0;
+  background: #f53b57;
+  color: #fff;
+  font-family: 'Orbitron', 'Share Tech Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #ffd32a, 0 0 4px #f53b57;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
+}
+.banner-ad-cta:hover, .banner-ad-cta:focus {
+  background: #ffd32a;
+  color: #f53b57;
+  box-shadow: 0 4px 16px #f53b57, 0 0 8px #ffd32a;
+  transform: translateY(-2px) scale(1.04);
+}
+</style> 
