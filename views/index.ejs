@@ -301,13 +301,7 @@
       <div class="projects-title"><%= t.projectsHeading %></div>
       <div class="projects-list">
         <% t.projects.forEach(function(project) { %>
-          <div class="project-card">
-            <div class="project-image">
-              <img src="<%= project.image %>" alt="<%= project.title %>">
-            </div>
-            <div class="project-title"><%= project.title %></div>
-            <div class="project-description"><%= project.description %></div>
-          </div>
+          <%- include('project-card.ejs', { project }) %>
         <% }); %>
       </div>
     </section>

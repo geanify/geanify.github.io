@@ -35,7 +35,7 @@ export function createWebHeraldServer({ port = 3000 } = {}) {
         const lang = url.searchParams.get("lang") === "ro" ? "ro" : "en";
         const t = await getTranslations(lang);
         const template = await readFile("views/index.ejs", "utf-8");
-        const html = ejs.render(template, { t, lang });
+        const html = ejs.render(template, { t, lang }, { views: ["views"] });
         return new Response(html, {
           headers: { "Content-Type": "text/html" },
         });
