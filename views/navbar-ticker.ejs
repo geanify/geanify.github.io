@@ -71,50 +71,61 @@ const stocks = [
   { symbol: 'AMZN', name: 'Amazon' },
   { symbol: 'META', name: 'Meta' },
   { symbol: 'TSLA', name: 'Tesla' },
-  { symbol: 'NVDA', name: 'Nvidia' }
+  { symbol: 'NVDA', name: 'Nvidia' },
+  // Oil companies
+  { symbol: 'XOM', name: 'ExxonMobil' },
+  { symbol: 'CVX', name: 'Chevron' },
+  { symbol: 'BP', name: 'BP' },
+  { symbol: 'SHEL', name: 'Shell' },
+  { symbol: 'TOT', name: 'TotalEnergies' },
+  // Military/defense tech
+  { symbol: 'LMT', name: 'Lockheed Martin' },
+  { symbol: 'RTX', name: 'Raytheon' },
+  { symbol: 'NOC', name: 'Northrop Grumman' },
+  { symbol: 'GD', name: 'General Dynamics' },
+  { symbol: 'BA', name: 'Boeing' },
+  // Food & beverage
+  { symbol: 'KO', name: 'Coca-Cola' },
+  { symbol: 'PEP', name: 'PepsiCo' },
+  { symbol: 'NESN.SW', name: 'Nestle' },
+  { symbol: 'MDLZ', name: 'Mondelez' },
+  { symbol: 'KHC', name: 'Kraft Heinz' },
 ];
+
+function getRandomStocks(arr, n) {
+  const shuffled = arr.slice().sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
 
 async function fetchStockPrices() {
   try {
-    const symbols = stocks.map(s => s.symbol).join(',');
-    const url = `/api/stocks?symbols=${symbols}`;
+    const url = `/api/stocks`;
     const res = await fetch(url);
     const data = await res.json();
+    // Get all available symbols from the cache object
+    const allSymbols = Object.keys(data);
+    // Pick 8 random symbols
+    const selectedSymbols = getRandomStocks(allSymbols, 8);
     let prices = [];
-    // Twelve Data returns an object for single, or an object of objects for batch
-    if (data && typeof data === 'object' && !Array.isArray(data)) {
-      if (data.code && data.message) {
-        // API error
-        prices = [data.message];
-      } else if (data[symbols.split(',')[0]]) {
-        // Batch response
-        prices = stocks.map(s => {
-          const quote = data[s.symbol];
-          let price = quote && (quote.close || quote.previous_close);
-          let change = quote && quote.percent_change ? parseFloat(quote.percent_change) : null;
-          let changeStr = '';
-          let cls = '';
-          if (change !== null) {
-            changeStr = ` (${quote.percent_change}%)`;
-            if (change > 0) cls = 'stock-up';
-            else if (change < 0) cls = 'stock-down';
-          }
-          if (price) {
-            return `<span class="${cls}">${s.name} (${s.symbol}): $${parseFloat(price).toFixed(2)}${changeStr}</span>`;
-          } else {
-            return `<span>${s.name} (${s.symbol}): N/A</span>`;
-          }
-        });
-      } else if (data.close || data.previous_close) {
-        // Single response
-        let price = data.close || data.previous_close;
-        prices = [`<span>${stocks[0].name} (${stocks[0].symbol}): $${parseFloat(price).toFixed(2)}</span>`];
-      } else {
-        prices = stocks.map(s => `<span>${s.name} (${s.symbol}): N/A</span>`);
+    prices = selectedSymbols.map(symbol => {
+      const quote = data[symbol];
+      let price = quote && (quote.close || quote.previous_close);
+      let change = quote && quote.percent_change ? parseFloat(quote.percent_change) : null;
+      let changeStr = '';
+      let cls = '';
+      if (change !== null) {
+        changeStr = ` (${quote.percent_change}%)`;
+        if (change > 0) cls = 'stock-up';
+        else if (change < 0) cls = 'stock-down';
       }
-    } else {
-      prices = stocks.map(s => `<span>${s.name} (${s.symbol}): N/A</span>`);
-    }
+      // Try to get the display name from the stocks array, fallback to symbol
+      const stockInfo = stocks.find(s => s.symbol === symbol) || { name: symbol, symbol };
+      if (price) {
+        return `<span class="${cls}">${stockInfo.name} (${symbol}): $${parseFloat(price).toFixed(2)}${changeStr}</span>`;
+      } else {
+        return `<span>${stockInfo.name} (${symbol}): N/A</span>`;
+      }
+    });
     document.getElementById('stock-ticker-inner').innerHTML = prices.join(' &nbsp; | &nbsp; ');
   } catch (e) {
     document.getElementById('stock-ticker-inner').innerHTML = 'Failed to load stock prices.';

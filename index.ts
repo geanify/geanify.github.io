@@ -1,7 +1,7 @@
 import { serve } from "bun";
 // @ts-ignore
 import ejs from "ejs";
-import { readFile } from "fs/promises";
+import { readFile, writeFile, mkdir } from "fs/promises";
 
 async function getTranslations(lang: string) {
   try {
@@ -16,10 +16,6 @@ async function getTranslations(lang: string) {
 // In-memory cache for rendered HTML (prod only)
 const htmlCache: Record<string, { html: string; timestamp: number }> = {};
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in ms
-
-// In-memory cache for stock API responses
-const stockCache: Record<string, { data: any; timestamp: number }> = {};
-const STOCK_CACHE_TTL = process.env.NODE_ENV === 'production' ? 60 * 1000 : 60 * 60 * 1000; // 1 min in prod, 1 hour in dev
 
 export function createWebHeraldServer({ port = 3000 } = {}) {
   return serve({
@@ -40,24 +36,39 @@ export function createWebHeraldServer({ port = 3000 } = {}) {
       }
       // Proxy endpoint for stock prices (to avoid CORS)
       if (url.pathname === "/api/stocks") {
+        console.log("Proxy request for stocks:", url.searchParams.get("symbols"));
         const symbols = url.searchParams.get("symbols") || "AAPL,GOOGL,MSFT,AMZN,META,TSLA,NVDA";
         const cacheKey = symbols;
         const now = Date.now();
-        if (stockCache[cacheKey] && now - stockCache[cacheKey].timestamp < STOCK_CACHE_TTL) {
-          return new Response(JSON.stringify(stockCache[cacheKey].data), {
+        // Disk cache: one file per day in 'temp' folder
+        const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        const tempDir = "temp";
+        const diskCacheFile = `${tempDir}/stock-${today}.json`;
+        try {
+          // Ensure temp directory exists
+          await mkdir(tempDir, { recursive: true });
+        } catch {}
+        // Check if disk cache file exists before reading/fetching
+        const file = Bun.file(diskCacheFile);
+        if (await file.exists()) {
+          const diskData = await file.text();
+          const diskCache = JSON.parse(diskData);
+          console.log("Serving full stock data from disk cache");
+          return new Response(JSON.stringify(diskCache), {
             headers: { "Content-Type": "application/json" }
           });
         }
+        // If not in disk cache, fetch from API
         try {
           const apiKey = process.env.STOCK_API_KEY;
           if (!apiKey) {
             throw new Error("Missing Twelve Data API key in STOCK_API_KEY");
           }
-          // Twelve Data supports batch quotes with comma-separated symbols
           const urlTwelve = `https://api.twelvedata.com/quote?symbol=${symbols}&apikey=${apiKey}`;
           const res = await fetch(urlTwelve);
           const data = await res.json();
-          stockCache[cacheKey] = { data, timestamp: now };
+          console.log("Twelve Data response:", data);
+          await writeFile(diskCacheFile, JSON.stringify(data), "utf-8");
           return new Response(JSON.stringify(data), {
             headers: { "Content-Type": "application/json" }
           });
