@@ -9,8 +9,8 @@
   "projects": [
   ],
   "bannerAds": {
-    "overconsumption": ["Happiness is just one more purchase away!", "", "Find Love today!"],
-    "subscriptions": "Why own when you can rent? 10 layers of subscriptions for everything. You will own nothing, and you will love it!",
+    "overconsumption": ["Happiness is just one more purchase away!", "", "You too can find love today!"],
+    "subscriptions": ["Owning things is hard!", "", "Rent everything"],
     "overconsumptionCta": "Buy More!",
     "subscriptionsCta": "Subscribe Now!"
   },

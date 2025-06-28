@@ -7,7 +7,7 @@
     <% } %>
   </div>
   <button class="banner-ad-cta">
-    <%= t.bannerAds[type + 'Cta'] %>
+    <%= t.bannerAds[type + 'Cta'] || (type === 'overconsumption' ? 'Buy More!' : 'Subscribe Now!') %>
   </button>
   <div class="banner-ad-content">
     <div class="banner-ad-text">
