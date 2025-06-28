@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= t.title %></title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/logo.png">
   <style>
     :root {
       --neutral: #808e9b;
@@ -975,10 +976,19 @@
     @media (max-width: 999px) {
       .side-banners { display: none !important; }
       .mobile-banners { display: flex !important; }
-      .projects-list { grid-template-columns: 1fr; }
+      .projects-list { grid-template-columns: 1fr; align-items: center; display: flex; flex-direction: column; }
       .projects-list-wrapper {
         margin-left: 0 !important;
         margin-right: 0 !important;
+      }
+      .projects-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .project-card {
+        margin-left: auto;
+        margin-right: auto;
       }
     }
   </style>
