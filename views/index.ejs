@@ -42,6 +42,8 @@
       background: var(--background-dark);
       color: var(--neutral-text);
       min-height: 100vh;
+      max-width: 100vw;
+      overflow-x: hidden;
     }
     body {
       display: flex;
@@ -84,6 +86,14 @@
       max-width: 1100px;
       margin: 0 auto;
       width: 100%;
+      box-sizing: border-box;
+    }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      margin-right: 1.5rem;
+      margin-bottom: 0;
+      position: static;
     }
     .logo {
       width: 120px;
@@ -170,13 +180,15 @@
       flex-wrap: wrap;
       gap: 2rem;
       justify-content: center;
+      max-width: 100vw;
+      box-sizing: border-box;
     }
     .project-card {
       background: var(--background-dark-highlight);
       border-radius: 18px;
       box-shadow: 0 2px 12px var(--overlay-background);
       width: 320px;
-      max-width: 98vw;
+      max-width: calc(100vw - 2.5rem);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -184,6 +196,7 @@
       transition: transform 0.15s, box-shadow 0.15s;
       border: 2px solid transparent;
       min-width: 0;
+      box-sizing: border-box;
     }
     .project-card:hover {
       transform: translateY(-6px) scale(1.03);
@@ -253,10 +266,12 @@
       .projects-list {
         flex-direction: column;
         align-items: center;
+        max-width: 100vw;
       }
       .project-card {
-        width: 98vw;
-        max-width: 400px;
+        width: 100%;
+        max-width: calc(100vw - 2.5rem);
+        box-sizing: border-box;
       }
     }
     @media (max-width: 600px) {
@@ -265,6 +280,7 @@
       }
       .container {
         padding: 1rem 0.5rem 0.5rem 0.5rem;
+        max-width: 100vw;
       }
       .logo {
         width: 100px;
@@ -291,24 +307,90 @@
         font-size: 0.95rem;
       }
       .project-card {
-        padding: 1rem 0.5rem 1rem 0.5rem;
+        width: 100%;
+        max-width: calc(100vw - 1.2rem);
+        margin-left: auto;
+        margin-right: auto;
       }
       .project-image {
         width: 60px;
         height: 60px;
       }
+      .navbar {
+        max-width: 100vw;
+      }
+      .navbar-content {
+        max-width: 100vw;
+      }
+      .projects-list {
+        max-width: 100vw;
+      }
+      .project-card {
+        max-width: calc(100vw - 1.2rem);
+      }
+    }
+    .navbar {
+      width: 100vw;
+      left: 0;
+      right: 0;
+      top: 0;
+      background: var(--background-dark);
+      box-shadow: 0 2px 12px var(--background-dark-highlight);
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      z-index: 100;
+      margin-bottom: 2rem;
+    }
+    .navbar-content {
+      width: 100%;
+      max-width: 1100px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0.2rem 1.5rem;
+      gap: 0.5rem;
+      min-height: 120px;
+      align-items: center;
+    }
+    .navbar-spacer {
+      flex: 1;
+    }
+    .lang-switcher {
+      display: flex;
+      gap: 0.5rem;
+      background: none;
+      box-shadow: none;
+      padding: 0;
+      border-radius: 0;
+      position: static;
+    }
+    @media (max-width: 600px) {
+      .navbar-content {
+        padding: 0.2rem 0.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <nav class="lang-switcher">
-    <a href="?lang=en" class="<%= lang === 'en' ? 'active' : '' %>">🇬🇧 EN</a>
-    <a href="?lang=ro" class="<%= lang === 'ro' ? 'active' : '' %>">🇷🇴 RO</a>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/" class="logo-link">
+        <div class="logo">
+          <img src="/logo.png" alt="Web Herald Logo">
+        </div>
+      </a>
+      <div class="navbar-spacer"></div>
+      <div class="lang-switcher">
+        <a href="?lang=en" class="<%= lang === 'en' ? 'active' : '' %>">🇬🇧 EN</a>
+        <a href="?lang=ro" class="<%= lang === 'ro' ? 'active' : '' %>">🇷🇴 RO</a>
+      </div>
+    </div>
   </nav>
   <div class="container">
-    <div class="logo">
-      <img src="/logo.png" alt="Web Herald Logo">
-    </div>
     <h1><%= t.heading %></h1>
     <div class="description"><%= t.description %></div>
     <div class="actions">
