@@ -3,6 +3,16 @@ import { serve } from "bun";
 import ejs from "ejs";
 import { readFile } from "fs/promises";
 
+async function getTranslations(lang: string) {
+  try {
+    const data = await readFile(`locales/${lang}.json`, "utf-8");
+    return JSON.parse(data);
+  } catch {
+    const data = await readFile("locales/en.json", "utf-8");
+    return JSON.parse(data);
+  }
+}
+
 serve({
   port: 3000,
   async fetch(req) {
@@ -21,8 +31,10 @@ serve({
     }
     // Render EJS template for root route
     if (url.pathname === "/") {
+      const lang = url.searchParams.get("lang") === "ro" ? "ro" : "en";
+      const t = await getTranslations(lang);
       const template = await readFile("views/index.ejs", "utf-8");
-      const html = ejs.render(template, { message: "Hello, world!" });
+      const html = ejs.render(template, { t, lang });
       return new Response(html, {
         headers: { "Content-Type": "text/html" },
       });
