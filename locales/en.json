@@ -27,7 +27,7 @@
     }
   ],
   "bannerAds": {
-    "overconsumption": "Upgrade your life with things you don't need. Because happiness is just one more purchase away!",
+    "overconsumption": ["Happiness is just one more purchase away!", "", "Find Love today!"],
     "subscriptions": "Why own when you can rent? 10 layers of subscriptions for everything. You will own nothing, and you will love it!",
     "overconsumptionCta": "Buy More!",
     "subscriptionsCta": "Subscribe Now!"

@@ -5,4 +5,4 @@ import { createWebHeraldServer } from "./index";
 
 process.env.NODE_ENV = 'production';
 
-createWebHeraldServer({ port: 80 }); 
+createWebHeraldServer({ port: 3000 }); 

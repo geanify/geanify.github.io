@@ -1,0 +1,111 @@
+<nav class="navbar">
+  <div class="navbar-content">
+    <a href="/" class="logo-link">
+      <div class="logo">
+        <img src="/logo.png" alt="Web Herald Logo">
+      </div>
+    </a>
+    <div class="navbar-spacer"></div>
+    <div class="lang-switcher">
+      <a href="?lang=en" class="<%= lang === 'en' ? 'active' : '' %>">🇬🇧 EN</a>
+      <a href="?lang=ro" class="<%= lang === 'ro' ? 'active' : '' %>">🇷🇴 RO</a>
+    </div>
+  </div>
+</nav>
+<div class="stock-ticker-bar">
+  <div class="stock-ticker-inner" id="stock-ticker-inner">
+    <!-- Stock prices will be injected here by JS -->
+    <span>Loading stock prices...</span>
+  </div>
+</div>
+<style>
+.stock-ticker-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  width: 100vw;
+  background: linear-gradient(90deg, #222b3a 0%, #ffd32a 100%);
+  color: #1a0033;
+  font-family: 'Share Tech Mono', 'Orbitron', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  overflow: hidden;
+  height: 2.2rem;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px #ffd32a44;
+}
+.navbar {
+  position: sticky;
+  top: 2.2rem;
+  left: 0;
+  right: 0;
+  z-index: 101;
+}
+.stock-ticker-inner {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-scroll 30s linear infinite;
+  padding-left: 100vw;
+}
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+</style>
+<script>
+const stocks = [
+  { symbol: 'AAPL', name: 'Apple' },
+  { symbol: 'GOOGL', name: 'Google' },
+  { symbol: 'MSFT', name: 'Microsoft' },
+  { symbol: 'AMZN', name: 'Amazon' },
+  { symbol: 'META', name: 'Meta' },
+  { symbol: 'TSLA', name: 'Tesla' },
+  { symbol: 'NVDA', name: 'Nvidia' }
+];
+
+async function fetchStockPrices() {
+  try {
+    const symbols = stocks.map(s => s.symbol).join(',');
+    const url = `/api/stocks?symbols=${symbols}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    let prices = [];
+    // Twelve Data returns an object for single, or an object of objects for batch
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      if (data.code && data.message) {
+        // API error
+        prices = [data.message];
+      } else if (data[symbols.split(',')[0]]) {
+        // Batch response
+        prices = stocks.map(s => {
+          const quote = data[s.symbol];
+          let price = quote && (quote.close || quote.previous_close);
+          if (price) {
+            let change = '';
+            if (quote.percent_change) change = ` (${quote.percent_change}%)`;
+            return `${s.name} (${s.symbol}): $${parseFloat(price).toFixed(2)}${change}`;
+          } else {
+            return `${s.name} (${s.symbol}): N/A`;
+          }
+        });
+      } else if (data.close || data.previous_close) {
+        // Single response
+        let price = data.close || data.previous_close;
+        prices = [`${stocks[0].name} (${stocks[0].symbol}): $${parseFloat(price).toFixed(2)}`];
+      } else {
+        prices = stocks.map(s => `${s.name} (${s.symbol}): N/A`);
+      }
+    } else {
+      prices = stocks.map(s => `${s.name} (${s.symbol}): N/A`);
+    }
+    document.getElementById('stock-ticker-inner').innerHTML = prices.join(' &nbsp; | &nbsp; ');
+  } catch (e) {
+    document.getElementById('stock-ticker-inner').innerHTML = 'Failed to load stock prices.';
+  }
+}
+fetchStockPrices();
+setInterval(fetchStockPrices, 60000); // Refresh every 60s
+</script> 

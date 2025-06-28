@@ -994,20 +994,7 @@
   </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="navbar-content">
-      <a href="/" class="logo-link">
-        <div class="logo">
-          <img src="/logo.png" alt="Web Herald Logo">
-        </div>
-      </a>
-      <div class="navbar-spacer"></div>
-      <div class="lang-switcher">
-        <a href="?lang=en" class="<%= lang === 'en' ? 'active' : '' %>">🇬🇧 EN</a>
-        <a href="?lang=ro" class="<%= lang === 'ro' ? 'active' : '' %>">🇷🇴 RO</a>
-      </div>
-    </div>
-  </nav>
+  <%- include('navbar-ticker.ejs', { lang }) %>
   <div class="container">
     <section class="hero">
       <h1><%= t.heading %></h1>

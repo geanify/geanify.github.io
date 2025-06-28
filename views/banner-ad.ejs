@@ -11,7 +11,14 @@
   </button>
   <div class="banner-ad-content">
     <div class="banner-ad-text">
-      <%= t.bannerAds[type] %>
+      <% const adText = t.bannerAds[type]; %>
+      <% if (Array.isArray(adText)) { %>
+        <% adText.forEach(function(line, idx) { %>
+          <%= line %><% if (idx < adText.length - 1) { %><br><% } %>
+        <% }); %>
+      <% } else { %>
+        <%= adText %>
+      <% } %>
     </div>
   </div>
 </div>
