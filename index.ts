@@ -13,6 +13,10 @@ async function getTranslations(lang: string) {
   }
 }
 
+// In-memory cache for rendered HTML (prod only)
+const htmlCache: Record<string, { html: string; timestamp: number }> = {};
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in ms
+
 export function createWebHeraldServer({ port = 3000 } = {}) {
   return serve({
     port,
@@ -33,12 +37,32 @@ export function createWebHeraldServer({ port = 3000 } = {}) {
       // Render EJS template for root route
       if (url.pathname === "/") {
         const lang = url.searchParams.get("lang") === "ro" ? "ro" : "en";
-        const t = await getTranslations(lang);
-        const template = await readFile("views/index.ejs", "utf-8");
-        const html = ejs.render(template, { t, lang }, { views: ["views"] });
-        return new Response(html, {
-          headers: { "Content-Type": "text/html" },
-        });
+        // Only use cache in production
+        if (process.env.NODE_ENV === "production") {
+          const cacheKey = lang;
+          const cached = htmlCache[cacheKey];
+          const now = Date.now();
+          if (cached && now - cached.timestamp < CACHE_TTL) {
+            return new Response(cached.html, {
+              headers: { "Content-Type": "text/html" },
+            });
+          }
+          const t = await getTranslations(lang);
+          const template = await readFile("views/index.ejs", "utf-8");
+          const html = ejs.render(template, { t, lang }, { views: ["views"] });
+          htmlCache[cacheKey] = { html, timestamp: now };
+          return new Response(html, {
+            headers: { "Content-Type": "text/html" },
+          });
+        } else {
+          // No cache in dev
+          const t = await getTranslations(lang);
+          const template = await readFile("views/index.ejs", "utf-8");
+          const html = ejs.render(template, { t, lang }, { views: ["views"] });
+          return new Response(html, {
+            headers: { "Content-Type": "text/html" },
+          });
+        }
       }
       return new Response("Not Found", { status: 404 });
     },
