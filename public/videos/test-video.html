@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Background Test</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a0033;
+            color: white;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-banner {
+            width: 320px;
+            height: 480px;
+            margin: 20px auto;
+            border-radius: 18px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(90deg, #ffd32a 0%, #f53b57 100%);
+        }
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+        .test-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 18px;
+            filter: contrast(1.15) saturate(0.92) brightness(1.08);
+            animation: crt-video-flicker 0.15s infinite linear;
+        }
+        .crt-scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 3;
+            pointer-events: none;
+            background:
+                repeating-linear-gradient(
+                    to bottom,
+                    rgba(255,255,255,0.07) 0px,
+                    rgba(255,255,255,0.07) 1px,
+                    transparent 2px,
+                    transparent 4px
+                );
+            mix-blend-mode: screen;
+            opacity: 0.45;
+            border-radius: 18px;
+            animation: crt-scanlines-flicker 0.08s infinite linear;
+        }
+        .crt-vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 4;
+            pointer-events: none;
+            background:
+                radial-gradient(ellipse at center, rgba(255,255,255,0.10) 0%, rgba(0,0,0,0.18) 100%);
+            opacity: 0.7;
+            box-shadow: 0 0 32px 8px #fff2 inset;
+            border-radius: 18px;
+            animation: crt-vignette-pulse 2s infinite ease-in-out;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 211, 42, 0.85);
+            padding: 1rem;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .icon {
+            font-size: 2.7rem;
+            margin-bottom: 1.2rem;
+        }
+        .cta {
+            background: #f53b57;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.7rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            margin-bottom: 1.2rem;
+        }
+        .text {
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+        @keyframes crt-video-flicker {
+            0% { filter: contrast(1.15) saturate(0.92) brightness(1.08) hue-rotate(0deg); }
+            25% { filter: contrast(1.18) saturate(0.95) brightness(1.05) hue-rotate(-1deg); }
+            50% { filter: contrast(1.12) saturate(0.88) brightness(1.12) hue-rotate(1deg); }
+            75% { filter: contrast(1.16) saturate(0.90) brightness(1.06) hue-rotate(-0.5deg); }
+            100% { filter: contrast(1.15) saturate(0.92) brightness(1.08) hue-rotate(0deg); }
+        }
+        @keyframes crt-scanlines-flicker {
+            0% { opacity: 0.45; }
+            50% { opacity: 0.52; }
+            100% { opacity: 0.45; }
+        }
+        @keyframes crt-vignette-pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.7; }
+        }
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Video Background Test</h1>
+        
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <p>This page tests the video background functionality for banner ads. To see the full effect:</p>
+            <ol>
+                <li>Add video files to <code>/public/videos/</code> directory</li>
+                <li>Name them: <code>consumerism.mp4</code> and <code>subscriptions.mp4</code></li>
+                <li>Add poster images to <code>/public/images/</code> directory</li>
+                <li>Name them: <code>consumerism-poster.jpg</code> and <code>subscriptions-poster.jpg</code></li>
+                <li>Visit the main page to see the banner ads with video backgrounds</li>
+            </ol>
+        </div>
+
+        <h2>Test Banner with Video Background</h2>
+        <div class="test-banner">
+            <div class="video-background">
+                <video 
+                    class="test-video"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                >
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div class="crt-scanlines"></div>
+                <div class="crt-vignette"></div>
+            </div>
+            <div class="content">
+                <div class="icon">🛒</div>
+                <button class="cta">Buy More!</button>
+                <div class="text">
+                    Happiness is just one more purchase away!<br><br>
+                    You too can find love today!
+                </div>
+            </div>
+        </div>
+
+        <h2>Test Banner without Video (Fallback)</h2>
+        <div class="test-banner">
+            <div class="content">
+                <div class="icon">💸</div>
+                <button class="cta">Subscribe Now!</button>
+                <div class="text">
+                    Owning things is hard!<br><br>
+                    Rent everything
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

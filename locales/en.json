@@ -12,7 +12,23 @@
     "overconsumption": ["Happiness is just one more purchase away!", "", "You too can find love today!"],
     "subscriptions": ["Owning things is hard!", "", "Rent everything"],
     "overconsumptionCta": "Buy More!",
-    "subscriptionsCta": "Subscribe Now!"
+    "subscriptionsCta": "Subscribe Now!",
+    "overconsumptionVideo": {
+      "src": "videos/geisha.mp4",
+      "poster": "/images/consumerism-poster.jpg",
+      "autoplay": true,
+      "muted": true,
+      "loop": true,
+      "controls": false
+    },
+    "subscriptionsVideo": {
+      "src": "videos/ice.mp4",
+      "poster": "/images/subscriptions-poster.jpg",
+      "autoplay": true,
+      "muted": true,
+      "loop": true,
+      "controls": false
+    }
   },
   "comingSoon": "Coming soon™"
 } 
