@@ -991,6 +991,15 @@
         margin-right: auto;
       }
     }
+    .coming-soon-message {
+      text-align: center;
+      font-size: 2rem;
+      color: #ffd32a;
+      font-family: 'Orbitron', 'Share Tech Mono', monospace;
+      margin: 2.5rem 0;
+      font-weight: bold;
+      text-shadow: 0 0 8px #3c40c6, 0 0 4px #f53b57;
+    }
   </style>
 </head>
 <body>
@@ -1013,16 +1022,20 @@
           <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
         </div>
         <div class="projects-list" style="flex: 1;">
-          <% t.projects.forEach(function(project, idx) { %>
-            <% if (idx === 1) { %>
-              <!-- Mobile banners after first project -->
-              <div class="mobile-banners" style="display: none; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;">
-                <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
-                <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
-              </div>
-            <% } %>
-            <%- include('project-card.ejs', { project }) %>
-          <% }); %>
+          <% if (t.projects.length === 0) { %>
+            <div class="coming-soon-message"><%= t.comingSoon %></div>
+          <% } else { %>
+            <% t.projects.forEach(function(project, idx) { %>
+              <% if (idx === 1) { %>
+                <!-- Mobile banners after first project -->
+                <div class="mobile-banners" style="display: none; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;">
+                  <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
+                  <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
+                </div>
+              <% } %>
+              <%- include('project-card.ejs', { project }) %>
+            <% }); %>
+          <% } %>
         </div>
         <!-- Desktop right banner -->
         <div class="side-banners" style="display: none; flex-direction: column; gap: 2rem; margin-left: 2rem;">

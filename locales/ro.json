@@ -7,29 +7,12 @@
   "footer": "Web Herald. Schimbam lumea, un comunicat de presa pe rand.",
   "projectsHeading": "Disruptiile Noastre",
   "projects": [
-    {
-      "title": "Civic Connect™",
-      "description": "O platforma pentru cetateni sa se organizeze, sa discute si sa fie analizati pentru binele lor. Acum cu 30% mai multa sinergie!",
-      "image": "/project-civic-connect.png",
-      "link": "/projects/civic-connect"
-    },
-    {
-      "title": "GreenQuest: Carbon Edition",
-      "description": "Un joc mobil care transforma vina de mediu in microtranzactii. Salveaza planeta, cate un loot box pe rand.",
-      "image": "/project-greenquest.png",
-      "link": "/projects/greenquest"
-    },
-    {
-      "title": "Open Data Portal (Beta)",
-      "description": "Un site care face datele publice accesibile, frumoase si putin invazive. Pentru ca intimitatea e atat de 2020.",
-      "image": "/project-open-data.png",
-      "link": "/projects/open-data"
-    }
   ],
   "bannerAds": {
     "overconsumption": "Cumpara mai mult! Fii fericit cu lucruri de care nu ai nevoie. Fericirea e la un click distanta!",
     "subscriptions": "Aboneaza-te acum! De ce sa detii cand poti sa inchiriezi? 10 abonamente pentru orice. Nu vei detine nimic si o sa iti placa!",
     "overconsumptionCta": "Cumpara acum",
     "subscriptionsCta": "Aboneaza-te acum"
-  }
+  },
+  "comingSoon": "In curand™"
 } 

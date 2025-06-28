@@ -7,29 +7,12 @@
   "footer": "Web Herald. Changing the world, one press release at a time.",
   "projectsHeading": "Our Disruptions",
   "projects": [
-    {
-      "title": "Civic Connect™",
-      "description": "A platform for citizens to organize, discuss, and be data-mined for their own good. Now with 30% more synergy!",
-      "image": "/project-civic-connect.png",
-      "link": "/projects/civic-connect"
-    },
-    {
-      "title": "GreenQuest: Carbon Edition",
-      "description": "A mobile game that turns environmental guilt into microtransactions. Save the planet, one loot box at a time.",
-      "image": "/project-greenquest.png",
-      "link": "/projects/greenquest"
-    },
-    {
-      "title": "Open Data Portal (Beta)",
-      "description": "A website that makes public data accessible, beautiful, and just a little bit invasive. Because privacy is so 2020.",
-      "image": "/project-open-data.png",
-      "link": "/projects/open-data"
-    }
   ],
   "bannerAds": {
     "overconsumption": ["Happiness is just one more purchase away!", "", "Find Love today!"],
     "subscriptions": "Why own when you can rent? 10 layers of subscriptions for everything. You will own nothing, and you will love it!",
     "overconsumptionCta": "Buy More!",
     "subscriptionsCta": "Subscribe Now!"
-  }
+  },
+  "comingSoon": "Coming soon™"
 } 
