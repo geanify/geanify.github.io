@@ -19,7 +19,7 @@ const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in ms
 
 // In-memory cache for stock API responses
 const stockCache: Record<string, { data: any; timestamp: number }> = {};
-const STOCK_CACHE_TTL = 60 * 1000; // 1 minute
+const STOCK_CACHE_TTL = process.env.NODE_ENV === 'production' ? 60 * 1000 : 60 * 60 * 1000; // 1 min in prod, 1 hour in dev
 
 export function createWebHeraldServer({ port = 3000 } = {}) {
   return serve({

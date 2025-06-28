@@ -26,7 +26,7 @@
   right: 0;
   z-index: 9999;
   width: 100vw;
-  background: linear-gradient(90deg, #222b3a 0%, #ffd32a 100%);
+  background: linear-gradient(90deg, #222b3a 0%, #ffd32a 60%, rgba(34,43,58,0.85) 100%);
   color: #1a0033;
   font-family: 'Share Tech Mono', 'Orbitron', monospace;
   font-size: 1.1rem;
@@ -54,6 +54,14 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }
 }
+.stock-ticker-inner span {
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
+  -webkit-text-stroke: 0.5px #000;
+  text-stroke: 0.5px #000;
+  /* fallback for non-supporting browsers */
+}
+.stock-up { color: #00e676; font-weight: bold; }
+.stock-down { color: #e74c3c; font-weight: bold; }
 </style>
 <script>
 const stocks = [
@@ -83,23 +91,29 @@ async function fetchStockPrices() {
         prices = stocks.map(s => {
           const quote = data[s.symbol];
           let price = quote && (quote.close || quote.previous_close);
+          let change = quote && quote.percent_change ? parseFloat(quote.percent_change) : null;
+          let changeStr = '';
+          let cls = '';
+          if (change !== null) {
+            changeStr = ` (${quote.percent_change}%)`;
+            if (change > 0) cls = 'stock-up';
+            else if (change < 0) cls = 'stock-down';
+          }
           if (price) {
-            let change = '';
-            if (quote.percent_change) change = ` (${quote.percent_change}%)`;
-            return `${s.name} (${s.symbol}): $${parseFloat(price).toFixed(2)}${change}`;
+            return `<span class="${cls}">${s.name} (${s.symbol}): $${parseFloat(price).toFixed(2)}${changeStr}</span>`;
           } else {
-            return `${s.name} (${s.symbol}): N/A`;
+            return `<span>${s.name} (${s.symbol}): N/A</span>`;
           }
         });
       } else if (data.close || data.previous_close) {
         // Single response
         let price = data.close || data.previous_close;
-        prices = [`${stocks[0].name} (${stocks[0].symbol}): $${parseFloat(price).toFixed(2)}`];
+        prices = [`<span>${stocks[0].name} (${stocks[0].symbol}): $${parseFloat(price).toFixed(2)}</span>`];
       } else {
-        prices = stocks.map(s => `${s.name} (${s.symbol}): N/A`);
+        prices = stocks.map(s => `<span>${s.name} (${s.symbol}): N/A</span>`);
       }
     } else {
-      prices = stocks.map(s => `${s.name} (${s.symbol}): N/A`);
+      prices = stocks.map(s => `<span>${s.name} (${s.symbol}): N/A</span>`);
     }
     document.getElementById('stock-ticker-inner').innerHTML = prices.join(' &nbsp; | &nbsp; ');
   } catch (e) {
