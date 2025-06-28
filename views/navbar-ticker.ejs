@@ -47,12 +47,8 @@
 .stock-ticker-inner {
   display: inline-block;
   white-space: nowrap;
-  animation: ticker-scroll 30s linear infinite;
+  will-change: transform;
   padding-left: 100vw;
-}
-@keyframes ticker-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
 }
 .stock-ticker-inner span {
   text-shadow: 1px 1px 2px #000, -1px -1px 2px #000, 1px -1px 2px #000, -1px 1px 2px #000;
@@ -133,4 +129,32 @@ async function fetchStockPrices() {
 }
 fetchStockPrices();
 setInterval(fetchStockPrices, 60000); // Refresh every 60s
+
+// Ultra-smooth JS-driven ticker
+(function() {
+  const ticker = document.getElementById('stock-ticker-inner');
+  if (!ticker) return;
+  let px = 0;
+  let speed = 4; // pixels per frame (adjust for speed)
+  let tickerWidth = 0;
+  let barWidth = document.querySelector('.stock-ticker-bar').offsetWidth;
+
+  function updateTickerWidth() {
+    tickerWidth = ticker.scrollWidth;
+    barWidth = document.querySelector('.stock-ticker-bar').offsetWidth;
+  }
+  updateTickerWidth();
+  window.addEventListener('resize', updateTickerWidth);
+
+  function loop() {
+    px -= speed;
+    if (-px > tickerWidth) {
+      px = barWidth;
+    }
+    ticker.style.transform = `translate3d(${px}px,0,0)`;
+    requestAnimationFrame(loop);
+  }
+  // Wait for prices to load, then start
+  setTimeout(loop, 500);
+})();
 </script> 
