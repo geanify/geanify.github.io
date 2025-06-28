@@ -13,32 +13,34 @@ async function getTranslations(lang: string) {
   }
 }
 
-serve({
-  port: 3000,
-  async fetch(req) {
-    const url = new URL(req.url);
-    // Serve static files from public directory
-    if (url.pathname !== "/") {
-      try {
-        const file = Bun.file(`public${url.pathname}`);
-        if (await file.exists()) {
-          // Bun will set the correct content-type automatically
-          return new Response(file);
+export function createWebHeraldServer({ port = 3000 } = {}) {
+  return serve({
+    port,
+    async fetch(req) {
+      const url = new URL(req.url);
+      // Serve static files from public directory
+      if (url.pathname !== "/") {
+        try {
+          const file = Bun.file(`public${url.pathname}`);
+          if (await file.exists()) {
+            // Bun will set the correct content-type automatically
+            return new Response(file);
+          }
+        } catch (e) {
+          // Ignore and fall through to 404
         }
-      } catch (e) {
-        // Ignore and fall through to 404
       }
-    }
-    // Render EJS template for root route
-    if (url.pathname === "/") {
-      const lang = url.searchParams.get("lang") === "ro" ? "ro" : "en";
-      const t = await getTranslations(lang);
-      const template = await readFile("views/index.ejs", "utf-8");
-      const html = ejs.render(template, { t, lang });
-      return new Response(html, {
-        headers: { "Content-Type": "text/html" },
-      });
-    }
-    return new Response("Not Found", { status: 404 });
-  },
-});
+      // Render EJS template for root route
+      if (url.pathname === "/") {
+        const lang = url.searchParams.get("lang") === "ro" ? "ro" : "en";
+        const t = await getTranslations(lang);
+        const template = await readFile("views/index.ejs", "utf-8");
+        const html = ejs.render(template, { t, lang });
+        return new Response(html, {
+          headers: { "Content-Type": "text/html" },
+        });
+      }
+      return new Response("Not Found", { status: 404 });
+    },
+  });
+}

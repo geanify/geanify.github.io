@@ -11,5 +11,9 @@
   },
   "dependencies": {
     "ejs": "^3.1.10"
+  },
+  "scripts": {
+    "dev": "bun run dev-server.ts",
+    "start": "bun run prod-server.ts"
   }
 }
