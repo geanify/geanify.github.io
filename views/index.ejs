@@ -1005,6 +1005,8 @@
 <body>
   <%- include('navbar-ticker.ejs', { lang }) %>
   <div class="container">
+    <!-- Cyberpunk Smoke Effect Canvas -->
+    <canvas id="cyberpunk-smoke" width="600" height="400" style="position: fixed; right: 0; bottom: 0; pointer-events: none; z-index: 10;"></canvas>
     <section class="hero">
       <h1><%= t.heading %></h1>
       <div class="hero-underline"></div>
@@ -1091,5 +1093,6 @@
       });
     });
   </script>
+  <script src="/smoke-effect.js"></script>
 </body>
 </html> 
