@@ -1,8 +1,26 @@
 {
   "title": "Web Herald",
-  "heading": "Welcome to Web Herald",
-  "description": "Your modern web starter, powered by Bun, TypeScript, and EJS. Fast, beautiful, and ready for your next project.",
-  "getStarted": "Get Started",
+  "heading": "Empowering Communities Through Technology",
+  "description": "Web Herald is a small tech company dedicated to building digital tools that empower civic engagement and social good. We believe technology can amplify voices, connect communities, and drive positive change. Join us in shaping a more open, informed, and participatory society.",
+  "getStarted": "Get Involved",
   "learnMore": "Learn More",
-  "footer": "Web Herald. All rights reserved."
+  "footer": "Web Herald. Empowering communities for a better tomorrow.",
+  "projectsHeading": "Our Projects",
+  "projects": [
+    {
+      "title": "Civic Connect",
+      "description": "A platform that helps citizens organize, discuss, and act on local issues. Tools for petitions, event planning, and open forums.",
+      "image": "/project-civic-connect.png"
+    },
+    {
+      "title": "GreenQuest",
+      "description": "A mobile game that encourages environmental activism through fun quests and real-world challenges.",
+      "image": "/project-greenquest.png"
+    },
+    {
+      "title": "Open Data Portal",
+      "description": "A website that makes public data accessible and easy to visualize for everyone.",
+      "image": "/project-open-data.png"
+    }
+  ]
 } 

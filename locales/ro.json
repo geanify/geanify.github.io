@@ -1,8 +1,26 @@
 {
   "title": "Web Herald",
-  "heading": "Bine ai venit la Web Herald",
-  "description": "Starter-ul tău modern pentru web, alimentat de Bun, TypeScript și EJS. Rapid, frumos și gata pentru următorul tău proiect.",
-  "getStarted": "Începe acum",
+  "heading": "Împuternicim comunitățile prin tehnologie",
+  "description": "Web Herald este o companie tech de dimensiuni mici, dedicată dezvoltării de instrumente digitale care susțin implicarea civică și binele social. Credem că tehnologia poate amplifica vocile, conecta comunitățile și genera schimbări pozitive. Alătură-te nouă pentru a construi o societate mai deschisă, informată și participativă.",
+  "getStarted": "Implică-te",
   "learnMore": "Află mai multe",
-  "footer": "Web Herald. Toate drepturile rezervate."
+  "footer": "Web Herald. Împuternicim comunitățile pentru un viitor mai bun.",
+  "projectsHeading": "Proiectele noastre",
+  "projects": [
+    {
+      "title": "Civic Connect",
+      "description": "O platformă care ajută cetățenii să se organizeze, să discute și să acționeze asupra problemelor locale. Oferă instrumente pentru petiții, planificarea evenimentelor și forumuri deschise.",
+      "image": "/project-civic-connect.png"
+    },
+    {
+      "title": "GreenQuest",
+      "description": "Un joc mobil care încurajează activismul de mediu prin misiuni distractive și provocări reale.",
+      "image": "/project-greenquest.png"
+    },
+    {
+      "title": "Portal Date Deschise",
+      "description": "Un site care face datele publice accesibile și ușor de vizualizat pentru toată lumea.",
+      "image": "/project-open-data.png"
+    }
+  ]
 } 

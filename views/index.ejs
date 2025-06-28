@@ -48,18 +48,47 @@
       flex-direction: column;
       min-height: 100vh;
     }
+    .lang-switcher {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 100;
+      display: flex;
+      gap: 0.5rem;
+      background: var(--background-dark-highlight);
+      padding: 0.3rem 0.7rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--overlay-background);
+    }
+    .lang-switcher a {
+      color: var(--neutral-highlight);
+      background: var(--background-dark-highlight);
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: var(--medium-font-size);
+      transition: background 0.2s, color 0.2s;
+    }
+    .lang-switcher a.active, .lang-switcher a:hover {
+      background: var(--primary);
+      color: var(--primary-text);
+    }
     .container {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem;
+      justify-content: flex-start;
+      padding: 2rem 1rem 1rem 1rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
     }
     .logo {
       width: 120px;
       height: 120px;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       border-radius: 24px;
       box-shadow: 0 4px 24px var(--overlay-background);
       background: var(--background-dark-highlight);
@@ -75,27 +104,30 @@
       display: block;
     }
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       color: var(--primary);
-      margin: 0 0 1rem 0;
+      margin: 0 0 0.5rem 0;
       letter-spacing: 1px;
       font-weight: 700;
       text-shadow: 0 2px 8px var(--overlay-background);
+      text-align: center;
     }
-    p {
-      font-size: 1.25rem;
+    .description {
+      font-size: 1.15rem;
       color: var(--neutral-highlight);
       margin: 0 0 2rem 0;
-      max-width: 500px;
+      max-width: 700px;
       text-align: center;
     }
     .actions {
       display: flex;
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
     }
     .btn {
-      padding: 0.75rem 2rem;
+      padding: 0.85rem 2.2rem;
       font-size: var(--medium-font-size);
       border: none;
       border-radius: 8px;
@@ -103,6 +135,8 @@
       font-weight: 600;
       transition: background 0.2s, color 0.2s, box-shadow 0.2s;
       box-shadow: 0 2px 8px var(--overlay-background);
+      min-width: 160px;
+      margin-bottom: 0.5rem;
     }
     .btn-primary {
       background: var(--primary);
@@ -120,6 +154,75 @@
       background: var(--secondary-highlight);
       color: var(--accent-text);
     }
+    .projects-section {
+      width: 100%;
+      margin-top: 2.5rem;
+      margin-bottom: 2rem;
+    }
+    .projects-title {
+      font-size: 1.7rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .projects-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
+    .project-card {
+      background: var(--background-dark-highlight);
+      border-radius: 18px;
+      box-shadow: 0 2px 12px var(--overlay-background);
+      width: 320px;
+      max-width: 98vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 1.2rem 1rem;
+      transition: transform 0.15s, box-shadow 0.15s;
+      border: 2px solid transparent;
+      min-width: 0;
+    }
+    .project-card:hover {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 6px 24px var(--overlay-background);
+      border-color: var(--primary);
+    }
+    .project-image {
+      width: 90px;
+      height: 90px;
+      border-radius: 12px;
+      background: var(--neutral-highlight);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 2px 8px var(--overlay-background);
+    }
+    .project-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .project-title {
+      font-size: 1.2rem;
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .project-description {
+      color: var(--neutral-highlight);
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
     footer {
       text-align: center;
       padding: 1rem 0;
@@ -128,39 +231,54 @@
       font-size: var(--small-font-size);
       letter-spacing: 0.5px;
     }
+    @media (max-width: 900px) {
+      .projects-list {
+        flex-direction: column;
+        align-items: center;
+      }
+      .project-card {
+        width: 98vw;
+        max-width: 400px;
+      }
+    }
     @media (max-width: 600px) {
       h1 {
-        font-size: 2rem;
+        font-size: 1.3rem;
       }
       .container {
-        padding: 1rem;
+        padding: 1rem 0.5rem 0.5rem 0.5rem;
       }
       .logo {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
       }
-    }
-    .lang-switcher {
-      position: absolute;
-      top: 1.5rem;
-      right: 2rem;
-      z-index: 10;
-      display: flex;
-      gap: 0.5rem;
-    }
-    .lang-switcher a {
-      color: var(--neutral-highlight);
-      background: var(--background-dark-highlight);
-      padding: 0.25rem 0.75rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: var(--medium-font-size);
-      transition: background 0.2s, color 0.2s;
-    }
-    .lang-switcher a.active, .lang-switcher a:hover {
-      background: var(--primary);
-      color: var(--primary-text);
+      .projects-title {
+        font-size: 1.2rem;
+      }
+      .actions {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+      }
+      .btn {
+        width: 100%;
+        min-width: 0;
+        font-size: 1rem;
+        padding: 0.9rem 0.5rem;
+      }
+      .lang-switcher {
+        top: 0.5rem;
+        right: 0.5rem;
+        padding: 0.2rem 0.4rem;
+        font-size: 0.95rem;
+      }
+      .project-card {
+        padding: 1rem 0.5rem 1rem 0.5rem;
+      }
+      .project-image {
+        width: 60px;
+        height: 60px;
+      }
     }
   </style>
 </head>
@@ -174,11 +292,25 @@
       <img src="/logo.png" alt="Web Herald Logo">
     </div>
     <h1><%= t.heading %></h1>
-    <p><%= t.description %></p>
+    <div class="description"><%= t.description %></div>
     <div class="actions">
       <button class="btn btn-primary">🚀 <%= t.getStarted %></button>
       <button class="btn btn-secondary">📖 <%= t.learnMore %></button>
     </div>
+    <section class="projects-section">
+      <div class="projects-title"><%= t.projectsHeading %></div>
+      <div class="projects-list">
+        <% t.projects.forEach(function(project) { %>
+          <div class="project-card">
+            <div class="project-image">
+              <img src="<%= project.image %>" alt="<%= project.title %>">
+            </div>
+            <div class="project-title"><%= project.title %></div>
+            <div class="project-description"><%= project.description %></div>
+          </div>
+        <% }); %>
+      </div>
+    </section>
   </div>
   <footer>
     &copy; <%= new Date().getFullYear() %> <%= t.footer %>
