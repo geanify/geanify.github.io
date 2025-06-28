@@ -1,26 +1,29 @@
 {
   "title": "Web Herald",
-  "heading": "Empowering Communities Through Technology",
-  "description": "Web Herald is a small tech company dedicated to building digital tools that empower civic engagement and social good. We believe technology can amplify voices, connect communities, and drive positive change. Join us in shaping a more open, informed, and participatory society.",
-  "getStarted": "Get Involved",
-  "learnMore": "Learn More",
-  "footer": "Web Herald. Empowering communities for a better tomorrow.",
-  "projectsHeading": "Our Projects",
+  "heading": "Disrupting Tomorrow, Monetizing Today",
+  "description": "Welcome to Web Herald, where we leverage the power of buzzwords, blockchain, and performative activism to build a brighter, more profitable future. Our mission? To connect communities, empower engagement, and maximize quarterly returns—preferably all at once. We believe in a world where every click is a revolution, every like is a movement, and every rainbow logo is a tax write-off. Join us as we innovate, iterate, and occasionally pretend to care.",
+  "getStarted": "Our Work",
+  "learnMore": "Contact Us",
+  "footer": "Web Herald. Changing the world, one press release at a time.",
+  "projectsHeading": "Our Disruptions",
   "projects": [
     {
-      "title": "Civic Connect",
-      "description": "A platform that helps citizens organize, discuss, and act on local issues. Tools for petitions, event planning, and open forums.",
-      "image": "/project-civic-connect.png"
+      "title": "Civic Connect™",
+      "description": "A platform for citizens to organize, discuss, and be data-mined for their own good. Now with 30% more synergy!",
+      "image": "/project-civic-connect.png",
+      "link": "/projects/civic-connect"
     },
     {
-      "title": "GreenQuest",
-      "description": "A mobile game that encourages environmental activism through fun quests and real-world challenges.",
-      "image": "/project-greenquest.png"
+      "title": "GreenQuest: Carbon Edition",
+      "description": "A mobile game that turns environmental guilt into microtransactions. Save the planet, one loot box at a time.",
+      "image": "/project-greenquest.png",
+      "link": "/projects/greenquest"
     },
     {
-      "title": "Open Data Portal",
-      "description": "A website that makes public data accessible and easy to visualize for everyone.",
-      "image": "/project-open-data.png"
+      "title": "Open Data Portal (Beta)",
+      "description": "A website that makes public data accessible, beautiful, and just a little bit invasive. Because privacy is so 2020.",
+      "image": "/project-open-data.png",
+      "link": "/projects/open-data"
     }
   ]
 } 

@@ -1,26 +1,29 @@
 {
   "title": "Web Herald",
-  "heading": "Împuternicim comunitățile prin tehnologie",
-  "description": "Web Herald este o companie tech de dimensiuni mici, dedicată dezvoltării de instrumente digitale care susțin implicarea civică și binele social. Credem că tehnologia poate amplifica vocile, conecta comunitățile și genera schimbări pozitive. Alătură-te nouă pentru a construi o societate mai deschisă, informată și participativă.",
-  "getStarted": "Implică-te",
-  "learnMore": "Află mai multe",
-  "footer": "Web Herald. Împuternicim comunitățile pentru un viitor mai bun.",
-  "projectsHeading": "Proiectele noastre",
+  "heading": "Schimbam ziua de maine, monetizam azi",
+  "description": "Bine ai venit la Web Herald, unde folosim buzzwords, blockchain si activism de fatada pentru a construi un viitor mai luminos si mai profitabil. Misiunea noastra? Sa conectam comunitati, sa incurajam implicarea si sa maximizam profiturile trimestriale—de preferat toate odata. Credem intr-o lume in care fiecare click e o revolutie, fiecare like e o miscare si fiecare logo in culorile curcubeului e o deducere fiscala. Alatura-te noua in timp ce inovam, iteram si, uneori, ne prefacem ca ne pasa.",
+  "getStarted": "Proiectele Noastre",
+  "learnMore": "Contacteaza-ne",
+  "footer": "Web Herald. Schimbam lumea, un comunicat de presa pe rand.",
+  "projectsHeading": "Disruptiile Noastre",
   "projects": [
     {
-      "title": "Civic Connect",
-      "description": "O platformă care ajută cetățenii să se organizeze, să discute și să acționeze asupra problemelor locale. Oferă instrumente pentru petiții, planificarea evenimentelor și forumuri deschise.",
-      "image": "/project-civic-connect.png"
+      "title": "Civic Connect™",
+      "description": "O platforma pentru cetateni sa se organizeze, sa discute si sa fie analizati pentru binele lor. Acum cu 30% mai multa sinergie!",
+      "image": "/project-civic-connect.png",
+      "link": "/projects/civic-connect"
     },
     {
-      "title": "GreenQuest",
-      "description": "Un joc mobil care încurajează activismul de mediu prin misiuni distractive și provocări reale.",
-      "image": "/project-greenquest.png"
+      "title": "GreenQuest: Carbon Edition",
+      "description": "Un joc mobil care transforma vina de mediu in microtranzactii. Salveaza planeta, cate un loot box pe rand.",
+      "image": "/project-greenquest.png",
+      "link": "/projects/greenquest"
     },
     {
-      "title": "Portal Date Deschise",
-      "description": "Un site care face datele publice accesibile și ușor de vizualizat pentru toată lumea.",
-      "image": "/project-open-data.png"
+      "title": "Open Data Portal (Beta)",
+      "description": "Un site care face datele publice accesibile, frumoase si putin invazive. Pentru ca intimitatea e atat de 2020.",
+      "image": "/project-open-data.png",
+      "link": "/projects/open-data"
     }
   ]
 } 
