@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://web-herald.com/sitemap.xml
+
+# Disallow temporary files
+Disallow: /temp/
+Disallow: /node_modules/
+
+# Allow all other content
+Allow: /public/
+Allow: /images/
+Allow: /videos/ 

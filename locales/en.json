@@ -7,6 +7,12 @@
   "footer": "Web Herald. Changing the world, one press release at a time.",
   "projectsHeading": "Our Disruptions",
   "projects": [
+    {
+      "title": "Web Herald (Satire)",
+      "description": "A tongue-in-cheek satire of tech, buzzwords, and performative activism. This site parodies the world of web disruption, blockchain, and quarterly returns.",
+      "link": "https://web-herald.com/",
+      "image": "/logo.png"
+    }
   ],
   "bannerAds": {
     "overconsumption": ["Happiness is just one more purchase away!", "", "You too can find love today!"],

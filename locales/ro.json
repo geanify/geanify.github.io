@@ -7,6 +7,12 @@
   "footer": "Web Herald. Schimbam lumea, un comunicat de presa pe rand.",
   "projectsHeading": "Disruptiile Noastre",
   "projects": [
+    {
+      "title": "Web Herald (Satiră)",
+      "description": "O satiră ironică la adresa tehnologiei, buzzword-urilor și activismului de fațadă. Acest site parodiază lumea disruptivă a web-ului, blockchain-ului și profiturilor trimestriale.",
+      "link": "https://web-herald.com/",
+      "image": "/logo.png"
+    }
   ],
   "bannerAds": {
     "overconsumption": ["Cumpara fericirea!", "", "Si tu poti sa fii iubit!"],

@@ -3,9 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags -->
   <title><%= t.title %></title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <meta name="description" content="<%= t.description %>">
+  <meta name="keywords" content="web development, software engineering, cyberpunk design, portfolio, <%= t.heading.toLowerCase() %>">
+  <meta name="author" content="Geani">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://web-herald.com/">
+  <meta property="og:title" content="<%= t.title %>">
+  <meta property="og:description" content="<%= t.description %>">
+  <meta property="og:image" content="https://web-herald.com/logo.png">
+  <meta property="og:site_name" content="Web Herald">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://web-herald.com/">
+  <meta property="twitter:title" content="<%= t.title %>">
+  <meta property="twitter:description" content="<%= t.description %>">
+  <meta property="twitter:image" content="https://web-herald.com/logo.png">
+  
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#f53b57">
+  <meta name="msapplication-TileColor" content="#f53b57">
+  <link rel="canonical" href="https://web-herald.com/">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap"></noscript>
+  
   <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="apple-touch-icon" href="/logo.png">
+  
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Geani",
+    "url": "https://web-herald.com",
+    "image": "https://web-herald.com/logo.png",
+    "sameAs": [
+      "mailto:geanify@gmail.com"
+    ],
+    "jobTitle": "Software Engineer",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Web Herald"
+    },
+    "description": "<%= t.description %>"
+  }
+  </script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Web Herald",
+    "url": "https://web-herald.com",
+    "description": "<%= t.description %>",
+    "author": {
+      "@type": "Person",
+      "name": "Geani"
+    }
+  }
+  </script>
+  
   <style>
     :root {
       --neutral: #808e9b;
@@ -91,6 +157,7 @@
       margin: 0 auto;
       width: 100%;
       box-sizing: border-box;
+      contain: layout style;
     }
     .logo-link {
       display: flex;
@@ -111,6 +178,8 @@
       background: var(--neon-yellow);
       box-shadow: 0 0 24px 4px var(--neon-blue), 0 0 8px 2px var(--neon-pink);
       transition: box-shadow 0.2s, background 0.2s, transform 0.2s;
+      will-change: transform, box-shadow;
+      contain: layout style paint;
     }
     .logo img {
       width: 100%;
@@ -129,6 +198,9 @@
       position: relative;
       z-index: 2;
       font-family: 'Orbitron', 'Share Tech Mono', monospace;
+      text-rendering: optimizeLegibility;
+      -webkit-font-feature-settings: "kern" 1;
+      font-feature-settings: "kern" 1;
     }
     .description {
       font-size: 1.18rem;
@@ -165,6 +237,8 @@
       letter-spacing: 1.2px;
       text-shadow: 0 0 8px #ffd32a, 0 0 4px #3c40c6;
       font-family: 'Orbitron', 'Share Tech Mono', monospace;
+      will-change: transform, box-shadow;
+      contain: layout style paint;
     }
     .btn-primary {
       background: linear-gradient(90deg, #f53b57 0%, #ffd32a 100%);
@@ -219,6 +293,7 @@
       justify-content: center;
       max-width: 100vw;
       box-sizing: border-box;
+      contain: layout style;
     }
     .project-card {
       width: 100%;
@@ -236,6 +311,8 @@
       position: relative;
       overflow: hidden;
       transition: box-shadow 0.2s, background 0.2s, border-color 0.2s, filter 0.2s, transform 0.2s;
+      will-change: transform, box-shadow;
+      contain: layout style paint;
     }
     .project-card:hover, .project-card-flashy-neon {
       background: #1a0033;
@@ -304,6 +381,9 @@
       letter-spacing: 0.5px;
       font-family: 'Orbitron', 'Share Tech Mono', monospace;
       text-shadow: 0 0 8px #f53b57, 0 0 4px #3c40c6;
+      text-rendering: optimizeLegibility;
+      -webkit-font-feature-settings: "kern" 1;
+      font-feature-settings: "kern" 1;
     }
     .project-description {
       color: #bae2e2;
@@ -358,56 +438,90 @@
       }
     }
     @media (max-width: 600px) {
+      .project-card {
+        will-change: auto;
+        contain: layout style;
+      }
+      
+      .btn, .btn-linklike {
+        will-change: auto;
+        contain: layout style;
+      }
+      
+      /* Reduce animations on mobile for better performance */
+      .project-card:hover, .project-card-flashy-neon {
+        transform: scale(1.02);
+        animation: none;
+      }
+      
+      .logo-link:hover .logo {
+        transform: scale(1.02);
+      }
+      
+      /* Optimize font loading */
       h1 {
         font-size: 1.3rem;
+        font-display: swap;
       }
+      
       .container {
         padding: 1rem 0.5rem 0.5rem 0.5rem;
         max-width: 100vw;
       }
+      
       .logo {
         width: 70px;
         height: 70px;
       }
+      
       .projects-title {
         font-size: 1.2rem;
       }
+      
       .actions {
         flex-direction: column;
         gap: 0.5rem;
         align-items: stretch;
       }
+      
       .btn, .btn-linklike {
         width: 100%;
         min-width: 0;
         font-size: 1rem;
         padding: 0.9rem 0.5rem;
       }
+      
       .lang-switcher {
         top: 0.5rem;
         right: 0.5rem;
         padding: 0.2rem 0.4rem;
         font-size: 0.95rem;
       }
+      
       .project-card {
         width: 100%;
         max-width: calc(100vw - 1.2rem);
         margin-left: auto;
         margin-right: auto;
       }
+      
       .project-image {
         width: 60px;
         height: 60px;
       }
+      
       .navbar {
         max-width: 100vw;
       }
+      
       .navbar-content {
         max-width: 100vw;
       }
+      
       .projects-list {
         max-width: 100vw;
       }
+      
       .project-card {
         max-width: calc(100vw - 1.2rem);
       }
@@ -469,6 +583,8 @@
       box-shadow: 0 0 16px #f53b57, 0 0 16px #3c40c6;
       opacity: 0.95;
       animation: neon-underline 2.5s infinite alternate;
+      will-change: filter;
+      contain: layout style paint;
     }
     @keyframes neon-underline {
       0% { filter: brightness(1.2) drop-shadow(0 0 8px #ffd32a); }
@@ -976,24 +1092,22 @@
       .projects-list { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
     }
     @media (max-width: 999px) {
-      .side-banners { 
+      .side-banners {
+        display: none !important;
       }
-      .mobile-banners { 
-        display: flex !important; 
+      .mobile-banners {
+        display: flex !important;
+        padding: 0 1rem;
+        margin: 1.5rem 0;
+        box-sizing: border-box;
       }
-      .projects-list { grid-template-columns: 1fr; align-items: center; display: flex; flex-direction: column; }
-      .projects-list-wrapper {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
+    }
+    @media (min-width: 1000px) {
+      .mobile-banners {
+        display: none !important;
       }
-      .projects-section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-      .project-card {
-        margin-left: auto;
-        margin-right: auto;
+      .side-banners {
+        display: flex !important;
       }
     }
     .coming-soon-message {
@@ -1143,51 +1257,58 @@
 </head>
 <body>
   <%- include('navbar-ticker.ejs', { lang }) %>
-  <div class="container">
+  
+  <main class="container" role="main">
     <!-- Cyberpunk Smoke Effect Canvas -->
-    <canvas id="cyberpunk-smoke" width="600" height="400" style="position: fixed; right: 0; bottom: 0; pointer-events: none; z-index: 10;"></canvas>
-    <section class="hero">
+    <canvas id="cyberpunk-smoke" width="600" height="400" style="position: fixed; right: 0; bottom: 0; pointer-events: none; z-index: 10;" aria-hidden="true"></canvas>
+    
+    <section class="hero" role="banner">
       <h1><%= t.heading %></h1>
-      <div class="hero-underline"></div>
-      <div class="description"><%= t.description %></div>
-      <div class="actions">
-        <button class="btn btn-primary" id="our-work-btn">🛠️ <%= t.getStarted %></button>
-        <a class="btn btn-secondary btn-linklike" href="mailto:geanify@gmail.com" role="button" tabindex="0">✉️ <%= t.learnMore %></a>
+      <div class="hero-underline" aria-hidden="true"></div>
+      <p class="description"><%= t.description %></p>
+      <div class="actions" role="group" aria-label="Main actions">
+        <button class="btn btn-primary" id="our-work-btn" aria-label="<%= t.getStarted %>">🛠️ <%= t.getStarted %></button>
+        <a class="btn btn-secondary btn-linklike" href="mailto:geanify@gmail.com" role="button" tabindex="0" aria-label="<%= t.learnMore %>">✉️ <%= t.learnMore %></a>
       </div>
     </section>
-    <section class="projects-section">
-      <div class="projects-title"><%= t.projectsHeading %></div>
+    
+    <section class="projects-section" role="region" aria-labelledby="projects-heading">
+      <h2 id="projects-heading" class="projects-title"><%= t.projectsHeading %></h2>
       <div class="projects-list-wrapper" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 100%;">
         <!-- Desktop left banner -->
-        <div class="side-banners" style=" flex-direction: column; gap: 2rem; margin-right: 2rem;">
+        <aside class="side-banners" style="flex-direction: column; gap: 2rem; margin-right: 2rem;" aria-label="Promotional content">
           <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
-        </div>
-        <div class="projects-list" style="flex: 1;">
+        </aside>
+        
+        <div class="projects-list" style="flex: 1;" role="list">
           <% if (t.projects.length === 0) { %>
-            <div class="coming-soon-message"><%= t.comingSoon %></div>
+            <div class="coming-soon-message" role="status"><%= t.comingSoon %></div>
           <% } else { %>
+            <!-- Mobile banners always shown on mobile -->
+            <aside class="mobile-banners" style="flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;" aria-label="Promotional content">
+              <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
+              <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
+            </aside>
+            
             <% t.projects.forEach(function(project, idx) { %>
-              <% if (idx === 1) { %>
-                <!-- Mobile banners after first project -->
-                <div class="mobile-banners" style="flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;">
-                  <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
-                  <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
-                </div>
-              <% } %>
               <%- include('project-card.ejs', { project }) %>
             <% }); %>
           <% } %>
         </div>
+        
         <!-- Desktop right banner -->
-        <div class="side-banners" style="flex-direction: column; gap: 2rem; margin-left: 2rem;">
+        <aside class="side-banners" style="flex-direction: column; gap: 2rem; margin-left: 2rem;" aria-label="Promotional content">
           <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
-        </div>
+        </aside>
       </div>
     </section>
-  </div>
-  <footer>
-    &copy; <%= new Date().getFullYear() %> <%= t.footer %>
+  </main>
+  
+  <footer role="contentinfo">
+    <p>&copy; <%= new Date().getFullYear() %> <%= t.footer %></p>
   </footer>
+  
+  <!-- Performance optimized scripts -->
   <script>
     // Smooth scroll and highlight for Our Work button
     document.addEventListener('DOMContentLoaded', function() {
@@ -1204,6 +1325,7 @@
         });
       }
     });
+    
     // Neon effect on logo tap for mobile
     document.addEventListener('DOMContentLoaded', function() {
       var logo = document.querySelector('.logo');
@@ -1231,7 +1353,26 @@
         card.addEventListener('mouseenter', animate);
       });
     });
+    
+    // Performance optimization: Intersection Observer for smoke effect
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('cyberpunk-smoke');
+      if (canvas && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              canvas.style.display = 'block';
+            } else {
+              canvas.style.display = 'none';
+            }
+          });
+        }, { threshold: 0.1 });
+        observer.observe(canvas);
+      }
+    });
   </script>
-  <script src="/smoke-effect.js"></script>
+  
+  <!-- Load smoke effect asynchronously -->
+  <script src="/smoke-effect.js" async defer></script>
 </body>
 </html> 
