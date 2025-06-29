@@ -115,7 +115,7 @@ If videos are served by nginx but not showing up on the page:
 
 #### Banner ads not showing videos
 - **Cause**: Translation configuration or template issues
-- **Solution**: Check `locales/en.json` and `views/banner-ad.ejs`
+- **Solution**: Check `locales/en.json` and `views/banner-video.ejs`
 
 ### Debugging Commands
 ```bash
