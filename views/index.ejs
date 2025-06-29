@@ -966,6 +966,8 @@
         margin-left: 0 !important;
         align-items: flex-end;
       }
+      .mobile-banners {
+      }
       .projects-list-wrapper {
         margin-left: 340px !important;
         margin-right: 340px !important;
@@ -974,8 +976,11 @@
       .projects-list { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
     }
     @media (max-width: 999px) {
-      .side-banners {  }
-      .mobile-banners {  }
+      .side-banners { 
+      }
+      .mobile-banners { 
+        display: flex !important; 
+      }
       .projects-list { grid-template-columns: 1fr; align-items: center; display: flex; flex-direction: column; }
       .projects-list-wrapper {
         margin-left: 0 !important;
@@ -1051,6 +1056,89 @@
     .crt-effect {
       animation: crt-flicker 0.18s infinite linear;
     }
+    
+    /* Banner styling with new class name to avoid ad blockers */
+    .content-promo {
+      background: linear-gradient(135deg, #ffd32a 0%, #f53b57 50%, #3c40c6 100%);
+      color: #1a0033;
+      border-radius: 18px;
+      padding: 1.5rem;
+      text-align: center;
+      font-weight: bold;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 32px 4px #fff8, 0 0 0 4px #2228, 0 0 24px 8px #00f2ff44;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .content-promo:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 48px 8px #fff8, 0 0 0 4px #2228, 0 0 32px 12px #00f2ff44;
+    }
+    
+    .content-promo-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .content-promo-description {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      opacity: 0.9;
+    }
+    
+    .content-promo-cta {
+      background: rgba(255,255,255,0.9);
+      color: #1a0033;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    
+    .content-promo-cta:hover {
+      background: rgba(255,255,255,1);
+      text-decoration: none;
+    }
+    
+    /* Alternative class names to avoid ad blockers */
+    .promo-box, .feature-box, .highlight-box {
+      background: linear-gradient(135deg, #ffd32a 0%, #f53b57 50%, #3c40c6 100%);
+      color: #1a0033;
+      border-radius: 18px;
+      padding: 1.5rem;
+      text-align: center;
+      font-weight: bold;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 32px 4px #fff8, 0 0 0 4px #2228, 0 0 24px 8px #00f2ff44;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .promo-box:hover, .feature-box:hover, .highlight-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 48px 8px #fff8, 0 0 0 4px #2228, 0 0 32px 12px #00f2ff44;
+    }
+    
+    /* Force display for all banner-like elements */
+    .content-promo, .promo-box, .feature-box, .highlight-box {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
   </style>
 </head>
 <body>
@@ -1071,7 +1159,7 @@
       <div class="projects-title"><%= t.projectsHeading %></div>
       <div class="projects-list-wrapper" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 100%;">
         <!-- Desktop left banner -->
-        <div class="side-banners" style="display: none; flex-direction: column; gap: 2rem; margin-right: 2rem;">
+        <div class="side-banners" style=" flex-direction: column; gap: 2rem; margin-right: 2rem;">
           <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
         </div>
         <div class="projects-list" style="flex: 1;">
@@ -1081,7 +1169,7 @@
             <% t.projects.forEach(function(project, idx) { %>
               <% if (idx === 1) { %>
                 <!-- Mobile banners after first project -->
-                <div class="mobile-banners" style="display: none; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;">
+                <div class="mobile-banners" style="flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;">
                   <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
                   <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
                 </div>
@@ -1091,7 +1179,7 @@
           <% } %>
         </div>
         <!-- Desktop right banner -->
-        <div class="side-banners" style="display: none; flex-direction: column; gap: 2rem; margin-left: 2rem;">
+        <div class="side-banners" style="flex-direction: column; gap: 2rem; margin-left: 2rem;">
           <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
         </div>
       </div>

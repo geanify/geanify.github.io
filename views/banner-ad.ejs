@@ -1,4 +1,4 @@
-<div class="banner-ad banner-ad-<%= type %> crt-effect">
+<div class="banner-ad banner-ad-<%= type %> crt-effect" style="display: block !important;">
   <% const videoConfig = t.bannerAds[type + 'Video']; %>
   <% if (videoConfig && videoConfig.src) { %>
     <div class="banner-ad-video-background crt-video-effect">
@@ -10,6 +10,10 @@
         <% if (videoConfig.loop) { %>loop<% } %>
         <% if (videoConfig.controls) { %>controls<% } %>
         playsinline
+        onloadstart="console.log('Video loading started: <%= videoConfig.src %>')"
+        oncanplay="console.log('Video can play: <%= videoConfig.src %>')"
+        onerror="console.error('Video error: <%= videoConfig.src %>', event)"
+        onplaying="console.log('Video playing: <%= videoConfig.src %>')"
       >
         <source src="<%= videoConfig.src %>" type="video/mp4">
         Your browser does not support the video tag.
@@ -18,6 +22,11 @@
       <div class="crt-scanlines"></div>
       <!-- CRT vignette overlay for video -->
       <div class="crt-vignette"></div>
+    </div>
+  <% } else { %>
+    <!-- Debug info when no video config -->
+    <div style="position: absolute; top: 0; left: 0; background: rgba(255,0,0,0.8); color: white; padding: 5px; font-size: 10px; z-index: 1000;">
+      No video config for: <%= type %>Video
     </div>
   <% } %>
   <div class="banner-ad-content">

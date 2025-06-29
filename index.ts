@@ -32,8 +32,9 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
       console.log("X-Forwarded-Proto:", req.headers.get("x-forwarded-proto"));
       console.log("X-Real-IP:", req.headers.get("x-real-ip"));
       
-      // Serve static files from public directory
-      if (url.pathname !== "/") {
+      // In production with nginx, static files are served by nginx
+      // Only serve static files in development mode
+      if (process.env.NODE_ENV !== 'production' && url.pathname !== "/") {
         try {
           const file = Bun.file(`public${url.pathname}`);
           if (await file.exists()) {
@@ -44,6 +45,7 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
           // Ignore and fall through to 404
         }
       }
+      
       // Proxy endpoint for stock prices (to avoid CORS)
       if (url.pathname === "/api/stocks") {
         console.log("Proxy request for stocks:", url.searchParams.get("symbols"));

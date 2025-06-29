@@ -3,6 +3,8 @@
 import { spawn } from "child_process";
 import { createInterface } from "readline";
 
+process.env.NODE_ENV = 'production';
+
 interface ProcessManagerConfig {
   script: string;
   maxRestarts: number;

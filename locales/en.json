@@ -14,16 +14,14 @@
     "overconsumptionCta": "Buy More!",
     "subscriptionsCta": "Subscribe Now!",
     "overconsumptionVideo": {
-      "src": "videos/geisha.mp4",
-      "poster": "/images/consumerism-poster.jpg",
+      "src": "/videos/geisha.mp4",
       "autoplay": true,
       "muted": true,
       "loop": true,
       "controls": false
     },
     "subscriptionsVideo": {
-      "src": "videos/ice.mp4",
-      "poster": "/images/subscriptions-poster.jpg",
+      "src": "/videos/ice.mp4",
       "autoplay": true,
       "muted": true,
       "loop": true,
