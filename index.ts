@@ -17,9 +17,10 @@ async function getTranslations(lang: string) {
 const htmlCache: Record<string, { html: string; timestamp: number }> = {};
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in ms
 
-export function createWebHeraldServer({ port = 3000 } = {}) {
+export function createWebHeraldServer({ port = 3000, tls }: { port?: number; tls?: any } = {}) {
   return serve({
     port,
+    ...(tls && { tls }),
     async fetch(req) {
       const url = new URL(req.url);
       // Serve static files from public directory
