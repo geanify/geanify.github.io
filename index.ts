@@ -17,12 +17,21 @@ async function getTranslations(lang: string) {
 const htmlCache: Record<string, { html: string; timestamp: number }> = {};
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutes in ms
 
-export function createWebHeraldServer({ port = 3000, tls }: { port?: number; tls?: any } = {}) {
+export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: number; tls?: any; hostname?: string } = {}) {
   return serve({
     port,
+    ...(hostname && { hostname }),
     ...(tls && { tls }),
     async fetch(req) {
       const url = new URL(req.url);
+      
+      // Debug logging for domain/IP issues
+      console.log("Request URL:", req.url);
+      console.log("Host header:", req.headers.get("host"));
+      console.log("X-Forwarded-Host:", req.headers.get("x-forwarded-host"));
+      console.log("X-Forwarded-Proto:", req.headers.get("x-forwarded-proto"));
+      console.log("X-Real-IP:", req.headers.get("x-real-ip"));
+      
       // Serve static files from public directory
       if (url.pathname !== "/") {
         try {

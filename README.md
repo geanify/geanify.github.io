@@ -18,6 +18,34 @@ To run in production:
 bun run start
 ```
 
+To run with automatic restart (process manager):
+
+```bash
+bun run start:managed
+```
+
+## Process Manager
+
+The process manager (`process-manager.ts`) automatically restarts the server if it crashes:
+
+- **Max restarts**: 10 attempts
+- **Restart delay**: 2 seconds between restarts
+- **Graceful shutdown**: Handles SIGINT and SIGTERM signals
+- **Logging**: Clear logging with timestamps
+
+## Systemd Service
+
+To run as a system service, copy the `web-herald.service` file to `/etc/systemd/system/` and update the paths:
+
+```bash
+# Edit the service file to match your paths
+sudo cp web-herald.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable web-herald
+sudo systemctl start web-herald
+sudo systemctl status web-herald
+```
+
 ## SSL/HTTPS Configuration
 
 To run the production server with HTTPS, set the following environment variables:

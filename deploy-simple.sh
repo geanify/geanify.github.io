@@ -65,10 +65,39 @@ if ! zip -r "$ZIP_NAME" . -x "*.DS_Store" "*/.*"; then
     exit 1
 fi
 
-# Copy zip to remote server
+# Check zip file size
+ZIP_SIZE=$(du -h "$ZIP_NAME" | cut -f1)
+echo "📦 Package size: $ZIP_SIZE"
+
+# Try multiple upload locations
 echo "📤 Uploading to $TARGET..."
-if ! scp "$ZIP_NAME" "$TARGET:/tmp/"; then
-    echo "❌ Error: Failed to upload to remote server"
+
+# Function to try upload to different locations
+try_upload() {
+    local locations=("/tmp/" "/home/$(echo $TARGET | cut -d@ -f1)/" "/var/tmp/" "/opt/")
+    
+    for location in "${locations[@]}"; do
+        echo "   Trying $location..."
+        if ssh "$TARGET" "test -w $location" 2>/dev/null; then
+            if scp "$ZIP_NAME" "$TARGET:$location"; then
+                echo "✅ Successfully uploaded to $location"
+                REMOTE_PATH="$location$ZIP_NAME"
+                return 0
+            fi
+        fi
+    done
+    return 1
+}
+
+if ! try_upload; then
+    echo "❌ Error: Failed to upload to any location on remote server"
+    echo ""
+    echo "🔧 Troubleshooting tips:"
+    echo "   1. Check disk space on remote server: ssh $TARGET 'df -h'"
+    echo "   2. Check permissions: ssh $TARGET 'ls -la /tmp/'"
+    echo "   3. Try manual upload: scp $ZIP_NAME $TARGET:/home/\$(whoami)/"
+    echo "   4. Check SSH connection: ssh $TARGET 'echo test'"
+    echo ""
     cd - > /dev/null
     rm -rf "$TEMP_DIR"
     exit 1
@@ -83,10 +112,11 @@ echo "✅ Deployment package uploaded successfully!"
 echo ""
 echo "📋 Next steps on your VPS:"
 echo "   1. SSH into your server: ssh $TARGET"
-echo "   2. Extract the package: unzip /tmp/$ZIP_NAME -d /opt/web-herald"
+echo "   2. Extract the package: unzip $REMOTE_PATH -d /opt/web-herald"
 echo "   3. Navigate to project: cd /opt/web-herald"
 echo "   4. Install dependencies: bun install"
-echo "   5. Set up environment: cp no-ip-config.example .env"
-echo "   6. Edit .env with your No-IP credentials"
-echo "   7. Start the server: bun run prod-server.ts"
+echo "   5. Set up environment: cp .env.example .env (if exists)"
+echo "   6. Edit .env with your configuration"
+echo "   7. Start the server: bun run start:managed"
+echo "   8. Or set up systemd: sudo cp web-herald.service /etc/systemd/system/"
 echo ""

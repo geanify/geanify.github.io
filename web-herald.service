@@ -1,0 +1,24 @@
+[Unit]
+Description=Web Herald Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/path/to/your/web-herald.com
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/bun run start:managed
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/path/to/your/web-herald.com/temp
+
+[Install]
+WantedBy=multi-user.target 

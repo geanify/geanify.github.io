@@ -15,6 +15,7 @@
   },
   "scripts": {
     "dev": "bun run dev-server.ts",
-    "start": "bun run prod-server.ts"
+    "start": "bun run prod-server.ts",
+    "start:managed": "bun run process-manager.ts"
   }
 }
