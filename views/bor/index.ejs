@@ -1,0 +1,127 @@
+<html lang="<%= lang %>">
+  <head>
+    <meta charset="UTF-8">
+    <title>BOR - <%= t.title %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        background: linear-gradient(135deg, #7c2d2d 0%, #f6e27a 100%);
+        font-family: 'EB Garamond', serif;
+        color: #2d1a0c;
+        margin: 0;
+        min-height: 100vh;
+      }
+      header {
+        background: #b08d57;
+        border-bottom: 8px solid #7c2d2d;
+        padding: 2rem 0 1rem 0;
+        text-align: center;
+        box-shadow: 0 4px 24px rgba(44, 24, 12, 0.15);
+      }
+      header h1 {
+        font-family: 'UnifrakturCook', cursive;
+        font-size: 3rem;
+        color: #7c2d2d;
+        letter-spacing: 0.1em;
+        margin: 0;
+        text-shadow: 0 2px 8px #f6e27a, 0 0 2px #2d1a0c;
+      }
+      nav a {
+        color: #fff;
+        background: #7c2d2d;
+        border: 2px solid #7c2d2d;
+        border-radius: 8px;
+        padding: 0.5em 1.2em 0.5em 0.5em;
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+        box-shadow: 0 2px 8px #b08d57;
+        transition: background 0.2s, color 0.2s;
+      }
+      nav a img.logo {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        display: inline-block;
+        margin-right: 0.5em;
+        vertical-align: middle;
+      }
+      nav a:hover {
+        background: #f6e27a;
+        color: #7c2d2d;
+      }
+      main {
+        max-width: 700px;
+        margin: 2rem auto;
+        background: rgba(246, 226, 122, 0.95);
+        border: 6px double #7c2d2d;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(44, 24, 12, 0.18);
+        padding: 2.5rem 2rem;
+        position: relative;
+      }
+      main:before, main:after {
+        content: '';
+        display: block;
+        position: absolute;
+        left: 50%;
+        width: 80px;
+        height: 80px;
+        background: url('/images/byzantine-corner.svg') no-repeat center center/contain;
+        opacity: 0.25;
+        pointer-events: none;
+      }
+      main:before {
+        top: -40px;
+        transform: translateX(-50%) rotate(0deg);
+      }
+      main:after {
+        bottom: -40px;
+        transform: translateX(-50%) rotate(180deg);
+      }
+      h2 {
+        font-family: 'UnifrakturCook', cursive;
+        font-size: 2.2rem;
+        color: #7c2d2d;
+        margin-top: 0;
+        margin-bottom: 1.2rem;
+        text-shadow: 0 1px 4px #f6e27a;
+      }
+      p {
+        font-size: 1.25rem;
+        line-height: 1.7;
+        color: #2d1a0c;
+        margin-bottom: 0;
+      }
+      @media (max-width: 600px) {
+        main {
+          padding: 1.2rem 0.5rem;
+        }
+        h2 {
+          font-size: 1.3rem;
+        }
+      }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <header>
+      <h1>BOR</h1>
+      <nav>
+        <a href="/">
+          <img src="/logo.png" alt="Web Herald Logo" class="logo" />
+          <span><%= t.title %></span>
+        </a>
+      </nav>
+    </header>
+    <main>
+      <section>
+        <h2>Biserica Ortodoxa Romana</h2>
+        <p><%= t.projects && t.projects.find(p => p.link === '/bor') ? t.projects.find(p => p.link === '/bor').description.replace(/[ăâîșțĂÂÎȘȚ]/g, c => ({'ă':'a','â':'a','î':'i','ș':'s','ț':'t','Ă':'A','Â':'A','Î':'I','Ș':'S','Ț':'T'}[c]||c)) : 'Descriere provizorie despre BOR.' %></p>
+      </section>
+    </main>
+  </body>
+</html> 

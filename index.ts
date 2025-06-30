@@ -3,13 +3,14 @@ import { serve } from "bun";
 import ejs from "ejs";
 import { readFile, writeFile, mkdir } from "fs/promises";
 
-async function getTranslations(lang: string) {
+async function getTranslations(lang: string, page: string = 'home') {
+  const fileName = `locales/${lang}.${page}.json`;
   try {
-    const data = await readFile(`locales/${lang}.json`, "utf-8");
+    const data = await readFile(fileName, "utf-8");
     return JSON.parse(data);
   } catch {
-    const data = await readFile("locales/en.json", "utf-8");
-    return JSON.parse(data);
+    const fallback = await readFile(`locales/ro.home.json`, "utf-8");
+    return JSON.parse(fallback);
   }
 }
 
@@ -94,7 +95,7 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
       }
       // Render EJS template for root route
       if (url.pathname === "/") {
-        const lang = url.searchParams.get("lang") === "ro" ? "ro" : "en";
+        const lang = url.searchParams.get("lang") === "en" ? "en" : "ro";
         // Only use cache in production
         if (process.env.NODE_ENV === "production") {
           const cacheKey = lang;
@@ -105,7 +106,7 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
               headers: { "Content-Type": "text/html" },
             });
           }
-          const t = await getTranslations(lang);
+          const t = await getTranslations(lang, 'home');
           const template = await readFile("views/home/index.ejs", "utf-8");
           const html = ejs.render(template, { t, lang }, { views: ["views"] });
           htmlCache[cacheKey] = { html, timestamp: now };
@@ -114,13 +115,23 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
           });
         } else {
           // No cache in dev
-          const t = await getTranslations(lang);
+          const t = await getTranslations(lang, 'home');
           const template = await readFile("views/home/index.ejs", "utf-8");
           const html = ejs.render(template, { t, lang }, { views: ["views"] });
           return new Response(html, {
             headers: { "Content-Type": "text/html" },
           });
         }
+      }
+      // New BOR page route
+      if (url.pathname === "/bor") {
+        const lang = url.searchParams.get("lang") === "en" ? "en" : "ro";
+        const t = await getTranslations(lang);
+        const template = await readFile("views/bor/index.ejs", "utf-8");
+        const html = ejs.render(template, { t, lang }, { views: ["views"] });
+        return new Response(html, {
+          headers: { "Content-Type": "text/html" },
+        });
       }
       return new Response("Not Found", { status: 404 });
     },

@@ -12,6 +12,12 @@
       "description": "A tongue-in-cheek satire of tech, buzzwords, and performative activism. This site parodies the world of web disruption, blockchain, and quarterly returns.",
       "link": "https://web-herald.com/",
       "image": "/logo.png"
+    },
+    {
+      "title": "BOR",
+      "description": "A page dedicated to the Romanian Orthodox Church. Placeholder description about the role and influence of BOR in Romanian society.",
+      "link": "/bor",
+      "image": "/images/bor.png"
     }
   ],
   "bannerAds": {
