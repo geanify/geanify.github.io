@@ -106,7 +106,7 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
             });
           }
           const t = await getTranslations(lang);
-          const template = await readFile("views/index.ejs", "utf-8");
+          const template = await readFile("views/home/index.ejs", "utf-8");
           const html = ejs.render(template, { t, lang }, { views: ["views"] });
           htmlCache[cacheKey] = { html, timestamp: now };
           return new Response(html, {
@@ -115,7 +115,7 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
         } else {
           // No cache in dev
           const t = await getTranslations(lang);
-          const template = await readFile("views/index.ejs", "utf-8");
+          const template = await readFile("views/home/index.ejs", "utf-8");
           const html = ejs.render(template, { t, lang }, { views: ["views"] });
           return new Response(html, {
             headers: { "Content-Type": "text/html" },

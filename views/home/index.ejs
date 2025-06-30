@@ -1256,7 +1256,7 @@
   </style>
 </head>
 <body>
-  <%- include('navbar-ticker.ejs', { lang }) %>
+  <%- include('home/navbar-ticker.ejs', { lang }) %>
   
   <main class="container" role="main">
     <!-- Cyberpunk Smoke Effect Canvas -->
@@ -1277,7 +1277,7 @@
       <div class="projects-list-wrapper" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; width: 100%;">
         <!-- Desktop left banner -->
         <aside class="side-banners" style="flex-direction: column; gap: 2rem; margin-right: 2rem;" aria-label="Promotional content">
-          <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
+          <%- include('home/banner-ad.ejs', { type: 'overconsumption', t: t }) %>
         </aside>
         
         <div class="projects-list" style="flex: 1;" role="list">
@@ -1286,19 +1286,19 @@
           <% } else { %>
             <!-- Mobile banners always shown on mobile -->
             <aside class="mobile-banners" style="flex-direction: column; gap: 1.5rem; margin: 1.5rem 0;" aria-label="Promotional content">
-              <%- include('banner-ad.ejs', { type: 'overconsumption', t: t }) %>
-              <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
+              <%- include('home/banner-ad.ejs', { type: 'overconsumption', t: t }) %>
+              <%- include('home/banner-ad.ejs', { type: 'subscriptions', t: t }) %>
             </aside>
             
             <% t.projects.forEach(function(project, idx) { %>
-              <%- include('project-card.ejs', { project }) %>
+              <%- include('home/project-card.ejs', { project }) %>
             <% }); %>
           <% } %>
         </div>
         
         <!-- Desktop right banner -->
         <aside class="side-banners" style="flex-direction: column; gap: 2rem; margin-left: 2rem;" aria-label="Promotional content">
-          <%- include('banner-ad.ejs', { type: 'subscriptions', t: t }) %>
+          <%- include('home/banner-ad.ejs', { type: 'subscriptions', t: t }) %>
         </aside>
       </div>
     </section>
