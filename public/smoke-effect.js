@@ -192,11 +192,42 @@
     requestAnimationFrame(animate);
   }
 
+  // Throttle utility
+  function throttle(fn, wait) {
+    let last = 0;
+    return function(...args) {
+      const now = Date.now();
+      if (now - last > wait) {
+        last = now;
+        fn.apply(this, args);
+      }
+    };
+  }
+
+  // Responsive canvas resize
+  function resizeCanvas() {
+    let dpr = window.devicePixelRatio || 1;
+    let width = 600;
+    let height = 400;
+    if (window.innerWidth < 700) {
+      width = Math.max(280, window.innerWidth - 40);
+      height = Math.max(180, Math.floor(window.innerHeight / 3));
+    }
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+  }
+
   function initializeSmoke() {
     // Initialize
+    resizeCanvas();
     checkVisibility();
-    window.addEventListener('scroll', checkVisibility);
-    window.addEventListener('resize', checkVisibility);
+    window.addEventListener('scroll', throttle(checkVisibility, 200));
+    window.addEventListener('resize', throttle(() => {
+      resizeCanvas();
+      checkVisibility();
+    }, 200));
     
     // Add toggle functionality
     const toggleButton = document.createElement('button');

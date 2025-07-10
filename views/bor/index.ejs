@@ -1,35 +1,35 @@
 <html lang="<%= lang %>">
   <head>
     <meta charset="UTF-8">
-    <title>BOR - <%= t.title %></title>
+    <title>Interlinked - <%= t.title %></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
       body {
-        background: linear-gradient(135deg, #7c2d2d 0%, #f6e27a 100%);
+        background: linear-gradient(135deg, #1a0033 0%, #3c40c6 100%);
         font-family: 'EB Garamond', serif;
-        color: #2d1a0c;
+        color: #e0e0ff;
         margin: 0;
         min-height: 100vh;
       }
       header {
-        background: #b08d57;
-        border-bottom: 8px solid #7c2d2d;
+        background: #3c40c6;
+        border-bottom: 8px solid #ffd32a;
         padding: 2rem 0 1rem 0;
         text-align: center;
-        box-shadow: 0 4px 24px rgba(44, 24, 12, 0.15);
+        box-shadow: 0 4px 24px rgba(44, 24, 200, 0.15);
       }
       header h1 {
         font-family: 'UnifrakturCook', cursive;
         font-size: 3rem;
-        color: #7c2d2d;
+        color: #ffd32a;
         letter-spacing: 0.1em;
         margin: 0;
-        text-shadow: 0 2px 8px #f6e27a, 0 0 2px #2d1a0c;
+        text-shadow: 0 2px 8px #3c40c6, 0 0 2px #ffd32a;
       }
       nav a {
         color: #fff;
-        background: #7c2d2d;
-        border: 2px solid #7c2d2d;
+        background: #ffd32a;
+        border: 2px solid #ffd32a;
         border-radius: 8px;
         padding: 0.5em 1.2em 0.5em 0.5em;
         text-decoration: none;
@@ -38,7 +38,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5em;
-        box-shadow: 0 2px 8px #b08d57;
+        box-shadow: 0 2px 8px #3c40c6;
         transition: background 0.2s, color 0.2s;
       }
       nav a img.logo {
@@ -50,8 +50,8 @@
         vertical-align: middle;
       }
       nav a:hover {
-        background: #f6e27a;
-        color: #7c2d2d;
+        background: #3c40c6;
+        color: #ffd32a;
       }
       main {
         max-width: 1100px;
@@ -65,105 +65,88 @@
         left: 50%;
         width: 80px;
         height: 80px;
-        background: url('/images/byzantine-corner.svg') no-repeat center center/contain;
-        opacity: 0.25;
+        background: url('/images/interlinked-corner.svg') no-repeat center center/contain;
+        opacity: 0.18;
         pointer-events: none;
       }
       main:before {
         top: -40px;
-        transform: translateX(-50%) rotate(0deg);
+        transform: translateX(-120%);
       }
       main:after {
         bottom: -40px;
-        transform: translateX(-50%) rotate(180deg);
+        transform: translateX(20%) rotate(180deg);
       }
-      h2 {
-        font-family: 'UnifrakturCook', cursive;
-        font-size: 2.2rem;
-        color: #7c2d2d;
-        margin-top: 0;
-        margin-bottom: 1.2rem;
-        text-shadow: 0 1px 4px #f6e27a;
-      }
-      p {
-        font-size: 1.25rem;
-        line-height: 1.7;
-        color: #2d1a0c;
-        margin-bottom: 0;
-      }
-      @media (max-width: 600px) {
-        main {
-          padding: 1.2rem 0.5rem;
-        }
-        h2 {
-          font-size: 1.3rem;
-        }
-      }
-      .bor-section-card {
-        max-width: 1100px;
-        margin: 2.5rem auto;
-        background: rgba(246, 226, 122, 0.95);
-        border: 6px double #7c2d2d;
-        border-radius: 24px;
-        box-shadow: 0 8px 32px rgba(44, 24, 12, 0.18);
+      .interlinked-section-card {
+        background: rgba(44, 64, 198, 0.15);
+        border-radius: 18px;
+        box-shadow: 0 4px 32px #1a003344;
+        margin: 0 auto 2rem auto;
+        max-width: 700px;
         padding: 0;
         overflow: hidden;
-        display: flex;
-        flex-direction: column;
       }
-      .bor-heading-image-wrapper {
-        position: relative;
+      .interlinked-heading-image-wrapper {
         width: 100%;
-        height: 220px;
-        overflow: hidden;
+        height: 180px;
+        background: #ffd32a;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        position: relative;
       }
-      .bor-heading-image {
+      .interlinked-heading-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: block;
+        opacity: 0.85;
+        border-bottom: 4px solid #ffd32a;
       }
-      .bor-heading-overlay {
+      .interlinked-heading-overlay {
         position: absolute;
-        left: 0; right: 0; top: 0; bottom: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(44, 24, 12, 0.45);
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: linear-gradient(0deg, #1a0033 80%, transparent 100%);
+        padding: 1.2rem 0 0.5rem 0;
+        text-align: center;
       }
-      .bor-heading-overlay h2 {
-        font-family: 'UnifrakturCook', cursive;
-        font-size: 2.5rem;
-        color: #fff;
+      .interlinked-heading-overlay h2 {
+        color: #ffd32a;
+        font-size: 2rem;
+        font-family: 'Orbitron', 'Share Tech Mono', monospace;
         margin: 0;
-        padding: 0.5em 1.5em;
-        background: rgba(44, 24, 12, 0.65);
-        border-radius: 12px;
-        text-shadow: 0 2px 8px #000, 0 0 2px #f6e27a;
+        letter-spacing: 0.08em;
+        text-shadow: 0 2px 8px #3c40c6, 0 0 2px #ffd32a;
       }
-      .bor-section-content {
+      .interlinked-section-content {
         padding: 2rem 2.5rem 2.5rem 2.5rem;
+        font-size: 1.18rem;
+        color: #e0e0ff;
+        font-family: 'Share Tech Mono', 'Orbitron', monospace;
+        line-height: 1.7;
+        text-align: center;
       }
       @media (max-width: 900px) {
-        .bor-section-card {
+        .interlinked-section-card {
           max-width: 98vw;
         }
-        .bor-section-content {
+        .interlinked-section-content {
           padding: 1.2rem 1rem 1.5rem 1rem;
         }
-        .bor-heading-overlay h2 {
+        .interlinked-heading-overlay h2 {
           font-size: 1.5rem;
         }
-        .bor-heading-image-wrapper {
+        .interlinked-heading-image-wrapper {
           height: 120px;
         }
       }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=UnifrakturCook:wght@700&family=Orbitron:wght@700&display=swap" rel="stylesheet">
   </head>
   <body>
     <header>
-      <h1>BOR</h1>
+      <h1>Interlinked</h1>
       <nav>
         <a href="/">
           <img src="/logo.png" alt="Web Herald Logo" class="logo" />
@@ -172,15 +155,15 @@
       </nav>
     </header>
     <main>
-      <section class="bor-section-card">
-        <div class="bor-heading-image-wrapper">
-          <img src="/images/bor-heading.jpg" alt="BOR Heading" class="bor-heading-image" />
-          <div class="bor-heading-overlay">
-            <h2>Biserica Ortodoxa Romana</h2>
+      <section class="interlinked-section-card">
+        <div class="interlinked-heading-image-wrapper">
+          <img src="/images/interlinked.png" alt="Interlinked Heading" class="interlinked-heading-image" />
+          <div class="interlinked-heading-overlay">
+            <h2>Interlinked Project</h2>
           </div>
         </div>
-        <div class="bor-section-content">
-          <p><%= t.projects && t.projects.find(p => p.link === '/bor') ? t.projects.find(p => p.link === '/bor').description.replace(/[ăâîșțĂÂÎȘȚ]/g, c => ({'ă':'a','â':'a','î':'i','ș':'s','ț':'t','Ă':'A','Â':'A','Î':'I','Ș':'S','Ț':'T'}[c]||c)) : 'Descriere provizorie despre BOR.' %></p>
+        <div class="interlinked-section-content">
+          <p>A new project exploring the interconnectedness of digital identities, networks, and society. More details coming soon.</p>
         </div>
       </section>
     </main>

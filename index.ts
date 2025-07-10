@@ -2,6 +2,8 @@ import { serve } from "bun";
 // @ts-ignore
 import ejs from "ejs";
 import { readFile, writeFile, mkdir } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 async function getTranslations(lang: string, page: string = 'home') {
   const fileName = `locales/${lang}.${page}.json`;
@@ -37,13 +39,19 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
       // Only serve static files in development mode
       if (process.env.NODE_ENV !== 'production' && url.pathname !== "/") {
         try {
-          const file = Bun.file(`public${url.pathname}`);
+          // Always resolve static file path relative to the script directory
+          const __dirname = dirname(fileURLToPath(import.meta.url));
+          const staticPath = join(__dirname, "public", url.pathname);
+          console.log("[DEV STATIC] Trying to serve:", staticPath);
+          const file = Bun.file(staticPath);
           if (await file.exists()) {
             // Bun will set the correct content-type automatically
             return new Response(file);
+          } else {
+            console.warn("[DEV STATIC] Not found:", staticPath);
           }
         } catch (e) {
-          // Ignore and fall through to 404
+          console.error("[DEV STATIC] Error serving static file:", e);
         }
       }
       
@@ -132,6 +140,74 @@ export function createWebHeraldServer({ port = 3000, tls, hostname }: { port?: n
         return new Response(html, {
           headers: { "Content-Type": "text/html" },
         });
+      }
+      // New Interlinked page route
+      if (url.pathname === "/interlinked") {
+        const lang = url.searchParams.get("lang") === "en" ? "en" : "ro";
+        const t = await getTranslations(lang);
+        const template = await readFile("views/interlinked/index.ejs", "utf-8");
+        const html = ejs.render(template, { t, lang }, { views: ["views"] });
+        return new Response(html, {
+          headers: { "Content-Type": "text/html" },
+        });
+      }
+      // Placeholder endpoint for Interlinked form
+      if (url.pathname === "/api/interlink" && req.method === "POST") {
+        try {
+          const body: any = await req.json();
+          const inputA = body.inputA;
+          const inputB = body.inputB;
+          console.log("Received interlink:", { inputA, inputB });
+
+          // Compose a placeholder prompt
+          const prompt = `Interlink these two concepts: ${inputA} and ${inputB}.`;
+
+          // Call OpenAI API
+          const openaiKey = process.env.OPENAI_KEY;
+          if (!openaiKey) {
+            return new Response(JSON.stringify({ error: "Missing OPENAI_KEY env variable" }), {
+              status: 500,
+              headers: { "Content-Type": "application/json" }
+            });
+          }
+
+          const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${openaiKey}`
+            },
+            body: JSON.stringify({
+              model: "gpt-3.5-turbo",
+              messages: [
+                { role: "system", content: "You are a helpful assistant that interlinks concepts." },
+                { role: "user", content: prompt }
+              ],
+              max_tokens: 256
+            })
+          });
+
+          if (!openaiRes.ok) {
+            const err = await openaiRes.text();
+            return new Response(JSON.stringify({ error: "OpenAI API error", details: err }), {
+              status: 500,
+              headers: { "Content-Type": "application/json" }
+            });
+          }
+
+          const openaiData: any = await openaiRes.json();
+          const choice: any = openaiData?.choices && openaiData.choices[0] ? openaiData.choices[0] : null;
+          const completion = choice && choice.message && choice.message.content ? choice.message.content : "No response from OpenAI.";
+
+          return new Response(JSON.stringify({ status: "ok", completion }), {
+            headers: { "Content-Type": "application/json" }
+          });
+        } catch (e) {
+          return new Response(JSON.stringify({ error: "Invalid JSON or OpenAI error", details: e?.message || e }), {
+            status: 400,
+            headers: { "Content-Type": "application/json" }
+          });
+        }
       }
       return new Response("Not Found", { status: 404 });
     },

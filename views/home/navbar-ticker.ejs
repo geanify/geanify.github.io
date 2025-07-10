@@ -97,6 +97,7 @@ function getRandomStocks(arr, n) {
   return shuffled.slice(0, n);
 }
 
+let lastTickerHTML = '';
 async function fetchStockPrices() {
   try {
     const url = `/api/stocks`;
@@ -126,7 +127,11 @@ async function fetchStockPrices() {
         return `<span>${stockInfo.name} (${symbol}): N/A</span>`;
       }
     });
-    document.getElementById('stock-ticker-inner').innerHTML = prices.join(' &nbsp; | &nbsp; ');
+    const newHTML = prices.join(' &nbsp; | &nbsp; ');
+    if (newHTML !== lastTickerHTML) {
+      document.getElementById('stock-ticker-inner').innerHTML = newHTML;
+      lastTickerHTML = newHTML;
+    }
   } catch (e) {
     document.getElementById('stock-ticker-inner').innerHTML = 'Failed to load stock prices.';
   }
