@@ -389,6 +389,9 @@
 <body>
   <%- include('home/navbar-ticker.ejs', { lang }) %>
   <main class="container" role="main">
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 1.2rem;">
+      <img src="/interlinked.png" alt="Interlinked Logo" style="width: 90px; height: 90px; border-radius: 18px;  object-fit: contain;" />
+    </div>
     <form class="interlink-form" autocomplete="off">
       <input type="hidden" id="lang" name="lang" value="<%= lang %>" />
       <div class="interlink-input-row">
