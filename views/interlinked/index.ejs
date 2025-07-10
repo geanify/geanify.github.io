@@ -167,9 +167,16 @@
       width: 100%;
       justify-content: center;
     }
+    .input-wrap {
+      flex: 1 1 40px;
+      min-width: 120px;
+      max-width: 220px;
+      display: flex;
+      flex-direction: column;
+    }
     .interlink-input-row input {
-      font-size: 1.1rem;
-      padding: 0.7rem 1.1rem;
+      font-size: 1rem;
+      padding: 0.4rem 0.8rem;
       border-radius: 8px;
       border: 2px solid var(--secondary);
       background: var(--background-dark);
@@ -177,7 +184,7 @@
       outline: none;
       min-width: 120px;
       max-width: 220px;
-      flex: 1 1 120px;
+      flex: 1 1 40px;
       transition: border 0.2s, box-shadow 0.2s;
     }
     .interlink-input-row input:focus {
@@ -185,11 +192,23 @@
       box-shadow: 0 0 0 2px var(--primary-highlight);
     }
     .double-arrow {
-      font-size: 2rem;
+      font-size: 1.5rem;
       color: var(--primary);
       margin: 0 0.5rem;
       user-select: none;
       flex: 0 0 auto;
+      text-align: center;
+      align-self: center;
+    }
+    @media (max-width: 600px) {
+      .interlink-input-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .double-arrow {
+        margin: 0.5rem 0;
+        align-self: center;
+      }
     }
     .interlink-btn-row {
       width: 100%;
@@ -330,8 +349,36 @@
       background: var(--primary);
       color: var(--primary-text);
     }
+    #interlink-result {
+      margin-top:2rem;
+      max-width:700px;
+      background:rgba(44,64,198,0.10);
+      border-radius:12px;
+      padding:1.5rem;
+      color:#ffd32a;
+      font-size:1.1rem;
+      font-family:'Share Tech Mono','Orbitron',monospace;
+      display:none;
+      line-height: 1.7;
+    }
+    #interlink-result a {
+      color: #ffd32a;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+    #interlink-result strong, #interlink-result b {
+      color: #fff;
+    }
+    #interlink-result em, #interlink-result i {
+      color: #bae2e2;
+    }
+    #interlink-result ul, #interlink-result ol {
+      margin-left: 1.5em;
+      color: #ffd32a;
+    }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <%- include('home/navbar-ticker.ejs', { lang }) %>
@@ -343,16 +390,21 @@
     </section>
     <form class="interlink-form" autocomplete="off">
       <div class="interlink-input-row">
-        <label for="inputA" class="sr-only">Input A</label>
-        <input id="inputA" name="inputA" type="text" placeholder="Ursula von der Leyen" required />
+        <div class="input-wrap">
+          <label for="inputA" class="sr-only">Input A</label>
+          <input id="inputA" name="inputA" type="text" placeholder="Ursula von der Leyen" required />
+        </div>
         <span class="double-arrow" aria-hidden="true">&#8646;</span>
-        <label for="inputB" class="sr-only">Input B</label>
-        <input id="inputB" name="inputB" type="text" placeholder="Superbet" required />
+        <div class="input-wrap">
+          <label for="inputB" class="sr-only">Input B</label>
+          <input id="inputB" name="inputB" type="text" placeholder="Superbet" required />
+        </div>
       </div>
       <div class="interlink-btn-row">
         <button type="submit" class="interlink-btn">Interlink</button>
       </div>
     </form>
+    <div id="interlink-result" style="margin-top:2rem; max-width:700px; background:rgba(44,64,198,0.10); border-radius:12px; padding:1.5rem; color:#ffd32a; font-size:1.1rem; font-family:'Share Tech Mono','Orbitron',monospace; display:none;"></div>
   </main>
   <footer role="contentinfo">
     <p>&copy; <%= new Date().getFullYear() %> <%= t.footer %></p>
@@ -360,11 +412,17 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.querySelector('.interlink-form');
+      const resultDiv = document.getElementById('interlink-result');
       if (form) {
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
           const inputA = form.querySelector('#inputA')?.value;
           const inputB = form.querySelector('#inputB')?.value;
+          if(resultDiv) {
+            resultDiv.style.display = 'block';
+            resultDiv.style.color = '#ffd32a';
+            resultDiv.innerHTML = '<em>Loading...</em>';
+          }
           try {
             const res = await fetch('/api/interlink', {
               method: 'POST',
@@ -373,11 +431,24 @@
             });
             if(res.status === 200) {
               const data = await res.json();
-              alert('Response: ' + JSON.stringify(data));
+              if(resultDiv) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#ffd32a';
+                resultDiv.innerHTML = data.completion ? marked.parse(data.completion) : '<em>No response.</em>';
+              }
+            } else {
+              if(resultDiv) {
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#ff3f34';
+                resultDiv.innerHTML = '<strong>Error:</strong> ' + res.status;
+              }
             }
-         
           } catch (err) {
-            alert('Failed to send: ' + err);
+            if(resultDiv) {
+              resultDiv.style.display = 'block';
+              resultDiv.style.color = '#ff3f34';
+              resultDiv.innerHTML = '<strong>Failed to send:</strong> ' + err;
+            }
           }
         });
       }
