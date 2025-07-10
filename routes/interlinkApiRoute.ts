@@ -17,6 +17,14 @@ export async function interlinkApiRoute(req: Request, url: URL) {
       });
     }
 
+    const lang = body.lang || 'ro';
+    let userPrompt;
+    if (lang === 'ro') {
+      userPrompt = `Bună, mă poți ajuta să găsesc o legătură între ${inputA} și ${inputB}?`;
+    } else {
+      userPrompt = `Hello, can you please help me find a link between ${inputA} and ${inputB}?`;
+    }
+
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -45,7 +53,7 @@ export async function interlinkApiRoute(req: Request, url: URL) {
             
             Please give me links to cite, write them in the md format. 
              ` },
-          { role: "user", content: `Hello, can you please help me find a link between ${inputA} and ${inputB}?` }
+          { role: "user", content: userPrompt }
         ],
         max_tokens: 1024
       })
