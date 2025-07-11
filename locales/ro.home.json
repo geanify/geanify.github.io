@@ -17,7 +17,7 @@
       "title": "Interlinked",
       "description": "Un nou proiect care explorează interconectarea identităților digitale, a rețelelor și a societății. Mai multe detalii în curând.",
       "link": "/interlinked",
-      "image": "/interlinked.png"
+      "image": "/images/interlinked.png"
     }
   ],
   "bannerAds": {
@@ -26,7 +26,7 @@
     "overconsumptionCta": "Cumpara acum",
     "subscriptionsCta": "Aboneaza-te acum",
     "overconsumptionVideo": {
-      "src": "/videos/geisha.mp4",
+      "src": "/videos/geisha-10fps.mp4",
       "poster": "/images/consumerism-poster.jpg",
       "autoplay": true,
       "muted": true,
@@ -34,7 +34,7 @@
       "controls": false
     },
     "subscriptionsVideo": {
-      "src": "/videos/ice.mp4",
+      "src": "/videos/ice-10fps.mp4",
       "poster": "/images/subscriptions-poster.jpg",
       "autoplay": true,
       "muted": true,

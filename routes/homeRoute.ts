@@ -1,7 +1,7 @@
 // @ts-ignore
 import ejs from "ejs";
 import { readFile } from "fs/promises";
-import { getTranslations } from "../index";
+import { getTranslations } from "./getTranslations";
 
 const htmlCache: Record<string, { html: string; timestamp: number }> = {};
 const CACHE_TTL = 15 * 60 * 1000;

@@ -1,7 +1,7 @@
 // @ts-ignore
 import ejs from "ejs";
 import { readFile } from "fs/promises";
-import { getTranslations } from "../index";
+import { getTranslations } from "./getTranslations";
 
 export async function borRoute(req: Request, url: URL) {
   const lang = url.searchParams.get("lang") === "en" ? "en" : "ro";
