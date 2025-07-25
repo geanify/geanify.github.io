@@ -1,4 +1,4 @@
-/* Modern Dark Theme for Web Herald */
+/* Modern Dark Theme for GameServers Pro */
 
 :root {
     --neutral: #808e9b;
@@ -28,6 +28,14 @@
     --small-font-size: 14px;
     --medium-font-size: 16px;
     --large-font-size: 18px;
+    
+    /* Gaming-specific colors */
+    --minecraft-green: #4CAF50;
+    --minecraft-brown: #8D6E63;
+    --cs-orange: #FF9800;
+    --cs-blue: #2196F3;
+    --tf2-red: #FF4444;
+    --tf2-blue: #4A90E2;
 }
 
 * {
@@ -62,6 +70,11 @@ body.dark-theme {
 .warning-bg { background-color: var(--warning); }
 .neutral-bg { background-color: var(--neutral); }
 
+/* Gaming-specific backgrounds */
+.minecraft-bg { background: linear-gradient(135deg, var(--minecraft-green), var(--minecraft-brown)); }
+.cs-bg { background: linear-gradient(135deg, var(--cs-orange), var(--cs-blue)); }
+.tf2-bg { background: linear-gradient(135deg, var(--tf2-red), var(--tf2-blue)); }
+
 /* Hero Section */
 .hero-section {
     background: linear-gradient(135deg, var(--background-dark) 0%, var(--background-dark-highlight) 100%);
@@ -80,9 +93,9 @@ body.dark-theme {
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 20% 50%, rgba(245, 59, 87, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(60, 64, 198, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 80%, rgba(255, 211, 42, 0.1) 0%, transparent 50%);
+        radial-gradient(circle at 20% 50%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 152, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(255, 68, 68, 0.1) 0%, transparent 50%);
     z-index: 1;
 }
 
@@ -120,6 +133,20 @@ body.dark-theme {
     flex-wrap: wrap;
 }
 
+/* Hero Trust Elements */
+.hero-trust {
+    margin-top: 2rem;
+}
+
+.trust-text {
+    color: var(--neutral);
+    font-size: var(--small-font-size);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
 /* Floating Cards Animation */
 .hero-visual {
     position: relative;
@@ -148,20 +175,26 @@ body.dark-theme {
     animation: float 6s ease-in-out infinite;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.floating-card:hover {
+    transform: scale(1.1);
 }
 
 .floating-card.card-1 {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--success), var(--success-highlight));
+    background: linear-gradient(135deg, var(--minecraft-green), var(--minecraft-brown));
 }
 
 .floating-card.card-2 {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
-    background: linear-gradient(135deg, var(--primary), var(--primary-highlight));
+    background: linear-gradient(135deg, var(--cs-orange), var(--cs-blue));
     animation-delay: 1.5s;
 }
 
@@ -169,7 +202,7 @@ body.dark-theme {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--secondary), var(--secondary-highlight));
+    background: linear-gradient(135deg, var(--tf2-red), var(--tf2-blue));
     animation-delay: 3s;
 }
 
@@ -177,7 +210,7 @@ body.dark-theme {
     top: 50%;
     left: 0;
     transform: translateY(-50%);
-    background: linear-gradient(135deg, var(--accent), var(--accent-highlight));
+    background: linear-gradient(135deg, var(--success), var(--success-highlight));
     animation-delay: 4.5s;
 }
 
@@ -223,7 +256,34 @@ body.dark-theme {
     margin-bottom: 3rem;
 }
 
-/* Feature Cards */
+/* Game Cards */
+.game-card {
+    background: var(--background-dark-highlight);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.game-card:hover::before {
+    opacity: 1;
+}
+
 .feature-card {
     background: var(--background-dark-highlight);
     border-radius: 20px;
@@ -285,6 +345,7 @@ body.dark-theme {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    margin-bottom: 1rem;
 }
 
 .tag {
@@ -294,6 +355,11 @@ body.dark-theme {
     border-radius: 20px;
     font-size: var(--small-font-size);
     font-weight: 500;
+}
+
+.price-text {
+    color: var(--neutral);
+    font-size: var(--medium-font-size);
 }
 
 /* Stats Section */
@@ -341,6 +407,111 @@ body.dark-theme {
     margin: 0;
 }
 
+/* Pricing Section */
+.process-section {
+    background-color: var(--background-dark);
+    padding: 5rem 0;
+}
+
+.pricing-card {
+    background: var(--background-dark-highlight);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card.featured {
+    border: 2px solid var(--accent);
+    transform: scale(1.05);
+}
+
+.pricing-card.featured::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 211, 42, 0.1) 0%, transparent 50%);
+    opacity: 1;
+}
+
+.pricing-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--accent), var(--accent-highlight));
+    color: var(--background-dark);
+    padding: 0.5rem 1.5rem;
+    border-radius: 20px;
+    font-size: var(--small-font-size);
+    font-weight: 600;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.pricing-card.featured:hover {
+    transform: scale(1.05) translateY(-5px);
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.pricing-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--neutral-text);
+    margin-bottom: 1rem;
+}
+
+.pricing-price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.price-currency {
+    font-size: 1.25rem;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.price-amount {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0.25rem;
+}
+
+.price-period {
+    font-size: 1rem;
+    color: var(--neutral);
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.pricing-features li {
+    padding: 0.5rem 0;
+    color: var(--neutral);
+    display: flex;
+    align-items: center;
+}
+
 /* CTA Section */
 .cta-section {
     background: var(--background-dark);
@@ -366,6 +537,39 @@ body.dark-theme {
     gap: 1rem;
     justify-content: center;
     flex-wrap: wrap;
+}
+
+.cta-guarantee {
+    margin-top: 2rem;
+}
+
+.guarantee-text {
+    color: var(--neutral);
+    font-size: var(--small-font-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* Trust Section */
+.trust-section {
+    background: var(--background-dark-highlight);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.trust-badges {
+    color: var(--neutral);
+    font-size: var(--small-font-size);
+    margin: 0;
+}
+
+.badge-item {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
 }
 
 /* Buttons */
@@ -399,6 +603,7 @@ body.dark-theme {
 .btn-accent {
     background: linear-gradient(135deg, var(--accent), var(--accent-highlight));
     color: var(--background-dark);
+    font-weight: 700;
 }
 
 .btn-accent:hover {
@@ -480,6 +685,12 @@ footer {
     color: var(--neutral);
 }
 
+/* Modal Styling */
+.modal-content {
+    background-color: var(--background-dark-highlight);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-title {
@@ -509,6 +720,26 @@ footer {
         height: 60px;
         font-size: 1.5rem;
     }
+
+    .trust-text {
+        justify-content: center;
+    }
+
+    .guarantee-text {
+        text-align: center;
+    }
+
+    .badge-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .pricing-card.featured {
+        transform: none;
+    }
+
+    .pricing-card.featured:hover {
+        transform: translateY(-5px);
+    }
 }
 
 @media (max-width: 576px) {
@@ -531,6 +762,14 @@ footer {
     
     .stat-card {
         padding: 1.5rem 1rem;
+    }
+
+    .pricing-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .hero-trust {
+        text-align: center;
     }
 }
 
@@ -555,4 +794,29 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--neutral-highlight);
+}
+
+/* Gaming-specific animations */
+@keyframes pulse-gaming {
+    0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+.btn-primary {
+    animation: pulse-gaming 2s infinite;
+}
+
+.btn-primary:hover {
+    animation: none;
+}
+
+/* Gaming card hover effects */
+.game-card {
+    transition: all 0.3s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 } 
