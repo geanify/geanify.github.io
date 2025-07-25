@@ -16,17 +16,17 @@ function App() {
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>🎮 GameServers Pro Dashboard</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+          Server count: {count}
         </button>
         <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+          Gaming server management dashboard - Build watch is working! 🚀
         </p>
       </div>
       <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+        Welcome to the GameServers Pro admin panel
       </p>
     </>
   )

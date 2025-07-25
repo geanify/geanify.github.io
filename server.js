@@ -15,7 +15,102 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Routes
+// Dashboard static files - serve assets first (before catch-all route)
+app.use('/dashboard', express.static(path.join(__dirname, 'dashboard/dist')));
+
+// API endpoints (should come before dashboard catch-all route)
+app.get('/api/servers', (req, res) => {
+    res.json({
+        games: [
+            {
+                name: 'Minecraft',
+                icon: 'cube',
+                starting_price: 4.99,
+                features: ['Mod Support', 'Bukkit/Spigot', 'Unlimited Players']
+            },
+            {
+                name: 'Counter-Strike 1.6',
+                icon: 'crosshairs',
+                starting_price: 3.99,
+                features: ['Anti-Cheat', 'Custom Maps', 'Admin Panel']
+            },
+            {
+                name: 'Team Fortress 2',
+                icon: 'helmet-battle',
+                starting_price: 3.99,
+                features: ['Custom Modes', 'SourceMod', 'Fast Setup']
+            }
+        ]
+    });
+});
+
+// Dashboard API endpoints
+app.get('/api/dashboard/stats', (req, res) => {
+    res.json({
+        totalServers: 1247,
+        onlineServers: 1198,
+        totalPlayers: 15432,
+        uptime: 99.97,
+        revenue: {
+            today: 2847.50,
+            thisMonth: 68950.25,
+            lastMonth: 72100.80
+        }
+    });
+});
+
+app.get('/api/dashboard/servers', (req, res) => {
+    res.json([
+        {
+            id: 1,
+            name: 'Epic Survival',
+            game: 'Minecraft',
+            status: 'online',
+            players: 45,
+            maxPlayers: 100,
+            uptime: 99.8,
+            plan: 'Gaming Pro'
+        },
+        {
+            id: 2,
+            name: 'Dust2 24/7',
+            game: 'CS 1.6',
+            status: 'online',
+            players: 32,
+            maxPlayers: 32,
+            uptime: 100,
+            plan: 'Elite'
+        },
+        {
+            id: 3,
+            name: 'TF2 Community',
+            game: 'TF2',
+            status: 'maintenance',
+            players: 0,
+            maxPlayers: 24,
+            uptime: 98.5,
+            plan: 'Starter'
+        }
+    ]);
+});
+
+// Dashboard route - catch-all for React Router (must come after static files and APIs)
+app.get('/dashboard*', (req, res) => {
+    const dashboardPath = path.join(__dirname, 'dashboard/dist/index.html');
+    res.sendFile(dashboardPath, (err) => {
+        if (err) {
+            console.error('Dashboard not found:', err);
+            res.status(404).render('404', {
+                title: 'Dashboard Not Found | GameServers Pro',
+                description: 'The dashboard is not available. Please ensure it has been built.',
+                url: req.url,
+                canonicalUrl: 'https://gameservers-pro.com' + req.url
+            });
+        }
+    });
+});
+
+// Main app routes
 app.get('/', (req, res) => {
     res.render('index', { 
         title: 'GameServers Pro - Premium Gaming Server Hosting | Minecraft, CS 1.6, TF2',
@@ -102,32 +197,6 @@ app.get('/support', (req, res) => {
     });
 });
 
-// API endpoints for server management
-app.get('/api/servers', (req, res) => {
-    res.json({
-        games: [
-            {
-                name: 'Minecraft',
-                icon: 'cube',
-                starting_price: 4.99,
-                features: ['Mod Support', 'Bukkit/Spigot', 'Unlimited Players']
-            },
-            {
-                name: 'Counter-Strike 1.6',
-                icon: 'crosshairs',
-                starting_price: 3.99,
-                features: ['Anti-Cheat', 'Custom Maps', 'Admin Panel']
-            },
-            {
-                name: 'Team Fortress 2',
-                icon: 'helmet-battle',
-                starting_price: 3.99,
-                features: ['Custom Modes', 'SourceMod', 'Fast Setup']
-            }
-        ]
-    });
-});
-
 // 404 handler
 app.use((req, res) => {
     res.status(404).render('404', { 
@@ -153,6 +222,7 @@ app.listen(PORT, () => {
     console.log(`🎮 GameServers Pro running on http://localhost:${PORT}`);
     console.log(`🚀 Gaming server hosting platform ready!`);
     console.log(`🎯 Serving Minecraft, CS 1.6, and TF2 communities`);
+    console.log(`📊 Dashboard available at http://localhost:${PORT}/dashboard`);
 });
 
 module.exports = app; 
