@@ -1,137 +1,173 @@
-# web-herald.com
+# Web Herald
 
-To install dependencies:
+A modern web application built with Express.js and EJS templates, featuring a complete deployment solution.
 
-```bash
-bun install
-```
+## Features
 
-To run in development:
+- ⚡ **Express.js** - Fast, minimalist web framework
+- 🎨 **EJS Templates** - Dynamic content generation with embedded JavaScript
+- 📱 **Bootstrap 5** - Responsive, mobile-first design
+- 🚀 **One-click Deployment** - Automated deployment script for remote servers
+- 🔧 **PM2 Integration** - Process management for production
+- 💻 **Development Ready** - Hot reload with nodemon
 
-```bash
-bun run dev
-```
+## Quick Start
 
-To run in production:
-
-```bash
-bun run start
-```
-
-To run with automatic restart (process manager):
+### Installation
 
 ```bash
-bun run start:managed
+# Clone or initialize the project
+npm install
+
+# Start development server
+npm run dev
 ```
 
-## Process Manager
+The application will be available at `http://localhost:3000`
 
-The process manager (`process-manager.ts`) automatically restarts the server if it crashes:
-
-- **Max restarts**: 10 attempts
-- **Restart delay**: 2 seconds between restarts
-- **Graceful shutdown**: Handles SIGINT and SIGTERM signals
-- **Logging**: Clear logging with timestamps
-
-## Systemd Service
-
-To run as a system service, copy the `web-herald.service` file to `/etc/systemd/system/` and update the paths:
+### Development Commands
 
 ```bash
-# Edit the service file to match your paths
-sudo cp web-herald.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable web-herald
-sudo systemctl start web-herald
-sudo systemctl status web-herald
+# Start production server
+npm start
+
+# Start development server with hot reload
+npm run dev
+
+# Deploy to remote server
+npm run deploy
 ```
 
-## SSL/HTTPS Configuration
+## Project Structure
 
-To run the production server with HTTPS, set the following environment variables:
+```
+web-herald/
+├── views/                  # EJS templates
+│   ├── partials/           # Reusable template components
+│   │   ├── navbar.ejs      # Navigation bar
+│   │   └── footer.ejs      # Footer
+│   ├── index.ejs           # Homepage
+│   ├── about.ejs           # About page
+│   ├── 404.ejs             # 404 error page
+│   └── error.ejs           # Error page
+├── public/                 # Static files
+│   └── css/
+│       └── style.css       # Custom styles
+├── server.js               # Express server
+├── package.json            # Dependencies and scripts
+├── deploy.sh               # Deployment script
+└── README.md               # This file
+```
+
+## Deployment
+
+The project includes an automated deployment script that can deploy your application to any remote server with SSH access.
+
+### Prerequisites
+
+- SSH access to the target server
+- The target server should have Ubuntu/Debian (for automatic Node.js installation)
+
+### Deploy to Remote Server
 
 ```bash
-# SSL Certificate paths
-SSL_CERT_PATH=/path/to/your/certificate.crt
-SSL_KEY_PATH=/path/to/your/private.key
-SSL_CA_PATH=/path/to/your/ca_bundle.crt  # Optional
+# Deploy with default port (3000)
+./deploy.sh user@hostname
 
-# Stock API key
-STOCK_API_KEY=your_twelve_data_api_key_here
+# Deploy with custom port
+./deploy.sh user@hostname 8080
 ```
 
-The server will automatically detect SSL certificates and start an HTTPS server. If SSL certificates are not provided, it will fall back to HTTP.
+### What the deployment script does:
 
-## Video Serving Troubleshooting
+1. Tests SSH connection to the remote server
+2. Installs dependencies locally
+3. Creates a deployment package
+4. Uploads the package to the remote server
+5. Installs Node.js and PM2 on the remote server (if not present)
+6. Extracts and installs the application
+7. Starts the application with PM2 process manager
+8. Configures PM2 to restart on server reboot
 
-If videos are not displaying properly on the server:
+### Managing the deployed application:
 
-### Quick Fix
 ```bash
-# Run the video fix script (requires sudo)
-sudo ./deploy-video-fix.sh
+# View application logs
+ssh user@hostname 'pm2 logs web-herald'
+
+# Restart the application
+ssh user@hostname 'pm2 restart web-herald'
+
+# Stop the application
+ssh user@hostname 'pm2 stop web-herald'
+
+# Check application status
+ssh user@hostname 'pm2 list'
 ```
 
-### Manual Steps
-1. **Update nginx configuration**:
-   ```bash
-   sudo cp nginx.conf /etc/nginx/sites-available/web-herald
-   sudo nginx -t
-   sudo systemctl reload nginx
-   ```
+## Customization
 
-2. **Fix permissions**:
-   ```bash
-   sudo chown -R www-data:www-data /opt/web-herald/public
-   sudo chmod -R 755 /opt/web-herald/public
-   ```
+### Adding New Routes
 
-3. **Test video serving**:
-   - Visit: `https://web-herald.com/video-test.html`
-   - Try direct video links: `https://web-herald.com/videos/subscriptions.mp4`
+Edit `server.js` to add new routes:
 
-### Debugging Video Display Issues
+```javascript
+app.get('/new-page', (req, res) => {
+    res.render('new-page', { 
+        title: 'New Page',
+        data: 'Your data here'
+    });
+});
+```
 
-If videos are served by nginx but not showing up on the page:
+### Adding New Templates
 
-1. **Check browser console** for JavaScript errors
-2. **Test banner ad videos**: Visit `https://web-herald.com/video-debug.html`
-3. **Check autoplay policy**: Modern browsers block autoplay without user interaction
-4. **Verify video paths**: Ensure `/videos/geisha.mp4` and `/videos/ice.mp4` exist
+Create new EJS files in the `views/` directory:
 
-### Common Issues and Solutions
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('partials/navbar') %>
+    
+    <main class="container mt-4">
+        <!-- Your content here -->
+    </main>
+    
+    <%- include('partials/footer') %>
+</body>
+</html>
+```
 
-#### Videos not autoplaying
-- **Cause**: Browser autoplay policy
-- **Solution**: Videos are muted and should autoplay. If not, check browser settings
+### Styling
 
-#### Videos not loading at all
-- **Cause**: File permissions or nginx configuration
-- **Solution**: Run `sudo ./deploy-video-fix.sh`
+Add custom CSS to `public/css/style.css` or modify the existing styles.
 
-#### Videos load but don't display
-- **Cause**: CSS issues or JavaScript errors
-- **Solution**: Check browser console and test with `video-debug.html`
+## Environment Variables
 
-#### Banner ads not showing videos
-- **Cause**: Translation configuration or template issues
-- **Solution**: Check `locales/en.json` and `views/banner-video.ejs`
+The application supports the following environment variables:
 
-### Debugging Commands
+- `PORT` - Server port (default: 3000)
+- `NODE_ENV` - Environment mode (development/production)
+
+## License
+
+MIT License - feel free to use this project for your own applications.
+
+## Support
+
+For issues and questions, please check the application logs:
+
 ```bash
-# Check nginx logs
-sudo tail -f /var/log/nginx/error.log
-sudo tail -f /var/log/nginx/access.log
+# Local development
+npm run dev
 
-# Check file permissions
-ls -la /opt/web-herald/public/videos/
-
-# Check disk space
-df -h
-
-# Test video files directly
-curl -I https://web-herald.com/videos/geisha.mp4
-curl -I https://web-herald.com/videos/ice.mp4
-```
-
-This project was created using `bun init` in bun v1.2.16. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+# Production (via PM2)
+pm2 logs web-herald
+``` 
