@@ -8,14 +8,20 @@
     "dev": "nodemon server.js",
     "deploy": "./deploy.sh"
   },
-  "keywords": ["express", "ejs", "web", "herald"],
+  "keywords": [
+    "express",
+    "ejs",
+    "web",
+    "herald"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
-    "ejs": "^3.1.9"
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
   }
-} 
+}
