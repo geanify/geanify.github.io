@@ -40,6 +40,9 @@
                             <li><a class="dropdown-item" href="/dashboard">
                                 <i class="fas fa-tachometer-alt me-2"></i>Dashboard
                             </a></li>
+                            <li><a class="dropdown-item" href="/servers">
+                                <i class="fas fa-server me-2"></i>My Servers
+                            </a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/auth/logout">
                                 <i class="fas fa-sign-out-alt me-2"></i>Logout
@@ -48,8 +51,8 @@
                     </div>
                 <% } else { %>
                     <!-- Non-authenticated User -->
-                    <a href="/auth/login" class="btn btn-outline-accent btn-sm me-2">
-                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    <a href="/auth/google" class="btn btn-outline-accent btn-sm me-2">
+                        <i class="fab fa-google me-1"></i>Login with Google
                     </a>
                     <a href="/#order" class="btn btn-accent btn-sm">
                         <i class="fas fa-shopping-cart me-1"></i>Order Now

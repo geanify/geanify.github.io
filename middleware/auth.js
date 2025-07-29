@@ -62,7 +62,8 @@ const requireAuth = (req, res, next) => {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/auth/login');
+    // Redirect directly to Google OAuth instead of login page
+    res.redirect('/auth/google');
 };
 
 // Middleware to check if user is authenticated for API routes

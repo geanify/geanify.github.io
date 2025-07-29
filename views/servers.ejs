@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <meta name="description" content="<%= description %>">
+    <meta name="keywords" content="<%= keywords %>">
+    <meta property="og:title" content="<%= ogTitle %>">
+    <meta property="og:description" content="<%= ogDescription %>">
+    <meta property="og:image" content="<%= ogImage %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="<%= canonicalUrl %>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <%- include('partials/navbar') %>
+    
+    <main class="container-fluid px-0">
+        <section class="dashboard-section py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="dashboard-header mb-5">
+                            <h1 class="dashboard-title">Server Management</h1>
+                            <p class="dashboard-subtitle">Manage your game servers</p>
+                        </div>
+                        
+                        <!-- Add Server Button -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <button class="btn btn-accent" data-bs-toggle="modal" data-bs-target="#addServerModal">
+                                    <i class="fas fa-plus me-2"></i>Add New Server
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Servers List -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="servers-container">
+                                    <div id="serversLoading" class="text-center py-5">
+                                        <i class="fas fa-spinner fa-spin fa-2x text-accent"></i>
+                                        <p class="mt-3">Loading servers...</p>
+                                    </div>
+                                    <div id="serversList" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Add Server Modal -->
+    <div class="modal fade" id="addServerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white">Add New Server</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addServerForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="serverName" class="form-label text-white">Server Name</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" id="serverName" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gameType" class="form-label text-white">Game Type</label>
+                                <select class="form-select bg-dark text-white border-secondary" id="gameType" name="game_type" required>
+                                    <option value="">Select Game</option>
+                                    <option value="minecraft">Minecraft</option>
+                                    <option value="cs16">Counter-Strike 1.6</option>
+                                    <option value="tf2">Team Fortress 2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="plan" class="form-label text-white">Plan</label>
+                                <select class="form-select bg-dark text-white border-secondary" id="plan" name="plan" required>
+                                    <option value="">Select Plan</option>
+                                    <option value="starter">Starter - $3.99/month</option>
+                                    <option value="gaming_pro">Gaming Pro - $7.99/month</option>
+                                    <option value="elite">Elite - $15.99/month</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="maxPlayers" class="form-label text-white">Max Players</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary" id="maxPlayers" name="max_players" min="1" max="200" value="10">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ramGb" class="form-label text-white">RAM (GB)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary" id="ramGb" name="ram_gb" min="1" max="64" value="1">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-neutral" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-accent" onclick="addServer()">
+                        <i class="fas fa-plus me-2"></i>Create Server
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Server Modal -->
+    <div class="modal fade" id="editServerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white">Edit Server</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editServerForm">
+                        <input type="hidden" id="editServerId" name="id">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editServerName" class="form-label text-white">Server Name</label>
+                                <input type="text" class="form-control bg-dark text-white border-secondary" id="editServerName" name="name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editStatus" class="form-label text-white">Status</label>
+                                <select class="form-select bg-dark text-white border-secondary" id="editStatus" name="status">
+                                    <option value="pending">Pending</option>
+                                    <option value="active">Active</option>
+                                    <option value="suspended">Suspended</option>
+                                    <option value="terminated">Terminated</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editMaxPlayers" class="form-label text-white">Max Players</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary" id="editMaxPlayers" name="max_players" min="1" max="200">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editRamGb" class="form-label text-white">RAM (GB)</label>
+                                <input type="number" class="form-control bg-dark text-white border-secondary" id="editRamGb" name="ram_gb" min="1" max="64">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-secondary">
+                    <button type="button" class="btn btn-outline-neutral" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-accent" onclick="updateServer()">
+                        <i class="fas fa-save me-2"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load servers on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServers();
+        });
+
+        // Load servers from API
+        async function loadServers() {
+            try {
+                const response = await fetch('/api/servers');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayServers(data.servers);
+                } else {
+                    showError('Failed to load servers');
+                }
+            } catch (error) {
+                console.error('Error loading servers:', error);
+                showError('Failed to load servers');
+            }
+        }
+
+        // Display servers in the UI
+        function displayServers(servers) {
+            const loadingEl = document.getElementById('serversLoading');
+            const listEl = document.getElementById('serversList');
+            
+            loadingEl.style.display = 'none';
+            listEl.style.display = 'block';
+            
+            if (servers.length === 0) {
+                listEl.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-server fa-3x text-neutral mb-3"></i>
+                        <h5 class="text-white">No servers found</h5>
+                        <p class="text-neutral">Create your first server to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="row g-4">';
+            servers.forEach(server => {
+                const statusColor = getStatusColor(server.status);
+                const gameIcon = getGameIcon(server.game_type);
+                
+                html += `
+                    <div class="col-md-6 col-lg-4">
+                        <div class="server-card">
+                            <div class="server-header">
+                                <div class="server-game">
+                                    <i class="${gameIcon} me-2"></i>
+                                    ${getGameName(server.game_type)}
+                                </div>
+                                <span class="server-status ${statusColor}">${server.status}</span>
+                            </div>
+                            <h5 class="server-name">${server.name}</h5>
+                            <div class="server-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Plan:</span>
+                                    <span class="detail-value">${getPlanName(server.plan)}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Players:</span>
+                                    <span class="detail-value">${server.max_players} max</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">RAM:</span>
+                                    <span class="detail-value">${server.ram_gb}GB</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Price:</span>
+                                    <span class="detail-value">$${server.monthly_price}/month</span>
+                                </div>
+                            </div>
+                            <div class="server-actions">
+                                <button class="btn btn-sm btn-outline-accent" onclick="editServer(${server.id})">
+                                    <i class="fas fa-edit me-1"></i>Edit
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="deleteServer(${server.id}, '${server.name}')">
+                                    <i class="fas fa-trash me-1"></i>Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            listEl.innerHTML = html;
+        }
+
+        // Add new server
+        async function addServer() {
+            const form = document.getElementById('addServerForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/servers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('addServerModal')).hide();
+                    form.reset();
+                    loadServers();
+                    showSuccess('Server created successfully');
+                } else {
+                    showError(result.error || 'Failed to create server');
+                }
+            } catch (error) {
+                console.error('Error creating server:', error);
+                showError('Failed to create server');
+            }
+        }
+
+        // Edit server
+        async function editServer(serverId) {
+            try {
+                const response = await fetch('/api/servers');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const server = data.servers.find(s => s.id === serverId);
+                    if (server) {
+                        // Populate edit form
+                        document.getElementById('editServerId').value = server.id;
+                        document.getElementById('editServerName').value = server.name;
+                        document.getElementById('editStatus').value = server.status;
+                        document.getElementById('editMaxPlayers').value = server.max_players;
+                        document.getElementById('editRamGb').value = server.ram_gb;
+                        
+                        // Show modal
+                        new bootstrap.Modal(document.getElementById('editServerModal')).show();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading server data:', error);
+                showError('Failed to load server data');
+            }
+        }
+
+        // Update server
+        async function updateServer() {
+            const form = document.getElementById('editServerForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData);
+            const serverId = data.id;
+            delete data.id;
+            
+            try {
+                const response = await fetch(`/api/servers/${serverId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('editServerModal')).hide();
+                    loadServers();
+                    showSuccess('Server updated successfully');
+                } else {
+                    showError(result.error || 'Failed to update server');
+                }
+            } catch (error) {
+                console.error('Error updating server:', error);
+                showError('Failed to update server');
+            }
+        }
+
+        // Delete server
+        async function deleteServer(serverId, serverName) {
+            if (!confirm(`Are you sure you want to delete "${serverName}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/servers/${serverId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    loadServers();
+                    showSuccess('Server deleted successfully');
+                } else {
+                    showError(result.error || 'Failed to delete server');
+                }
+            } catch (error) {
+                console.error('Error deleting server:', error);
+                showError('Failed to delete server');
+            }
+        }
+
+        // Helper functions
+        function getStatusColor(status) {
+            const colors = {
+                'active': 'text-success',
+                'pending': 'text-warning',
+                'suspended': 'text-danger',
+                'terminated': 'text-neutral'
+            };
+            return colors[status] || 'text-neutral';
+        }
+
+        function getGameIcon(gameType) {
+            const icons = {
+                'minecraft': 'fas fa-cube',
+                'cs16': 'fas fa-crosshairs',
+                'tf2': 'fas fa-users'
+            };
+            return icons[gameType] || 'fas fa-gamepad';
+        }
+
+        function getGameName(gameType) {
+            const names = {
+                'minecraft': 'Minecraft',
+                'cs16': 'Counter-Strike 1.6',
+                'tf2': 'Team Fortress 2'
+            };
+            return names[gameType] || gameType;
+        }
+
+        function getPlanName(plan) {
+            const names = {
+                'starter': 'Starter',
+                'gaming_pro': 'Gaming Pro',
+                'elite': 'Elite'
+            };
+            return names[plan] || plan;
+        }
+
+        function showSuccess(message) {
+            // Simple alert for now - you could implement a toast system
+            alert('Success: ' + message);
+        }
+
+        function showError(message) {
+            // Simple alert for now - you could implement a toast system
+            alert('Error: ' + message);
+        }
+    </script>
+</body>
+</html> 

@@ -1041,3 +1041,142 @@ html {
 .profile-fallback:hover {
     background: linear-gradient(135deg, var(--accent-highlight), var(--accent));
 } 
+
+/* Server Management Styles */
+.server-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.server-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.server-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.server-game {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.server-status {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.server-name {
+    color: var(--neutral-text);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.server-details {
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.detail-label {
+    color: var(--neutral);
+}
+
+.detail-value {
+    color: var(--neutral-text);
+    font-weight: 500;
+}
+
+.server-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.server-actions .btn {
+    flex: 1;
+}
+
+/* Modal Form Styles */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(255, 211, 42, 0.25);
+}
+
+.form-control.bg-dark {
+    background-color: var(--background-dark-highlight) !important;
+}
+
+.form-select.bg-dark {
+    background-color: var(--background-dark-highlight) !important;
+}
+
+.form-control.bg-dark:focus,
+.form-select.bg-dark:focus {
+    background-color: var(--background-dark-highlight) !important;
+}
+
+/* Button Outline Styles */
+.btn-outline-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: white;
+}
+
+/* Loading and Empty States */
+.servers-container {
+    min-height: 300px;
+}
+
+.text-neutral {
+    color: var(--neutral) !important;
+}
+
+/* Responsive Design for Server Cards */
+@media (max-width: 768px) {
+    .server-card {
+        margin-bottom: 1rem;
+    }
+    
+    .server-actions {
+        flex-direction: column;
+    }
+    
+    .server-actions .btn {
+        flex: none;
+    }
+    
+    .detail-item {
+        font-size: 0.85rem;
+    }
+} 

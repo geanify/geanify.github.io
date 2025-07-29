@@ -28,9 +28,16 @@
                         <div class="login-card">
                             <div class="login-header text-center mb-4">
                                 <i class="fas fa-gamepad login-icon mb-3"></i>
-                                <h2 class="login-title">Welcome Back</h2>
+                                <h2 class="login-title">Authentication Required</h2>
                                 <p class="login-subtitle">Access your Web Herald dashboard</p>
                             </div>
+                            
+                            <% if (typeof error !== 'undefined' || (typeof query !== 'undefined' && query.error)) { %>
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Authentication failed. Please try again.
+                            </div>
+                            <% } %>
                             
                             <div class="login-form">
                                 <a href="/auth/google" class="btn btn-google w-100 mb-3">

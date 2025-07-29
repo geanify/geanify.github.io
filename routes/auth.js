@@ -25,7 +25,7 @@ router.get('/google', passport.authenticate('google', {
 
 // Google OAuth2 callback
 router.get('/google/callback', 
-    passport.authenticate('google', { failureRedirect: '/auth/login' }),
+    passport.authenticate('google', { failureRedirect: '/auth/login?error=oauth_failed' }),
     (req, res) => {
         // Successful authentication, redirect to dashboard
         res.redirect('/dashboard');
