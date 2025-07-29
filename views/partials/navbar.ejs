@@ -2,7 +2,7 @@
     <div class="container">
         <a class="navbar-brand" href="/">
             <i class="fas fa-gamepad me-2"></i>
-            <span class="accent-text">GameServers</span> Pro
+            <span class="accent-text">Web</span> Herald
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -13,19 +13,48 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#servers">Game Servers</a>
+                    <a class="nav-link" href="/#servers">Game Servers</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#pricing">Pricing</a>
+                    <a class="nav-link" href="/#pricing">Pricing</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/about">Support</a>
                 </li>
             </ul>
             <div class="navbar-nav">
-                <a href="#order" class="btn btn-accent btn-sm ms-2">
-                    <i class="fas fa-shopping-cart me-1"></i>Order Now
-                </a>
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <!-- Authenticated User -->
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="profile-image-container me-2">
+                                <img src="<%= user.picture %>" alt="Profile" class="rounded-circle profile-image" width="32" height="32" 
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="profile-fallback rounded-circle" style="display: none;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <%= user.name %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="/dashboard">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/auth/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a></li>
+                        </ul>
+                    </div>
+                <% } else { %>
+                    <!-- Non-authenticated User -->
+                    <a href="/auth/login" class="btn btn-outline-accent btn-sm me-2">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    <a href="/#order" class="btn btn-accent btn-sm">
+                        <i class="fas fa-shopping-cart me-1"></i>Order Now
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>

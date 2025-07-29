@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <meta name="description" content="<%= description %>">
+    <meta name="keywords" content="<%= keywords %>">
+    <meta property="og:title" content="<%= ogTitle %>">
+    <meta property="og:description" content="<%= ogDescription %>">
+    <meta property="og:image" content="<%= ogImage %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="<%= canonicalUrl %>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <%- include('partials/navbar') %>
+    
+    <main class="container-fluid px-0">
+        <section class="login-section">
+            <div class="container">
+                <div class="row justify-content-center align-items-center min-vh-100">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="login-card">
+                            <div class="login-header text-center mb-4">
+                                <i class="fas fa-gamepad login-icon mb-3"></i>
+                                <h2 class="login-title">Welcome Back</h2>
+                                <p class="login-subtitle">Access your Web Herald dashboard</p>
+                            </div>
+                            
+                            <div class="login-form">
+                                <a href="/auth/google" class="btn btn-google w-100 mb-3">
+                                    <i class="fab fa-google me-2"></i>
+                                    Continue with Google
+                                </a>
+                                
+                                <div class="login-divider">
+                                    <span>Secure OAuth2 Authentication</span>
+                                </div>
+                                
+                                <div class="login-features">
+                                    <div class="feature-item">
+                                        <i class="fas fa-shield-alt text-success me-2"></i>
+                                        <span>Secure & Protected</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-user-check text-primary me-2"></i>
+                                        <span>Easy Access</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <i class="fas fa-server text-warning me-2"></i>
+                                        <span>Manage Your Servers</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="login-footer text-center mt-4">
+                                <p class="text-muted small">
+                                    By logging in, you agree to our 
+                                    <a href="/terms" class="text-accent">Terms of Service</a> and 
+                                    <a href="/privacy" class="text-accent">Privacy Policy</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <%- include('partials/footer') %>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

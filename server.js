@@ -1,6 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
+const { passport } = require('./middleware/auth');
+const { getBaseUrl } = require('./utils/url');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,11 +21,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Session configuration
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
+
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Routes
 const apiRoutes = require('./routes/api');
 const viewRoutes = require('./routes/views');
+const authRoutes = require('./routes/auth');
 
 app.use('/api', apiRoutes);
+app.use('/auth', authRoutes);
 app.use('/', viewRoutes);
 
 // 404 handler
@@ -31,11 +51,12 @@ app.use((req, res) => {
     title: '404 - Page Not Found',
     description: 'The page you are looking for could not be found.',
     keywords: '404, page not found',
-    canonicalUrl: `${process.env.BASE_URL || 'http://localhost:3000'}${req.path}`,
+    canonicalUrl: `${getBaseUrl()}${req.path}`,
     ogTitle: '404 - Page Not Found',
     ogDescription: 'The page you are looking for could not be found.',
-    ogImage: process.env.OG_IMAGE || '/images/gameservers-og.jpg',
-    ogUrl: `${process.env.BASE_URL || 'http://localhost:3000'}${req.path}`
+    ogImage: process.env.OG_IMAGE || '/images/web-herald-og.jpg',
+    ogUrl: `${getBaseUrl()}${req.path}`,
+    user: req.user || null
   });
 });
 
@@ -46,11 +67,12 @@ app.use((err, req, res, next) => {
     title: '500 - Server Error',
     description: 'An internal server error occurred.',
     keywords: '500, server error',
-    canonicalUrl: `${process.env.BASE_URL || 'http://localhost:3000'}${req.path}`,
+    canonicalUrl: `${getBaseUrl()}${req.path}`,
     ogTitle: '500 - Server Error',
     ogDescription: 'An internal server error occurred.',
-    ogImage: process.env.OG_IMAGE || '/images/gameservers-og.jpg',
-    ogUrl: `${process.env.BASE_URL || 'http://localhost:3000'}${req.path}`
+    ogImage: process.env.OG_IMAGE || '/images/web-herald-og.jpg',
+    ogUrl: `${getBaseUrl()}${req.path}`,
+    user: req.user || null
   });
 });
 
@@ -59,4 +81,5 @@ app.listen(PORT, HOST, () => {
   console.log(`📝 Environment: ${NODE_ENV}`);
   console.log(`📁 Static files: ${path.join(__dirname, 'public')}`);
   console.log(`🎨 Views: ${path.join(__dirname, 'views')}`);
+  console.log(`🔐 OAuth2 callback: ${getBaseUrl()}/auth/google/callback`);
 }); 
