@@ -1,6 +1,7 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { getBaseUrl } = require('../utils/url');
+const UserService = require('../services/userService');
 
 // Configure Google OAuth2 strategy
 passport.use(new GoogleStrategy({
@@ -9,28 +10,51 @@ passport.use(new GoogleStrategy({
     callbackURL: `${getBaseUrl()}/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
     try {
-        // Here you would typically save the user to a database
-        // For now, we'll just return the profile
-        const user = {
-            id: profile.id,
-            email: profile.emails && profile.emails[0] ? profile.emails[0].value : 'No email',
-            name: profile.displayName || 'Unknown User',
-            picture: profile.photos && profile.photos[0] ? profile.photos[0].value : '/images/default-avatar.png'
+        // Use UserService to find or create user in database
+        const user = await UserService.findOrCreateUser(profile);
+        
+        // Convert Sequelize model to plain object for session
+        const userSession = {
+            id: user.id,
+            google_id: user.google_id,
+            email: user.email,
+            name: user.name,
+            picture: user.picture
         };
-        return done(null, user);
+        
+        return done(null, userSession);
     } catch (error) {
+        console.error('OAuth error:', error);
         return done(error, null);
     }
 }));
 
-// Serialize user for session
+// Serialize user for session (store minimal data)
 passport.serializeUser((user, done) => {
-    done(null, user);
+    done(null, user.email); // Store only email in session
 });
 
-// Deserialize user from session
-passport.deserializeUser((user, done) => {
-    done(null, user);
+// Deserialize user from session (fetch from database)
+passport.deserializeUser(async (email, done) => {
+    try {
+        const user = await UserService.getUserByEmail(email);
+        if (user) {
+            // Convert to plain object for session
+            const userSession = {
+                id: user.id,
+                google_id: user.google_id,
+                email: user.email,
+                name: user.name,
+                picture: user.picture
+            };
+            done(null, userSession);
+        } else {
+            done(null, false);
+        }
+    } catch (error) {
+        console.error('Deserialize error:', error);
+        done(error, null);
+    }
 });
 
 // Middleware to check if user is authenticated

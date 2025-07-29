@@ -4,11 +4,26 @@ const path = require('path');
 const session = require('express-session');
 const { passport } = require('./middleware/auth');
 const { getBaseUrl } = require('./utils/url');
+const { sequelize, testConnection } = require('./config/database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
 const NODE_ENV = process.env.NODE_ENV || 'development';
+
+// Initialize database
+const initializeDatabase = async () => {
+  try {
+    await testConnection();
+    
+    // Sync database models
+    await sequelize.sync({ alter: NODE_ENV === 'development' });
+    console.log('✅ Database models synchronized successfully.');
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    process.exit(1);
+  }
+};
 
 // Set view engine
 app.set('view engine', 'ejs');
@@ -76,10 +91,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, HOST, () => {
-  console.log(`🚀 Server running on http://${HOST}:${PORT}`);
-  console.log(`📝 Environment: ${NODE_ENV}`);
-  console.log(`📁 Static files: ${path.join(__dirname, 'public')}`);
-  console.log(`🎨 Views: ${path.join(__dirname, 'views')}`);
-  console.log(`🔐 OAuth2 callback: ${getBaseUrl()}/auth/google/callback`);
+// Start server after database initialization
+const startServer = async () => {
+  await initializeDatabase();
+  
+  app.listen(PORT, HOST, () => {
+    console.log(`🚀 Server running on http://${HOST}:${PORT}`);
+    console.log(`📝 Environment: ${NODE_ENV}`);
+    console.log(`📁 Static files: ${path.join(__dirname, 'public')}`);
+    console.log(`🎨 Views: ${path.join(__dirname, 'views')}`);
+    console.log(`🔐 OAuth2 callback: ${getBaseUrl()}/auth/google/callback`);
+    console.log(`🗄️  Database: ${path.join(__dirname, 'database.sqlite')}`);
+  });
+};
+
+startServer().catch(error => {
+  console.error('Failed to start server:', error);
+  process.exit(1);
 }); 

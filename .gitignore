@@ -55,3 +55,7 @@ deploy-*/
 # Build outputs
 dist/
 build/ 
+
+# Database
+database.sqlite
+database.sqlite-journal 
