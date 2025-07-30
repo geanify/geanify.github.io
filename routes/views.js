@@ -185,6 +185,14 @@ router.get('/dashboard', requireAuth, (req, res) => {
 // Login page
 router.get('/login', (req, res) => {
   res.render('login', {
+    title: 'Login - Web Herald',
+    description: 'Login to access your server management dashboard',
+    keywords: 'login, authentication, web herald',
+    canonicalUrl: `${getBaseUrl()}/login`,
+    ogTitle: 'Login - Web Herald',
+    ogDescription: 'Login to access your server management dashboard',
+    ogImage: process.env.OG_IMAGE || '/images/web-herald-og.jpg',
+    ogUrl: `${getBaseUrl()}/login`,
     user: req.user || null
   });
 });

@@ -48,13 +48,13 @@ class DockerService {
     }
 
     // Create CS 1.6 server container
-    async createCS16Server(serverId, config = {}) {
+    async createCS16Server(serverId, config = {}, specificPort = null) {
         try {
             if (!this.dockerConnected) {
                 throw new Error('Docker service is not available. Please check Docker installation and permissions.');
             }
 
-            const port = this.getAvailablePort();
+            const port = specificPort || this.getAvailablePort();
             const containerName = `cs16-server-${serverId}`;
             
             const containerConfig = {
@@ -301,7 +301,7 @@ class DockerService {
     }
 
     // Restart server
-    async restartServer(serverId) {
+    async restartServer(serverId, newConfig = null) {
         try {
             const containerInfo = this.containers.get(serverId);
             if (!containerInfo) {
@@ -310,13 +310,44 @@ class DockerService {
 
             const container = this.docker.getContainer(containerInfo.id);
             
-            console.log(`Restarting server ${serverId} (${containerInfo.name})`);
+            // If no new configuration is provided, just restart the container
+            if (!newConfig || Object.keys(newConfig).length === 0) {
+                console.log(`Restarting server ${serverId} (${containerInfo.name})`);
+                await container.restart();
+                
+                return {
+                    success: true,
+                    message: `Server ${serverId} restarted`
+                };
+            }
             
-            await container.restart();
+            // If new configuration is provided, stop and recreate the container
+            console.log(`Recreating server ${serverId} with new configuration`);
+            
+            // Stop and remove the old container
+            await container.stop({ t: 10 }); // 10 second timeout
+            await container.remove();
+            
+            // Remove from our tracking
+            this.containers.delete(serverId);
+            
+            // Create new container with updated configuration
+            const config = {
+                serverName: newConfig.serverName || `CS 1.6 Server ${serverId}`,
+                maxPlayers: newConfig.maxPlayers || 16,
+                serverPassword: newConfig.serverPassword || '',
+                ramLimit: newConfig.ramLimit || 1,
+                startMap: newConfig.startMap || 'de_dust2'
+            };
+            
+            // Reuse the same port
+            const port = containerInfo.port;
+            const result = await this.createCS16Server(serverId, config, port);
             
             return {
                 success: true,
-                message: `Server ${serverId} restarted`
+                message: `Server ${serverId} recreated with new configuration`,
+                config: config
             };
             
         } catch (error) {

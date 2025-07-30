@@ -100,13 +100,16 @@ class GameServerService {
     }
 
     // Restart server
-    async restartServer(serverId) {
+    async restartServer(serverId, config = null) {
         try {
             console.log(`Restarting server ${serverId}`);
+            if (config) {
+                console.log('Server configuration for restart:', config);
+            }
             
             const response = await axios.post(
                 `${this.gameServerManagerUrl}/api/servers/${serverId}/restart`,
-                {},
+                config || {}, // Send config if provided, empty object otherwise
                 { timeout: this.timeout }
             );
 
@@ -118,7 +121,6 @@ class GameServerService {
             } else {
                 throw new Error(response.data.error || 'Failed to restart server');
             }
-
         } catch (error) {
             console.error(`Error restarting server ${serverId}:`, error);
             return {

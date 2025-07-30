@@ -141,6 +141,7 @@ router.get('/:serverId/status', async (req, res) => {
 router.post('/:serverId/restart', async (req, res) => {
     try {
         const serverId = parseInt(req.params.serverId);
+        const config = req.body; // Optional configuration for restart
         
         if (!serverId) {
             return res.status(400).json({
@@ -150,8 +151,11 @@ router.post('/:serverId/restart', async (req, res) => {
         }
 
         console.log(`Restarting server ${serverId}`);
+        if (config && Object.keys(config).length > 0) {
+            console.log('Restart with new configuration:', config);
+        }
         
-        const result = await req.dockerService.restartServer(serverId);
+        const result = await req.dockerService.restartServer(serverId, config);
         
         res.json({
             success: true,
