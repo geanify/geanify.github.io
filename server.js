@@ -16,8 +16,8 @@ const initializeDatabase = async () => {
   try {
     await testConnection();
     
-    // Sync database models
-    await sequelize.sync({ alter: NODE_ENV === 'development' });
+    // Force sync database models (drops and recreates tables)
+    await sequelize.sync({ force: true });
     console.log('✅ Database models synchronized successfully.');
   } catch (error) {
     console.error('❌ Database initialization failed:', error);

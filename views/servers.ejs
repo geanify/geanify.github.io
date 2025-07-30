@@ -208,6 +208,11 @@
         // Display servers
         function displayServers(servers) {
             const listEl = document.getElementById('serversList');
+            const loadingEl = document.getElementById('serversLoading');
+            
+            // Hide loading spinner and show servers list
+            loadingEl.style.display = 'none';
+            listEl.style.display = 'block';
             
             if (!servers || servers.length === 0) {
                 listEl.innerHTML = `
