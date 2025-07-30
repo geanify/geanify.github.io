@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <meta name="description" content="<%= description %>">
+    <meta name="keywords" content="<%= keywords %>">
+    <meta property="og:title" content="<%= ogTitle %>">
+    <meta property="og:description" content="<%= ogDescription %>">
+    <meta property="og:image" content="<%= ogImage %>">
+    <meta property="og:url" content="<%= ogUrl %>">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="<%= canonicalUrl %>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/modern-gaming.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <%- include('partials/navbar') %>
+    
+    <main class="container-fluid px-0">
+        <section class="dashboard-section py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Header -->
+                        <div class="dashboard-header mb-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h1 class="dashboard-title">
+                                        <i class="fas fa-server text-accent me-2"></i>
+                                        <%= server.name %>
+                                    </h1>
+                                    <p class="dashboard-subtitle">
+                                        <span class="text-accent"><%= server.game_type.toUpperCase() %></span> Server Management
+                                    </p>
+                                </div>
+                                <div>
+                                    <a href="/servers" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Servers
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Server Status & Quick Actions -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-accent mb-3">
+                                            <i class="fas fa-info-circle me-2"></i>Server Status
+                                        </h5>
+                                        <div id="serverStatus" class="mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                                <span>Loading server status...</span>
+                                            </div>
+                                        </div>
+                                        <div id="connectionInfo" style="display: none;" class="connection-info">
+                                            <h6 class="text-secondary mb-2">Connection Information:</h6>
+                                            <div class="d-flex align-items-center">
+                                                <code id="connectionString" class="text-accent me-3"></code>
+                                                <button class="btn btn-sm btn-outline-secondary" onclick="copyConnectionString()">
+                                                    <i class="fas fa-copy"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h5 class="text-accent mb-3">
+                                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                                        </h5>
+                                        <div id="serverActions" class="d-grid gap-2">
+                                            <div class="spinner-border spinner-border-sm text-primary mx-auto" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Server Configuration -->
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-accent mb-3">
+                                            <i class="fas fa-cog me-2"></i>Server Configuration
+                                        </h5>
+                                        <form id="serverConfigForm">
+                                            <div class="mb-3">
+                                                <label for="serverName" class="form-label">Server Name</label>
+                                                <input type="text" class="form-control" id="serverName" name="name" value="<%= server.name %>" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="maxPlayers" class="form-label">Max Players</label>
+                                                <input type="number" class="form-control" id="maxPlayers" name="max_players" value="<%= server.max_players %>" min="1" max="200" required>
+                                            </div>
+                                            <% if (server.game_type === 'cs16') { %>
+                                            <div class="mb-3">
+                                                <label for="serverPassword" class="form-label">Server Password</label>
+                                                <input type="password" class="form-control" id="serverPassword" name="server_password" placeholder="Leave empty for no password">
+                                                <small class="text-muted">Leave empty to remove password protection</small>
+                                            </div>
+                                            <% } %>
+                                            <button type="submit" class="btn btn-accent">
+                                                <i class="fas fa-save me-2"></i>Save Configuration
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-accent mb-3">
+                                            <i class="fas fa-chart-bar me-2"></i>Server Information
+                                        </h5>
+                                        <div class="detail-item mb-2">
+                                            <span class="detail-label">Game Type:</span>
+                                            <span class="detail-value text-accent"><%= server.game_type.toUpperCase() %></span>
+                                        </div>
+                                        <div class="detail-item mb-2">
+                                            <span class="detail-label">Server ID:</span>
+                                            <span class="detail-value"><%= server.id %></span>
+                                        </div>
+                                        <div class="detail-item mb-2">
+                                            <span class="detail-label">Status:</span>
+                                            <span class="detail-value">
+                                                <span class="badge <%= server.status === 'active' ? 'bg-success' : 'bg-secondary' %>">
+                                                    <%= server.status.toUpperCase() %>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="detail-item mb-2">
+                                            <span class="detail-label">Created:</span>
+                                            <span class="detail-value"><%= new Date(server.createdAt).toLocaleDateString() %></span>
+                                        </div>
+                                        <div class="detail-item mb-2">
+                                            <span class="detail-label">RAM:</span>
+                                            <span class="detail-value"><%= server.ram_gb %>GB</span>
+                                        </div>
+                                        <% if (server.server_config) { %>
+                                        <div class="detail-item mb-2">
+                                            <span class="detail-label">Password Protected:</span>
+                                            <span class="detail-value">
+                                                <% 
+                                                try {
+                                                    const config = JSON.parse(server.server_config);
+                                                    const hasPassword = config.server_password && config.server_password.length > 0;
+                                                %>
+                                                <span class="badge <%= hasPassword ? 'bg-warning' : 'bg-secondary' %>">
+                                                    <%= hasPassword ? 'YES' : 'NO' %>
+                                                </span>
+                                                <% 
+                                                } catch (e) {
+                                                %>
+                                                <span class="badge bg-secondary">NO</span>
+                                                <% } %>
+                                            </span>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Management -->
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-accent mb-3">
+                                            <i class="fas fa-tools me-2"></i>Advanced Management
+                                        </h5>
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-outline-info" onclick="checkDetailedStatus()">
+                                                <i class="fas fa-info-circle me-2"></i>Detailed Status
+                                            </button>
+                                            <button class="btn btn-outline-warning" onclick="restartServer()">
+                                                <i class="fas fa-redo me-2"></i>Restart Server
+                                            </button>
+                                            <button class="btn btn-outline-danger" onclick="deleteServer()">
+                                                <i class="fas fa-trash me-2"></i>Delete Server
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="text-accent mb-3">
+                                            <i class="fas fa-history me-2"></i>Recent Activity
+                                        </h5>
+                                        <div id="activityLog" class="text-muted">
+                                            <small>Activity logging will be available soon...</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/modals.js"></script>
+    <script>
+        const serverId = <%= server.id %>;
+        const serverName = <%- JSON.stringify(server.name) %>;
+        
+        // Load server status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServerStatus();
+            
+            // Set up form submission
+            const configForm = document.getElementById('serverConfigForm');
+            configForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateServerConfig();
+            });
+        });
+
+        // Load and display server status
+        async function loadServerStatus() {
+            try {
+                const response = await fetch(`/api/servers/${serverId}/status`);
+                const result = await response.json();
+                
+                const statusEl = document.getElementById('serverStatus');
+                const actionsEl = document.getElementById('serverActions');
+                const connectionEl = document.getElementById('connectionInfo');
+                
+                if (result.success) {
+                    const status = result.status.status;
+                    const isRunning = status === 'running';
+                    
+                    // Update status display
+                    statusEl.innerHTML = `
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <span class="badge ${isRunning ? 'bg-success' : 'bg-secondary'} me-2">
+                                    ${isRunning ? 'RUNNING' : status.toUpperCase()}
+                                </span>
+                                <span class="text-secondary">
+                                    ${isRunning ? 'Server is online and accepting connections' : 'Server is offline'}
+                                </span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="loadServerStatus()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Update connection info
+                    if (result.connectionInfo && isRunning) {
+                        document.getElementById('connectionString').textContent = result.connectionInfo.connectionString;
+                        connectionEl.style.display = 'block';
+                    } else {
+                        connectionEl.style.display = 'none';
+                    }
+                    
+                    // Update action buttons
+                    actionsEl.innerHTML = isRunning ? `
+                        <button class="btn btn-outline-warning" onclick="stopServer()">
+                            <i class="fas fa-stop me-2"></i>Stop Server
+                        </button>
+                        <button class="btn btn-outline-info" onclick="restartServer()">
+                            <i class="fas fa-redo me-2"></i>Restart Server
+                        </button>
+                    ` : `
+                        <button class="btn btn-outline-success" onclick="startServer()">
+                            <i class="fas fa-play me-2"></i>Start Server
+                        </button>
+                    `;
+                } else {
+                    statusEl.innerHTML = `
+                        <div class="text-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Error loading status: ${result.error}
+                        </div>
+                    `;
+                    actionsEl.innerHTML = `
+                        <button class="btn btn-outline-success" onclick="startServer()">
+                            <i class="fas fa-play me-2"></i>Start Server
+                        </button>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading server status:', error);
+                document.getElementById('serverStatus').innerHTML = `
+                    <div class="text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Failed to load server status
+                    </div>
+                `;
+            }
+        }
+
+        // Start server
+        async function startServer() {
+            try {
+                showInfo(`Starting server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}/start`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Server "${serverName}" started successfully!`);
+                    setTimeout(loadServerStatus, 2000);
+                } else {
+                    showError(result.error || 'Failed to start server');
+                }
+            } catch (error) {
+                console.error('Error starting server:', error);
+                showError('Failed to start server');
+            }
+        }
+
+        // Stop server
+        async function stopServer() {
+            const confirmed = await confirmDialog(`Are you sure you want to stop "${serverName}"? Players will be disconnected.`);
+            if (!confirmed) return;
+            
+            try {
+                showInfo(`Stopping server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}/stop`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Server "${serverName}" stopped successfully!`);
+                    setTimeout(loadServerStatus, 2000);
+                } else {
+                    showError(result.error || 'Failed to stop server');
+                }
+            } catch (error) {
+                console.error('Error stopping server:', error);
+                showError('Failed to stop server');
+            }
+        }
+
+        // Restart server
+        async function restartServer() {
+            const confirmed = await confirmDialog(`Are you sure you want to restart "${serverName}"? Players will be temporarily disconnected.`);
+            if (!confirmed) return;
+            
+            try {
+                showInfo(`Restarting server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}/restart`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Server "${serverName}" restarted successfully!`);
+                    setTimeout(loadServerStatus, 3000);
+                } else {
+                    showError(result.error || 'Failed to restart server');
+                }
+            } catch (error) {
+                console.error('Error restarting server:', error);
+                showError('Failed to restart server');
+            }
+        }
+
+        // Update server configuration
+        async function updateServerConfig() {
+            try {
+                const formData = new FormData(document.getElementById('serverConfigForm'));
+                const data = Object.fromEntries(formData);
+                
+                showInfo('Updating server configuration...');
+                
+                const response = await fetch(`/api/servers/${serverId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Server configuration updated successfully!');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showError(result.error || 'Failed to update server configuration');
+                }
+            } catch (error) {
+                console.error('Error updating server config:', error);
+                showError('Failed to update server configuration');
+            }
+        }
+
+        // Check detailed status
+        async function checkDetailedStatus() {
+            try {
+                const response = await fetch(`/api/servers/${serverId}/status`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    let statusInfo = `Status: ${result.status.status}`;
+                    
+                    if (result.connectionInfo) {
+                        statusInfo += `\nConnect to: ${result.connectionInfo.connectionString}`;
+                    }
+                    
+                    if (result.serverConfig) {
+                        statusInfo += `\n\nServer Configuration:`;
+                        statusInfo += `\nName: ${result.serverConfig.name}`;
+                        statusInfo += `\nMax Players: ${result.serverConfig.maxPlayers}`;
+                        statusInfo += `\nPassword: ${result.serverConfig.hasPassword ? 'Yes' : 'No'}`;
+                        statusInfo += `\nGame Type: ${result.serverConfig.gameType}`;
+                    }
+                    
+                    if (result.status.startedAt) {
+                        const startTime = new Date(result.status.startedAt).toLocaleString();
+                        statusInfo += `\nStarted: ${startTime}`;
+                    }
+                    
+                    if (result.status.memory) {
+                        statusInfo += `\nMemory limit: ${Math.round(result.status.memory / 1024 / 1024)}MB`;
+                    }
+                    
+                    showInfo(statusInfo);
+                } else {
+                    showError(result.error || 'Failed to get server status');
+                }
+            } catch (error) {
+                console.error('Error getting detailed status:', error);
+                showError('Failed to get server status');
+            }
+        }
+
+        // Delete server
+        async function deleteServer() {
+            const confirmed = await confirmDialog(`Are you sure you want to delete "${serverName}"? This action cannot be undone.`);
+            if (!confirmed) return;
+            
+            try {
+                showInfo(`Deleting server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess('Server deleted successfully!');
+                    setTimeout(() => {
+                        window.location.href = '/servers';
+                    }, 1500);
+                } else {
+                    showError(result.error || 'Failed to delete server');
+                }
+            } catch (error) {
+                console.error('Error deleting server:', error);
+                showError('Failed to delete server');
+            }
+        }
+
+        // Copy connection string to clipboard
+        function copyConnectionString() {
+            const connectionString = document.getElementById('connectionString').textContent;
+            navigator.clipboard.writeText(connectionString).then(() => {
+                showSuccess('Connection string copied to clipboard!');
+            }).catch(() => {
+                showError('Failed to copy connection string');
+            });
+        }
+    </script>
+</body>
+</html> 

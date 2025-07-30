@@ -306,11 +306,29 @@ router.post('/servers/:id/start', async (req, res) => {
     }
     
     if (server.game_type === 'cs16') {
+      // Parse server_config to get the stored password
+      let serverPassword = '';
+      try {
+        if (server.server_config) {
+          const config = JSON.parse(server.server_config);
+          serverPassword = config.server_password || '';
+        }
+      } catch (error) {
+        console.log('Error parsing server_config:', error);
+      }
+
       const gameServerConfig = {
         serverName: server.name, // Use the current server name
         maxPlayers: server.max_players, // Use the current max players
-        ramLimit: `${server.ram_gb}g` // Use the current RAM setting
+        ramLimit: `${server.ram_gb}g`, // Use the current RAM setting
+        serverPassword: serverPassword // Include the stored server password
       };
+      
+      console.log(`Starting server ${serverId} with config:`, {
+        serverName: gameServerConfig.serverName,
+        maxPlayers: gameServerConfig.maxPlayers,
+        serverPassword: serverPassword ? '***SET***' : 'NOT SET'
+      });
       
       const result = await gameServerService.startServer(serverId, 'cs16', gameServerConfig);
       
@@ -469,7 +487,18 @@ router.get('/servers/:id/status', async (req, res) => {
           serverConfig: {
             name: server.name,
             maxPlayers: server.max_players,
-            hasPassword: !!(server.server_config && JSON.parse(server.server_config || '{}').server_password),
+            hasPassword: (() => {
+              try {
+                if (server.server_config && typeof server.server_config === 'string') {
+                  const config = JSON.parse(server.server_config);
+                  return !!(config.server_password);
+                }
+                return false;
+              } catch (e) {
+                console.error('Error parsing server_config in status endpoint:', e);
+                return false;
+              }
+            })(),
             gameType: server.game_type
           }
         });
@@ -489,7 +518,18 @@ router.get('/servers/:id/status', async (req, res) => {
         serverConfig: {
           name: server.name,
           maxPlayers: server.max_players,
-          hasPassword: !!(server.server_config && JSON.parse(server.server_config || '{}').server_password),
+          hasPassword: (() => {
+            try {
+              if (server.server_config && typeof server.server_config === 'string') {
+                const config = JSON.parse(server.server_config);
+                return !!(config.server_password);
+              }
+              return false;
+            } catch (e) {
+              console.error('Error parsing server_config in status endpoint (inactive):', e);
+              return false;
+            }
+          })(),
           gameType: server.game_type
         }
       });

@@ -151,20 +151,81 @@ router.get('/support', (req, res) => {
   });
 });
 
-// Servers management page - protected
-router.get('/servers', requireAuth, (req, res) => {
-  console.log('User in /servers route:', req.user);
-  res.render('servers', {
-    title: `Server Management - ${process.env.SITE_TITLE || 'Web Herald'}`,
-    description: 'Manage your game servers - add, edit, and delete servers',
-    keywords: 'server management, game servers, minecraft, cs16, tf2',
-    canonicalUrl: `${getBaseUrl()}/servers`,
-    ogTitle: `Server Management - ${process.env.SITE_TITLE || 'Web Herald'}`,
-    ogDescription: 'Manage your game servers - add, edit, and delete servers',
-    ogImage: process.env.OG_IMAGE || '/images/web-herald-og.jpg',
-    ogUrl: `${getBaseUrl()}/servers`,
-    user: req.user
-  });
+// Servers page (requires authentication)
+router.get('/servers', requireAuth, async (req, res) => {
+    console.log('User in /servers route:', req.user);
+    
+    try {
+        const metaData = {
+            title: 'My Servers - Web Herald',
+            description: 'Manage your game servers with Web Herald\'s control panel',
+            keywords: 'game servers, server management, web herald, control panel',
+            ogTitle: 'Server Management - Web Herald',
+            ogDescription: 'Manage your gaming servers with our powerful control panel',
+            ogImage: '/images/og-servers.jpg',
+            ogUrl: `${req.protocol}://${req.get('host')}/servers`,
+            canonicalUrl: `${req.protocol}://${req.get('host')}/servers`
+        };
+        
+        res.render('servers', { ...metaData, user: req.user });
+    } catch (error) {
+        console.error('Error rendering servers page:', error);
+        res.status(500).render('error', { 
+            title: 'Error - Web Herald',
+            user: req.user,
+            error: error
+        });
+    }
+});
+
+// Individual server management page (requires authentication and ownership)
+router.get('/servers/:id', requireAuth, async (req, res) => {
+    try {
+        const serverId = parseInt(req.params.id);
+        
+        if (!serverId) {
+            return res.status(404).render('404', {
+                title: '404 - Server Not Found',
+                user: req.user
+            });
+        }
+        
+        // Get user's servers to verify ownership
+        const UserService = require('../services/userService');
+        const servers = await UserService.getUserServers(req.user.email);
+        const server = servers.find(s => s.id === serverId);
+        
+        if (!server) {
+            return res.status(404).render('404', {
+                title: '404 - Server Not Found',
+                user: req.user
+            });
+        }
+        
+        const metaData = {
+            title: `${server.name} - Server Management`,
+            description: `Manage your ${server.game_type.toUpperCase()} server: ${server.name}`,
+            keywords: `${server.game_type}, server management, ${server.name}, web herald`,
+            ogTitle: `${server.name} - Server Management`,
+            ogDescription: `Manage your ${server.game_type.toUpperCase()} server with Web Herald`,
+            ogImage: '/images/og-server.jpg',
+            ogUrl: `${req.protocol}://${req.get('host')}/servers/${serverId}`,
+            canonicalUrl: `${req.protocol}://${req.get('host')}/servers/${serverId}`
+        };
+        
+        res.render('server-management', { 
+            ...metaData, 
+            user: req.user, 
+            server: server 
+        });
+    } catch (error) {
+        console.error('Error rendering server management page:', error);
+        res.status(500).render('error', { 
+            title: 'Error - Web Herald',
+            user: req.user,
+            error: error
+        });
+    }
 });
 
 // Dashboard route - protected
