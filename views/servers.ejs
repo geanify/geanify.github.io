@@ -169,6 +169,8 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/notifications.js"></script>
+    <script src="/js/modals.js"></script>
     <script>
         // Load servers on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -334,7 +336,8 @@
 
         // Start server
         async function startServer(serverId, serverName) {
-            if (!confirm(`Are you sure you want to start server "${serverName}"?`)) {
+            const confirmed = await confirmDialog(`Are you sure you want to start server "${serverName}"?`);
+            if (!confirmed) {
                 return;
             }
             
@@ -364,7 +367,8 @@
 
         // Stop server
         async function stopServer(serverId, serverName) {
-            if (!confirm(`Are you sure you want to stop server "${serverName}"? Players will be disconnected.`)) {
+            const confirmed = await confirmDialog(`Are you sure you want to stop server "${serverName}"? Players will be disconnected.`);
+            if (!confirmed) {
                 return;
             }
             
@@ -391,7 +395,8 @@
 
         // Restart server
         async function restartServer(serverId, serverName) {
-            if (!confirm(`Are you sure you want to restart server "${serverName}"? Players will be temporarily disconnected.`)) {
+            const confirmed = await confirmDialog(`Are you sure you want to restart server "${serverName}"? Players will be temporarily disconnected.`);
+            if (!confirmed) {
                 return;
             }
             
@@ -438,7 +443,7 @@
                         statusInfo += `\nMemory limit: ${Math.round(result.status.memory / 1024 / 1024)}MB`;
                     }
                     
-                    alert(statusInfo);
+                    showInfo(statusInfo);
                 } else {
                     showError(result.error || 'Failed to get server status');
                 }
@@ -549,7 +554,8 @@
 
         // Delete server
         async function deleteServer(serverId, serverName) {
-            if (!confirm(`Are you sure you want to delete "${serverName}"? This action cannot be undone.`)) {
+            const confirmed = await confirmDialog(`Are you sure you want to delete "${serverName}"? This action cannot be undone.`);
+            if (!confirmed) {
                 return;
             }
             
@@ -608,20 +614,6 @@
                 'elite': 'Elite'
             };
             return names[plan] || plan;
-        }
-
-        function showSuccess(message) {
-            // Simple alert for now - you could implement a toast system
-            alert('Success: ' + message);
-        }
-
-        function showError(message) {
-            // Simple alert for now - you could implement a toast system
-            alert('Error: ' + message);
-        }
-
-        function showInfo(message) {
-            alert('Info: ' + message);
         }
     </script>
 </body>
