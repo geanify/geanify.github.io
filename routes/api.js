@@ -56,30 +56,23 @@ router.get('/servers', async (req, res) => {
 // Create a new server
 router.post('/servers', async (req, res) => {
   try {
-    const { name, game_type, plan, max_players, ram_gb, server_password } = req.body;
+    const { name, game_type, max_players, server_password } = req.body;
     
     // Validate required fields
-    if (!name || !game_type || !plan) {
+    if (!name || !game_type) {
       return res.status(400).json({
         success: false,
-        error: 'Name, game_type, and plan are required'
+        error: 'Name and game_type are required'
       });
     }
-
-    // Set pricing based on plan
-    const pricingMap = {
-      'starter': 3.99,
-      'gaming_pro': 7.99,
-      'elite': 15.99
-    };
 
     const serverData = {
       name,
       game_type,
-      plan,
+      plan: 'starter', // Default plan
       max_players: max_players || 10,
-      ram_gb: ram_gb || 1,
-      monthly_price: pricingMap[plan] || 3.99,
+      ram_gb: 1, // Default RAM
+      monthly_price: 3.99, // Default price
       status: 'pending'
     };
 
@@ -94,7 +87,7 @@ router.post('/servers', async (req, res) => {
         const gameServerConfig = {
           serverName: name,
           maxPlayers: max_players || 16,
-          ramLimit: `${ram_gb || 1}g`,
+          ramLimit: '1g', // Default RAM
           serverPassword: server_password || ''
         };
         

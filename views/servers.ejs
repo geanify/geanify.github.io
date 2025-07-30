@@ -84,23 +84,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="plan" class="form-label text-white">Plan</label>
-                                <select class="form-select bg-dark text-white border-secondary" id="plan" name="plan" required>
-                                    <option value="">Select Plan</option>
-                                    <option value="starter">Starter - $3.99/month</option>
-                                    <option value="gaming_pro">Gaming Pro - $7.99/month</option>
-                                    <option value="elite">Elite - $15.99/month</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
                                 <label for="maxPlayers" class="form-label text-white">Max Players</label>
                                 <input type="number" class="form-control bg-dark text-white border-secondary" id="maxPlayers" name="max_players" min="1" max="200" value="10">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="ramGb" class="form-label text-white">RAM (GB)</label>
-                                <input type="number" class="form-control bg-dark text-white border-secondary" id="ramGb" name="ram_gb" min="1" max="64" value="1">
                             </div>
                             <div class="col-md-6 mb-3" id="serverPasswordField" style="display: none;">
                                 <label for="serverPassword" class="form-label text-white">Server Password</label>
@@ -150,10 +135,6 @@
                             <div class="col-md-6 mb-3">
                                 <label for="editMaxPlayers" class="form-label text-white">Max Players</label>
                                 <input type="number" class="form-control bg-dark text-white border-secondary" id="editMaxPlayers" name="max_players" min="1" max="200">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="editRamGb" class="form-label text-white">RAM (GB)</label>
-                                <input type="number" class="form-control bg-dark text-white border-secondary" id="editRamGb" name="ram_gb" min="1" max="64">
                             </div>
                         </div>
                     </form>
@@ -262,20 +243,8 @@
                             
                             <div class="server-details">
                                 <div class="detail-item">
-                                    <span class="detail-label">Plan:</span>
-                                    <span class="detail-value">${getPlanName(server.plan)}</span>
-                                </div>
-                                <div class="detail-item">
                                     <span class="detail-label">Players:</span>
                                     <span class="detail-value">${server.max_players} max</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">RAM:</span>
-                                    <span class="detail-value">${server.ram_gb}GB</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Price:</span>
-                                    <span class="detail-value">$${server.monthly_price}/month</span>
                                 </div>
                             </div>
                             
@@ -508,7 +477,6 @@
                         document.getElementById('editServerName').value = server.name;
                         document.getElementById('editStatus').value = server.status;
                         document.getElementById('editMaxPlayers').value = server.max_players;
-                        document.getElementById('editRamGb').value = server.ram_gb;
                         
                         // Show modal
                         new bootstrap.Modal(document.getElementById('editServerModal')).show();
@@ -605,15 +573,6 @@
                 'tf2': 'Team Fortress 2'
             };
             return names[gameType] || gameType;
-        }
-
-        function getPlanName(plan) {
-            const names = {
-                'starter': 'Starter',
-                'gaming_pro': 'Gaming Pro',
-                'elite': 'Elite'
-            };
-            return names[plan] || plan;
         }
     </script>
 </body>
