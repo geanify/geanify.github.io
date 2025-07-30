@@ -187,50 +187,101 @@ router.put('/servers/:id', async (req, res) => {
 
     console.log('Updating server with data:', updateData);
 
+    // Get current server state before update
+    const servers = await UserService.getUserServers(req.user.email);
+    const currentServer = servers.find(s => s.id === parseInt(serverId));
+    
+    if (!currentServer) {
+      return res.status(404).json({
+        success: false,
+        error: 'Server not found'
+      });
+    }
+
+    // Always update server_config when password is provided
+    if (updateData.server_password !== undefined) {
+      try {
+        const existingConfig = JSON.parse(currentServer.server_config || '{}');
+        updateData.server_config = JSON.stringify({
+          ...existingConfig,
+          server_password: updateData.server_password
+        });
+        console.log('Updated server_config with new password');
+      } catch (error) {
+        console.error('Error parsing existing server_config:', error);
+        updateData.server_config = JSON.stringify({
+          server_password: updateData.server_password
+        });
+      }
+    }
+
+    // Update server in database
     const server = await UserService.updateServer(serverId, req.user.email, updateData);
     
-    // For CS 1.6 servers, if configuration is being updated, restart the container
-    if (server.game_type === 'cs16' && server.status === 'active') {
-      const needsRestart = updateData.name || updateData.max_players || updateData.server_password !== undefined;
+    // For CS 1.6 servers, propagate configuration changes to Docker container
+    if (server.game_type === 'cs16') {
+      const configChanged = updateData.name || updateData.max_players || updateData.server_password !== undefined;
       
-      if (needsRestart) {
+      if (configChanged) {
         try {
-          console.log(`Restarting CS 1.6 server ${serverId} with new configuration`);
+          console.log(`Configuration changed for CS 1.6 server ${serverId}`);
           
-          // Update server_config with password if provided
-          if (updateData.server_password !== undefined) {
-            await UserService.updateServer(serverId, req.user.email, {
-              server_config: JSON.stringify({
-                ...JSON.parse(server.server_config || '{}'),
-                server_password: updateData.server_password
-              })
-            });
+          // Get the latest server config including password
+          let serverPassword = '';
+          try {
+            if (server.server_config) {
+              const config = JSON.parse(server.server_config);
+              serverPassword = config.server_password || '';
+            }
+          } catch (error) {
+            console.error('Error parsing server_config:', error);
           }
           
-          // Restart the server with new configuration
+          // Build the complete configuration
           const gameServerConfig = {
-            serverName: updateData.name || server.name,
-            maxPlayers: updateData.max_players || server.max_players,
-            serverPassword: updateData.server_password || (JSON.parse(server.server_config || '{}')).server_password || '',
-            ramLimit: server.ram_gb
+            serverName: server.name,
+            maxPlayers: server.max_players,
+            serverPassword: serverPassword,
+            ramLimit: `${server.ram_gb}g`
           };
           
-          const result = await gameServerService.restartServer(serverId, gameServerConfig);
+          console.log(`Applying new configuration:`, {
+            serverName: gameServerConfig.serverName,
+            maxPlayers: gameServerConfig.maxPlayers,
+            serverPassword: serverPassword ? '***SET***' : 'NOT SET',
+            ramLimit: gameServerConfig.ramLimit
+          });
           
-          if (!result.success) {
-            console.error('Failed to restart server with new config:', result.error);
+          // Check if server is currently running
+          const statusResult = await gameServerService.getServerStatus(serverId);
+          const isRunning = statusResult.success && statusResult.data.status === 'running';
+          
+          if (isRunning) {
+            // Server is running - restart with new configuration
+            console.log(`Server ${serverId} is running, restarting with new configuration`);
+            const result = await gameServerService.restartServer(serverId, gameServerConfig);
+            
+            if (result.success) {
+              console.log('✅ Server restarted successfully with new configuration');
+            } else {
+              console.error('❌ Failed to restart server with new config:', result.error);
+              // Don't fail the entire update if restart fails
+            }
           } else {
-            console.log('Server restarted successfully with new configuration');
+            // Server is stopped - configuration will be applied when it's next started
+            console.log(`Server ${serverId} is stopped, configuration will be applied on next start`);
           }
         } catch (error) {
-          console.error('Error restarting server:', error);
+          console.error('Error applying configuration changes:', error);
+          // Don't fail the entire update if Docker operations fail
         }
       }
     }
     
     res.json({
       success: true,
-      server: server
+      server: server,
+      message: 'Server configuration updated successfully'
     });
   } catch (error) {
     console.error('Error updating server:', error);
@@ -435,11 +486,37 @@ router.post('/servers/:id/restart', async (req, res) => {
     }
     
     if (server.game_type === 'cs16') {
-      const result = await gameServerService.restartServer(serverId);
+      // Get the latest server configuration from database
+      let serverPassword = '';
+      try {
+        if (server.server_config) {
+          const config = JSON.parse(server.server_config);
+          serverPassword = config.server_password || '';
+        }
+      } catch (error) {
+        console.error('Error parsing server_config during restart:', error);
+      }
+
+      // Build the complete configuration from current database values
+      const gameServerConfig = {
+        serverName: server.name,
+        maxPlayers: server.max_players,
+        serverPassword: serverPassword,
+        ramLimit: `${server.ram_gb}g`
+      };
+      
+      console.log(`Restarting server ${serverId} with latest configuration:`, {
+        serverName: gameServerConfig.serverName,
+        maxPlayers: gameServerConfig.maxPlayers,
+        serverPassword: serverPassword ? '***SET***' : 'NOT SET',
+        ramLimit: gameServerConfig.ramLimit
+      });
+      
+      const result = await gameServerService.restartServer(serverId, gameServerConfig);
       
       res.json({
         success: result.success,
-        message: result.success ? 'Server restarted successfully' : result.error
+        message: result.success ? 'Server restarted successfully with latest configuration' : result.error
       });
     } else {
       res.status(400).json({

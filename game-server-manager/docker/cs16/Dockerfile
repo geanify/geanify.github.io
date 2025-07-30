@@ -44,7 +44,7 @@ COPY --chown=steam:steam configs/ ./
 # Create startup script
 RUN echo '#!/bin/bash' > start_server.sh && \
     echo 'cd /home/steam/cs16' >> start_server.sh && \
-    echo './hlds_run -game cstrike +map ${START_MAP:-de_dust2} +maxplayers ${MAX_PLAYERS:-16} +port 27015 +rcon_password ${RCON_PASSWORD:-changeme} +hostname "${SERVER_NAME:-CS 1.6 Server}" +sv_password "${SERVER_PASSWORD:-}" -noipx -nojoy -noipx -num_edicts 4096' >> start_server.sh && \
+    echo './hlds_run -game cstrike +map ${START_MAP:-de_dust2} +maxplayers ${MAX_PLAYERS:-16} +port 27015 +rcon_password ${RCON_PASSWORD:-changeme} +hostname "${SERVER_NAME}" +sv_password "${SERVER_PASSWORD:-}" -noipx -nojoy -noipx -num_edicts 4096' >> start_server.sh && \
     chmod +x start_server.sh
 
 # Environment variables with defaults
