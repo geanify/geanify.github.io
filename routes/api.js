@@ -108,6 +108,13 @@ router.post('/servers', async (req, res) => {
             port: dockerResult.data.port
           };
           
+          // Also save the server password in server_config if provided
+          if (server_password) {
+            updateData.server_config = JSON.stringify({
+              server_password: server_password
+            });
+          }
+          
           const updatedServer = await UserService.updateServer(server.id, req.user.email, updateData);
           
           res.status(201).json({

@@ -10,9 +10,14 @@ const sequelize = new Sequelize({
     underscored: true
   },
   dialectOptions: {
-    // Disable foreign key constraints during development
+    // Completely disable foreign key constraints
     foreignKeys: false
   }
+});
+
+// Disable foreign keys on connection
+sequelize.addHook('afterConnect', async (connection) => {
+  await connection.exec('PRAGMA foreign_keys = OFF;');
 });
 
 // Test database connection

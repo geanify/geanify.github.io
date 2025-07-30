@@ -90,12 +90,19 @@ class DockerService {
             };
 
             console.log(`Creating CS 1.6 server container: ${containerName} on port ${port}`);
-            console.log('Server configuration:', {
+            console.log('Server configuration received:', {
                 serverName: config.serverName,
                 maxPlayers: config.maxPlayers,
                 serverPassword: config.serverPassword ? '***SET***' : 'NOT SET',
                 ramLimit: config.ramLimit
             });
+            console.log('Environment variables being set:', [
+                `SERVER_NAME=${config.serverName || 'CS 1.6 Server'}`,
+                `MAX_PLAYERS=${config.maxPlayers || 16}`,
+                `START_MAP=${config.startMap || process.env.CS16_DEFAULT_MAP || 'de_dust2'}`,
+                `RCON_PASSWORD=***HIDDEN***`,
+                `SERVER_PASSWORD=${config.serverPassword ? '***SET***' : ''}`
+            ]);
             
             const container = await this.docker.createContainer(containerConfig);
             await container.start();
@@ -432,4 +439,4 @@ class DockerService {
     }
 }
 
-module.exports = DockerService; 
+module.exports = DockerService;
