@@ -136,6 +136,11 @@
                                 <label for="editMaxPlayers" class="form-label text-white">Max Players</label>
                                 <input type="number" class="form-control bg-dark text-white border-secondary" id="editMaxPlayers" name="max_players" min="1" max="200">
                             </div>
+                            <div class="col-md-6 mb-3" id="editServerPasswordField" style="display: none;">
+                                <label for="editServerPassword" class="form-label text-white">Server Password</label>
+                                <input type="password" class="form-control bg-dark text-white border-secondary" id="editServerPassword" name="server_password" placeholder="Leave empty for no password">
+                                <small class="text-muted">Optional password for CS 1.6 servers</small>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -174,13 +179,31 @@
         // Load servers from API
         async function loadServers() {
             try {
+                console.log('Loading servers...');
                 const response = await fetch('/api/servers');
+                console.log('Response status:', response.status);
+                
+                if (response.status === 401) {
+                    // User is not authenticated, redirect to login
+                    console.log('User not authenticated, redirecting to login');
+                    window.location.href = '/auth/google';
+                    return;
+                }
+                
+                if (!response.ok) {
+                    console.error('Response not ok:', response.status, response.statusText);
+                    showError(`Failed to load servers: ${response.status} ${response.statusText}`);
+                    return;
+                }
+                
                 const data = await response.json();
+                console.log('Server data:', data);
                 
                 if (data.success) {
                     displayServers(data.servers);
                 } else {
-                    showError('Failed to load servers');
+                    console.error('API returned error:', data.error);
+                    showError(data.error || 'Failed to load servers');
                 }
             } catch (error) {
                 console.error('Error loading servers:', error);
@@ -246,6 +269,19 @@
                                     <span class="detail-label">Players:</span>
                                     <span class="detail-value">${server.max_players} max</span>
                                 </div>
+                                ${server.game_type === 'cs16' ? `
+                                    <div class="detail-item">
+                                        <span class="detail-label">Password:</span>
+                                        <span class="detail-value">${(() => {
+                                            try {
+                                                const config = JSON.parse(server.server_config || '{}');
+                                                return config.server_password ? 'Yes' : 'No';
+                                            } catch (e) {
+                                                return 'No';
+                                            }
+                                        })()}</span>
+                                    </div>
+                                ` : ''}
                             </div>
                             
                             <div class="server-actions">
@@ -403,6 +439,14 @@
                         statusInfo += `\nConnect to: ${result.connectionInfo.connectionString}`;
                     }
                     
+                    if (result.serverConfig) {
+                        statusInfo += `\n\nServer Configuration:`;
+                        statusInfo += `\nName: ${result.serverConfig.name}`;
+                        statusInfo += `\nMax Players: ${result.serverConfig.maxPlayers}`;
+                        statusInfo += `\nPassword: ${result.serverConfig.hasPassword ? 'Yes' : 'No'}`;
+                        statusInfo += `\nGame Type: ${result.serverConfig.gameType}`;
+                    }
+                    
                     if (result.status.startedAt) {
                         const startTime = new Date(result.status.startedAt).toLocaleString();
                         statusInfo += `\nStarted: ${startTime}`;
@@ -427,6 +471,9 @@
             const form = document.getElementById('addServerForm');
             const formData = new FormData(form);
             const data = Object.fromEntries(formData);
+            
+            // Debug: log the form data
+            console.log('Form data:', data);
             
             try {
                 showInfo('Creating server...');
@@ -477,6 +524,16 @@
                         document.getElementById('editServerName').value = server.name;
                         document.getElementById('editStatus').value = server.status;
                         document.getElementById('editMaxPlayers').value = server.max_players;
+                        
+                        // Show password field for CS 1.6 servers
+                        const passwordField = document.getElementById('editServerPasswordField');
+                        if (server.game_type === 'cs16') {
+                            passwordField.style.display = 'block';
+                            // Note: We can't populate the password field for security reasons
+                            document.getElementById('editServerPassword').value = '';
+                        } else {
+                            passwordField.style.display = 'none';
+                        }
                         
                         // Show modal
                         new bootstrap.Modal(document.getElementById('editServerModal')).show();

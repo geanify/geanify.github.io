@@ -58,6 +58,9 @@ router.post('/servers', async (req, res) => {
   try {
     const { name, game_type, max_players, server_password } = req.body;
     
+    // Debug: log the received data
+    console.log('Received server creation request:', { name, game_type, max_players, server_password });
+    
     // Validate required fields
     if (!name || !game_type) {
       return res.status(400).json({
@@ -76,6 +79,8 @@ router.post('/servers', async (req, res) => {
       status: 'pending'
     };
 
+    console.log('Creating server with data:', serverData);
+
     // Create server record in database
     const server = await UserService.createServer(req.user.email, serverData);
     
@@ -85,11 +90,13 @@ router.post('/servers', async (req, res) => {
         console.log(`Creating CS 1.6 Docker container for server ${server.id}`);
         
         const gameServerConfig = {
-          serverName: name,
-          maxPlayers: max_players || 16,
+          serverName: name, // Use the actual server name from form
+          maxPlayers: parseInt(max_players) || 16, // Use the actual max players from form
           ramLimit: '1g', // Default RAM
-          serverPassword: server_password || ''
+          serverPassword: server_password || '' // Use the actual password from form
         };
+        
+        console.log('Docker config:', gameServerConfig);
         
         const dockerResult = await gameServerService.createCS16Server(server.id, gameServerConfig);
         
@@ -171,7 +178,33 @@ router.put('/servers/:id', async (req, res) => {
     delete updateData.created_at;
     delete updateData.updated_at;
 
+    console.log('Updating server with data:', updateData);
+
     const server = await UserService.updateServer(serverId, req.user.email, updateData);
+    
+    // For CS 1.6 servers, if password is being updated, we need to restart the container
+    if (server.game_type === 'cs16' && updateData.server_password !== undefined && server.status === 'active') {
+      try {
+        console.log(`Updating CS 1.6 server password for server ${serverId}`);
+        
+        // For now, we'll just log the password change
+        // In a real implementation, you'd want to update the Docker container environment
+        console.log('Password updated for CS 1.6 server:', serverId);
+        
+        // You could add logic here to restart the container with the new password
+        // For now, we'll just update the server_config to store the password
+        await UserService.updateServer(serverId, req.user.email, {
+          server_config: JSON.stringify({
+            ...JSON.parse(server.server_config || '{}'),
+            server_password: updateData.server_password
+          })
+        });
+        
+      } catch (error) {
+        console.error('Error updating CS 1.6 server password:', error);
+        // Continue with the update even if password update fails
+      }
+    }
     
     res.json({
       success: true,
@@ -252,9 +285,9 @@ router.post('/servers/:id/start', async (req, res) => {
     
     if (server.game_type === 'cs16') {
       const gameServerConfig = {
-        serverName: server.name,
-        maxPlayers: server.max_players,
-        ramLimit: `${server.ram_gb}g`
+        serverName: server.name, // Use the current server name
+        maxPlayers: server.max_players, // Use the current max players
+        ramLimit: `${server.ram_gb}g` // Use the current RAM setting
       };
       
       const result = await gameServerService.startServer(serverId, 'cs16', gameServerConfig);
@@ -410,7 +443,13 @@ router.get('/servers/:id/status', async (req, res) => {
             host: process.env.GAME_SERVER_HOST || 'localhost',
             port: result.data.port,
             connectionString: `${process.env.GAME_SERVER_HOST || 'localhost'}:${result.data.port}`
-          } : null
+          } : null,
+          serverConfig: {
+            name: server.name,
+            maxPlayers: server.max_players,
+            hasPassword: !!(server.server_config && JSON.parse(server.server_config || '{}').server_password),
+            gameType: server.game_type
+          }
         });
       } else {
         res.json({
@@ -424,6 +463,12 @@ router.get('/servers/:id/status', async (req, res) => {
         status: {
           status: server.status,
           message: 'Server is not actively running'
+        },
+        serverConfig: {
+          name: server.name,
+          maxPlayers: server.max_players,
+          hasPassword: !!(server.server_config && JSON.parse(server.server_config || '{}').server_password),
+          gameType: server.game_type
         }
       });
     }

@@ -222,6 +222,12 @@ class GameServerService {
     async startServer(serverId, gameType = 'cs16', config = {}) {
         try {
             if (gameType === 'cs16') {
+                console.log(`Starting server ${serverId} with config:`, {
+                    serverName: config.serverName,
+                    maxPlayers: config.maxPlayers,
+                    serverPassword: config.serverPassword ? '***SET***' : 'NOT SET'
+                });
+                
                 // First, try to start an existing container
                 const startResponse = await axios.post(
                     `${this.gameServerManagerUrl}/api/servers/${serverId}/start`,

@@ -153,6 +153,7 @@ router.get('/support', (req, res) => {
 
 // Servers management page - protected
 router.get('/servers', requireAuth, (req, res) => {
+  console.log('User in /servers route:', req.user);
   res.render('servers', {
     title: `Server Management - ${process.env.SITE_TITLE || 'Web Herald'}`,
     description: 'Manage your game servers - add, edit, and delete servers',
@@ -178,6 +179,13 @@ router.get('/dashboard', requireAuth, (req, res) => {
     ogImage: process.env.OG_IMAGE || '/images/web-herald-og.jpg',
     ogUrl: `${getBaseUrl()}/dashboard`,
     user: req.user
+  });
+});
+
+// Login page
+router.get('/login', (req, res) => {
+  res.render('login', {
+    user: req.user || null
   });
 });
 

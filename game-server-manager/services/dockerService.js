@@ -76,7 +76,7 @@ class DockerService {
                     }
                 },
                 Env: [
-                    `SERVER_NAME=${config.serverName || `CS 1.6 Server ${serverId}`}`,
+                    `SERVER_NAME=${config.serverName || 'CS 1.6 Server'}`,
                     `MAX_PLAYERS=${config.maxPlayers || 16}`,
                     `START_MAP=${config.startMap || process.env.CS16_DEFAULT_MAP || 'de_dust2'}`,
                     `RCON_PASSWORD=${this.generateRconPassword()}`,
@@ -90,6 +90,12 @@ class DockerService {
             };
 
             console.log(`Creating CS 1.6 server container: ${containerName} on port ${port}`);
+            console.log('Server configuration:', {
+                serverName: config.serverName,
+                maxPlayers: config.maxPlayers,
+                serverPassword: config.serverPassword ? '***SET***' : 'NOT SET',
+                ramLimit: config.ramLimit
+            });
             
             const container = await this.docker.createContainer(containerConfig);
             await container.start();
@@ -176,6 +182,8 @@ class DockerService {
 
             // Start the container
             console.log(`Starting existing container: ${containerName}`);
+            console.log('Container configuration preserved from original creation');
+            
             await container.start();
 
             // Get updated container info

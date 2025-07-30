@@ -28,11 +28,18 @@
                     <div class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
                             <div class="profile-image-container me-2">
-                                <img src="<%= user.picture %>" alt="Profile" class="rounded-circle profile-image" width="32" height="32" 
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="profile-fallback rounded-circle" style="display: none;">
-                                    <i class="fas fa-user"></i>
-                                </div>
+                                <% if (user.picture) { %>
+                                    <img src="<%= user.picture %>" alt="<%= user.name %>" class="rounded-circle profile-image" width="32" height="32" 
+                                         crossorigin="anonymous"
+                                         onerror="console.log('Profile image failed to load:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="profile-fallback rounded-circle" style="display: none;">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                <% } else { %>
+                                    <div class="profile-fallback rounded-circle">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                <% } %>
                             </div>
                             <%= user.name %>
                         </a>
