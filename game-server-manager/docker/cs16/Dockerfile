@@ -48,7 +48,6 @@ RUN echo '#!/bin/bash' > start_server.sh && \
     chmod +x start_server.sh
 
 # Environment variables with defaults
-ENV SERVER_NAME="CS 1.6 Dedicated Server"
 ENV MAX_PLAYERS=16
 ENV START_MAP=de_dust2
 ENV RCON_PASSWORD=changeme
