@@ -39,6 +39,44 @@ router.post('/cs16', async (req, res) => {
     }
 });
 
+// Start an existing server
+router.post('/:serverId/start', async (req, res) => {
+    try {
+        const serverId = parseInt(req.params.serverId);
+        
+        if (!serverId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid server ID'
+            });
+        }
+
+        console.log(`Starting server ${serverId}`);
+        
+        const result = await req.dockerService.startExistingServer(serverId);
+        
+        if (result.success) {
+            res.json({
+                success: true,
+                message: `Server ${serverId} started successfully`,
+                data: result.data
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                error: result.error
+            });
+        }
+        
+    } catch (error) {
+        console.error(`Error starting server ${req.params.serverId}:`, error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to start server'
+        });
+    }
+});
+
 // Stop a server
 router.delete('/:serverId', async (req, res) => {
     try {

@@ -235,17 +235,14 @@
                     <div class="col-md-6 col-lg-4">
                         <div class="server-card">
                             <div class="server-header">
-                                <div class="server-game">
-                                    <i class="${gameIcon} me-2"></i>
-                                    ${getGameName(server.game_type)}
+                                <div>
+                                    <span class="server-game">${getGameName(server.game_type)}</span>
+                                    <span class="server-status ${server.status === 'active' || server.realTimeStatus === 'running' ? 'bg-success' : 'bg-secondary'}">
+                                        ${server.status === 'active' || server.realTimeStatus === 'running' ? 'Running' : 'Stopped'}
+                                    </span>
                                 </div>
-                                <span class="server-status ${realTimeStatusColor}">
-                                    ${server.realTimeStatus || server.status}
-                                    ${server.realTimeStatus && server.realTimeStatus !== server.status ? 
-                                        `<small class="text-muted">(${server.status})</small>` : ''}
-                                </span>
+                                <h5 class="server-name">${server.name}</h5>
                             </div>
-                            <h5 class="server-name">${server.name}</h5>
                             
                             ${server.connectionInfo ? `
                                 <div class="connection-info mb-3">

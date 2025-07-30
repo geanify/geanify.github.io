@@ -136,7 +136,75 @@ class DockerService {
         }
     }
 
-    // Stop and remove server container
+    // Start an existing stopped server
+    async startExistingServer(serverId) {
+        try {
+            if (!this.dockerConnected) {
+                throw new Error('Docker service is not available. Please check Docker installation and permissions.');
+            }
+
+            const containerName = `cs16-server-${serverId}`;
+            
+            // Check if container exists
+            const containers = await this.docker.listContainers({ 
+                all: true,
+                filters: {
+                    name: [containerName]
+                }
+            });
+
+            if (containers.length === 0) {
+                throw new Error(`Container ${containerName} not found`);
+            }
+
+            const containerData = containers[0];
+            const container = this.docker.getContainer(containerData.Id);
+
+            // Check if container is already running
+            const containerInfo = await container.inspect();
+            if (containerInfo.State.Running) {
+                return {
+                    success: true,
+                    data: {
+                        containerId: containerData.Id,
+                        containerName: containerName,
+                        port: parseInt(containerInfo.Config.Labels['web-herald.port']),
+                        status: 'running'
+                    }
+                };
+            }
+
+            // Start the container
+            console.log(`Starting existing container: ${containerName}`);
+            await container.start();
+
+            // Get updated container info
+            const updatedInfo = await container.inspect();
+            const port = parseInt(updatedInfo.Config.Labels['web-herald.port']);
+
+            // Add port back to used ports
+            this.usedPorts.add(port);
+
+            return {
+                success: true,
+                data: {
+                    containerId: containerData.Id,
+                    containerName: containerName,
+                    port: port,
+                    status: 'running'
+                }
+            };
+
+        } catch (error) {
+            console.error(`Error starting existing server ${serverId}:`, error);
+            return {
+                success: false,
+                error: error.message || 'Failed to start existing server'
+            };
+        }
+    }
+
+    // Stop server
     async stopServer(serverId) {
         try {
             const containerInfo = this.containers.get(serverId);

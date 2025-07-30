@@ -220,15 +220,43 @@ class GameServerService {
 
     // Start a server (if it exists but is stopped)
     async startServer(serverId, gameType = 'cs16', config = {}) {
-        // For now, we only support creating new servers
-        // In the future, we might add support for starting existing stopped containers
-        
-        if (gameType === 'cs16') {
-            return await this.createCS16Server(serverId, config);
-        } else {
+        try {
+            if (gameType === 'cs16') {
+                // First, try to start an existing container
+                const startResponse = await axios.post(
+                    `${this.gameServerManagerUrl}/api/servers/${serverId}/start`,
+                    {},
+                    { timeout: 30000 }
+                );
+
+                if (startResponse.data.success) {
+                    return {
+                        success: true,
+                        data: startResponse.data.data
+                    };
+                } else {
+                    // If starting existing container fails, create a new one
+                    console.log(`No existing container found for server ${serverId}, creating new one`);
+                    return await this.createCS16Server(serverId, config);
+                }
+            } else {
+                return {
+                    success: false,
+                    error: `Unsupported game type: ${gameType}`
+                };
+            }
+        } catch (error) {
+            console.error(`Error starting server ${serverId}:`, error);
+            
+            // If the start endpoint fails (container doesn't exist), create a new one
+            if (error.response?.status === 500 || error.code === 'ECONNREFUSED') {
+                console.log(`Creating new container for server ${serverId}`);
+                return await this.createCS16Server(serverId, config);
+            }
+            
             return {
                 success: false,
-                error: `Unsupported game type: ${gameType}`
+                error: error.response?.data?.error || error.message || 'Failed to start server'
             };
         }
     }
