@@ -1,0 +1,15 @@
+de_dust2
+de_dust
+de_inferno
+de_train
+de_nuke
+de_cbble
+de_mirage
+de_cache
+de_overpass
+cs_office
+cs_militia
+cs_assault
+de_vertigo
+de_aztec
+cs_italy 

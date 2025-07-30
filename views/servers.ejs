@@ -102,6 +102,11 @@
                                 <label for="ramGb" class="form-label text-white">RAM (GB)</label>
                                 <input type="number" class="form-control bg-dark text-white border-secondary" id="ramGb" name="ram_gb" min="1" max="64" value="1">
                             </div>
+                            <div class="col-md-6 mb-3" id="serverPasswordField" style="display: none;">
+                                <label for="serverPassword" class="form-label text-white">Server Password</label>
+                                <input type="password" class="form-control bg-dark text-white border-secondary" id="serverPassword" name="server_password" placeholder="Leave empty for no password">
+                                <small class="text-muted">Optional password for CS 1.6 servers</small>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -168,6 +173,19 @@
         // Load servers on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadServers();
+            
+            // Handle game type change for password field visibility
+            const gameTypeSelect = document.getElementById('gameType');
+            const passwordField = document.getElementById('serverPasswordField');
+            
+            gameTypeSelect.addEventListener('change', function() {
+                if (this.value === 'cs16') {
+                    passwordField.style.display = 'block';
+                } else {
+                    passwordField.style.display = 'none';
+                    document.getElementById('serverPassword').value = ''; // Clear password when hidden
+                }
+            });
         });
 
         // Load servers from API
@@ -187,15 +205,11 @@
             }
         }
 
-        // Display servers in the UI
+        // Display servers
         function displayServers(servers) {
-            const loadingEl = document.getElementById('serversLoading');
             const listEl = document.getElementById('serversList');
             
-            loadingEl.style.display = 'none';
-            listEl.style.display = 'block';
-            
-            if (servers.length === 0) {
+            if (!servers || servers.length === 0) {
                 listEl.innerHTML = `
                     <div class="text-center py-5">
                         <i class="fas fa-server fa-3x text-neutral mb-3"></i>
@@ -209,6 +223,7 @@
             let html = '<div class="row g-4">';
             servers.forEach(server => {
                 const statusColor = getStatusColor(server.status);
+                const realTimeStatusColor = server.realTimeStatus ? getStatusColor(server.realTimeStatus) : statusColor;
                 const gameIcon = getGameIcon(server.game_type);
                 
                 html += `
@@ -219,9 +234,28 @@
                                     <i class="${gameIcon} me-2"></i>
                                     ${getGameName(server.game_type)}
                                 </div>
-                                <span class="server-status ${statusColor}">${server.status}</span>
+                                <span class="server-status ${realTimeStatusColor}">
+                                    ${server.realTimeStatus || server.status}
+                                    ${server.realTimeStatus && server.realTimeStatus !== server.status ? 
+                                        `<small class="text-muted">(${server.status})</small>` : ''}
+                                </span>
                             </div>
                             <h5 class="server-name">${server.name}</h5>
+                            
+                            ${server.connectionInfo ? `
+                                <div class="connection-info mb-3">
+                                    <div class="detail-item">
+                                        <span class="detail-label">Connect:</span>
+                                        <span class="detail-value">
+                                            <code class="text-accent">${server.connectionInfo.connectionString}</code>
+                                            <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('${server.connectionInfo.connectionString}')">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
                             <div class="server-details">
                                 <div class="detail-item">
                                     <span class="detail-label">Plan:</span>
@@ -240,13 +274,36 @@
                                     <span class="detail-value">$${server.monthly_price}/month</span>
                                 </div>
                             </div>
+                            
                             <div class="server-actions">
-                                <button class="btn btn-sm btn-outline-accent" onclick="editServer(${server.id})">
-                                    <i class="fas fa-edit me-1"></i>Edit
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger" onclick="deleteServer(${server.id}, '${server.name}')">
-                                    <i class="fas fa-trash me-1"></i>Delete
-                                </button>
+                                ${server.game_type === 'cs16' ? `
+                                    <div class="btn-group w-100 mb-2" role="group">
+                                        ${server.status === 'active' || server.realTimeStatus === 'running' ? `
+                                            <button class="btn btn-sm btn-outline-warning" onclick="stopServer(${server.id}, '${server.name}')">
+                                                <i class="fas fa-stop me-1"></i>Stop
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info" onclick="restartServer(${server.id}, '${server.name}')">
+                                                <i class="fas fa-redo me-1"></i>Restart
+                                            </button>
+                                        ` : `
+                                            <button class="btn btn-sm btn-outline-success" onclick="startServer(${server.id}, '${server.name}')">
+                                                <i class="fas fa-play me-1"></i>Start
+                                            </button>
+                                        `}
+                                        <button class="btn btn-sm btn-outline-primary" onclick="checkServerStatus(${server.id})">
+                                            <i class="fas fa-info-circle me-1"></i>Status
+                                        </button>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="btn-group w-100" role="group">
+                                    <button class="btn btn-sm btn-outline-accent" onclick="editServer(${server.id})">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteServer(${server.id}, '${server.name}')">
+                                        <i class="fas fa-trash me-1"></i>Delete
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -257,6 +314,138 @@
             listEl.innerHTML = html;
         }
 
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showSuccess('Connection string copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showSuccess('Connection string copied to clipboard!');
+            });
+        }
+
+        // Start server
+        async function startServer(serverId, serverName) {
+            if (!confirm(`Are you sure you want to start server "${serverName}"?`)) {
+                return;
+            }
+            
+            try {
+                showInfo(`Starting server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}/start`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Server "${serverName}" started successfully!`);
+                    if (result.connectionInfo) {
+                        showInfo(`Connect to: ${result.connectionInfo.host}:${result.connectionInfo.port}`);
+                    }
+                    loadServers(); // Refresh server list
+                } else {
+                    showError(result.error || 'Failed to start server');
+                }
+            } catch (error) {
+                console.error('Error starting server:', error);
+                showError('Failed to start server');
+            }
+        }
+
+        // Stop server
+        async function stopServer(serverId, serverName) {
+            if (!confirm(`Are you sure you want to stop server "${serverName}"? Players will be disconnected.`)) {
+                return;
+            }
+            
+            try {
+                showInfo(`Stopping server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}/stop`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Server "${serverName}" stopped successfully!`);
+                    loadServers(); // Refresh server list
+                } else {
+                    showError(result.error || 'Failed to stop server');
+                }
+            } catch (error) {
+                console.error('Error stopping server:', error);
+                showError('Failed to stop server');
+            }
+        }
+
+        // Restart server
+        async function restartServer(serverId, serverName) {
+            if (!confirm(`Are you sure you want to restart server "${serverName}"? Players will be temporarily disconnected.`)) {
+                return;
+            }
+            
+            try {
+                showInfo(`Restarting server "${serverName}"...`);
+                
+                const response = await fetch(`/api/servers/${serverId}/restart`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccess(`Server "${serverName}" restarted successfully!`);
+                    loadServers(); // Refresh server list
+                } else {
+                    showError(result.error || 'Failed to restart server');
+                }
+            } catch (error) {
+                console.error('Error restarting server:', error);
+                showError('Failed to restart server');
+            }
+        }
+
+        // Check server status
+        async function checkServerStatus(serverId) {
+            try {
+                const response = await fetch(`/api/servers/${serverId}/status`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    let statusInfo = `Status: ${result.status.status}`;
+                    
+                    if (result.connectionInfo) {
+                        statusInfo += `\nConnect to: ${result.connectionInfo.connectionString}`;
+                    }
+                    
+                    if (result.status.startedAt) {
+                        const startTime = new Date(result.status.startedAt).toLocaleString();
+                        statusInfo += `\nStarted: ${startTime}`;
+                    }
+                    
+                    if (result.status.memory) {
+                        statusInfo += `\nMemory limit: ${Math.round(result.status.memory / 1024 / 1024)}MB`;
+                    }
+                    
+                    alert(statusInfo);
+                } else {
+                    showError(result.error || 'Failed to get server status');
+                }
+            } catch (error) {
+                console.error('Error getting server status:', error);
+                showError('Failed to get server status');
+            }
+        }
+
         // Add new server
         async function addServer() {
             const form = document.getElementById('addServerForm');
@@ -264,6 +453,8 @@
             const data = Object.fromEntries(formData);
             
             try {
+                showInfo('Creating server...');
+                
                 const response = await fetch('/api/servers', {
                     method: 'POST',
                     headers: {
@@ -278,7 +469,15 @@
                     bootstrap.Modal.getInstance(document.getElementById('addServerModal')).hide();
                     form.reset();
                     loadServers();
-                    showSuccess('Server created successfully');
+                    
+                    if (data.game_type === 'cs16') {
+                        showSuccess('CS 1.6 server created and deployed successfully!');
+                        if (result.server && result.server.connectionInfo) {
+                            showInfo(`Your server is ready! Connect to: ${result.server.connectionInfo.connectionString}`);
+                        }
+                    } else {
+                        showSuccess('Server created successfully!');
+                    }
                 } else {
                     showError(result.error || 'Failed to create server');
                 }
@@ -417,6 +616,10 @@
         function showError(message) {
             // Simple alert for now - you could implement a toast system
             alert('Error: ' + message);
+        }
+
+        function showInfo(message) {
+            alert('Info: ' + message);
         }
     </script>
 </body>

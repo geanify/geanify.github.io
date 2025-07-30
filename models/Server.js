@@ -40,7 +40,22 @@ const Server = sequelize.define('Server', {
     type: DataTypes.STRING,
     allowNull: true,
     validate: {
-      isIP: true
+      isValidHost(value) {
+        if (value === null || value === undefined) return;
+        
+        // Check if it's a valid IP address
+        const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        if (ipRegex.test(value)) return;
+        
+        // Check if it's a valid hostname
+        const hostnameRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
+        if (hostnameRegex.test(value)) return;
+        
+        // Check for localhost
+        if (value === 'localhost') return;
+        
+        throw new Error('Invalid hostname or IP address');
+      }
     }
   },
   port: {
