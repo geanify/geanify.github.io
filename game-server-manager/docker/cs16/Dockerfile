@@ -44,7 +44,13 @@ COPY --chown=steam:steam configs/ ./
 # Create startup script
 RUN echo '#!/bin/bash' > start_server.sh && \
     echo 'cd /home/steam/cs16' >> start_server.sh && \
-    echo './hlds_run -game cstrike +map ${START_MAP:-de_dust2} +maxplayers ${MAX_PLAYERS:-16} +port 27015 +rcon_password ${RCON_PASSWORD:-changeme} +hostname "${SERVER_NAME}" +sv_password "${SERVER_PASSWORD:-}" -noipx -nojoy -noipx -num_edicts 4096' >> start_server.sh && \
+    echo 'echo "Starting CS 1.6 server with SERVER_NAME=$SERVER_NAME"' >> start_server.sh && \
+    echo '# Replace hostname in server.cfg with environment variable' >> start_server.sh && \
+    echo 'sed -i "s/hostname \".*\"/hostname \"$SERVER_NAME\"/" server.cfg' >> start_server.sh && \
+    echo '# Replace password if set' >> start_server.sh && \
+    echo 'sed -i "s/sv_password \".*\"/sv_password \"${SERVER_PASSWORD:-}\"/" server.cfg' >> start_server.sh && \
+    echo 'echo "Updated server.cfg with hostname: $SERVER_NAME"' >> start_server.sh && \
+    echo './hlds_run -game cstrike +map ${START_MAP:-de_dust2} +maxplayers ${MAX_PLAYERS:-16} +port 27015 +rcon_password ${RCON_PASSWORD:-changeme} +exec server.cfg -noipx -nojoy -noipx -num_edicts 4096' >> start_server.sh && \
     chmod +x start_server.sh
 
 # Environment variables with defaults
