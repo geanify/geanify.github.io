@@ -133,6 +133,22 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: textGlow 3s ease-in-out infinite alternate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .hero h1 img {
+            height: clamp(3rem, 8vw, 6rem);
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.7));
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            from { filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.7)); }
+            to { filter: drop-shadow(0 0 40px rgba(255, 0, 255, 0.7)); }
         }
 
         @keyframes textGlow {
@@ -220,7 +236,7 @@
             border-radius: 25px;
             padding: 1.5rem 1.2rem;
             backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
             cursor: pointer;
@@ -243,7 +259,7 @@
                 rgba(255, 255, 0, 0.05) 75%,
                 rgba(0, 255, 255, 0.1) 100%);
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.2s ease;
             border-radius: 25px;
         }
 
@@ -260,7 +276,7 @@
             border-radius: 25px;
             z-index: -1;
             opacity: 0;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.2s ease;
         }
 
         @keyframes gradientShift {
@@ -448,7 +464,6 @@
                 <img src="herald.png" alt="Web Herald Logo">
             </div>
             <ul class="nav-links">
-                <li><a href="#services">Services</a></li>
                 <li><a href="mailto:contact@web-herald.com">Contact</a></li>
             </ul>
         </nav>
@@ -457,7 +472,10 @@
     <main>
         <section class="hero" id="home">
             <div class="container">
-                <h1>Web Herald</h1>
+                <h1>
+                    <img src="herald.png" alt="Web Herald Logo">
+                    Web Herald
+                </h1>
                 
                 <div class="hero-services">
                     <div class="services-grid">
@@ -557,38 +575,6 @@
 
         // Create particles periodically
         setInterval(createParticle, 3000);
-
-        // Add cursor trail effect
-        document.addEventListener('mousemove', (e) => {
-            const trail = document.createElement('div');
-            trail.style.position = 'fixed';
-            trail.style.left = e.clientX + 'px';
-            trail.style.top = e.clientY + 'px';
-            trail.style.width = '4px';
-            trail.style.height = '4px';
-            trail.style.background = 'radial-gradient(circle, #00ffff, #0099cc)';
-            trail.style.borderRadius = '50%';
-            trail.style.pointerEvents = 'none';
-            trail.style.opacity = '0.8';
-            trail.style.zIndex = '9999';
-            trail.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-            trail.style.transform = 'scale(1)';
-            trail.style.boxShadow = '0 0 10px rgba(0, 255, 255, 0.6)';
-            
-            document.body.appendChild(trail);
-            
-            // Immediate fade and scale animation
-            requestAnimationFrame(() => {
-                trail.style.opacity = '0';
-                trail.style.transform = 'scale(0.1)';
-            });
-            
-            setTimeout(() => {
-                if (trail.parentNode) {
-                    trail.remove();
-                }
-            }, 800);
-        });
     </script>
 </body>
 </html> 
