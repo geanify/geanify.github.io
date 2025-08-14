@@ -1,20 +1,25 @@
 {
   "name": "web-herald.com",
-  "module": "index.ts",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/geanify/web-herald.com#readme",
+  "bugs": {
+    "url": "https://github.com/geanify/web-herald.com/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geanify/web-herald.com.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "dotenv": "^17.0.0",
-    "ejs": "^3.1.10"
-  },
+  "main": "server.ts",
   "scripts": {
-    "dev": "bun run dev-server.ts",
-    "start": "bun run prod-server.ts"
+    "dev": "bun --hot server.ts",
+    "start": "bun server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "bun-types": "^1.2.20"
   }
 }
