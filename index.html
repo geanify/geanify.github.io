@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber Dev Solutions | Custom Software on Command</title>
+    <title>Web Herald | Custom Software on Command</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <style>
         * {
             margin: 0;
@@ -58,7 +61,7 @@
 
         /* Header */
         .header {
-            padding: 2rem 0;
+            padding: 1rem 0;
             border-bottom: 1px solid rgba(0, 255, 255, 0.2);
             backdrop-filter: blur(10px);
             background: rgba(0, 0, 0, 0.3);
@@ -83,9 +86,21 @@
             text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
 
+        .logo img {
+            height: 32px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .logo img:hover {
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) drop-shadow(0 0 30px rgba(255, 0, 255, 0.4));
+            transform: scale(1.05);
+        }
+
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 1.5rem;
             list-style: none;
         }
 
@@ -94,6 +109,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
             position: relative;
+            font-size: 0.95rem;
         }
 
         .nav-links a:hover {
@@ -103,7 +119,7 @@
 
         /* Hero Section */
         .hero {
-            padding: 8rem 0;
+            padding: 4rem 0 6rem 0;
             text-align: center;
             position: relative;
         }
@@ -111,7 +127,7 @@
         .hero h1 {
             font-size: clamp(3rem, 8vw, 6rem);
             font-weight: 900;
-            margin-bottom: 1.5rem;
+            margin-bottom: 3rem;
             background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
             background-clip: text;
             -webkit-background-clip: text;
@@ -168,7 +184,11 @@
             left: 100%;
         }
 
-        /* Services Section */
+        /* Services Section - now in hero */
+        .hero-services {
+            margin-top: 2rem;
+        }
+
         .services {
             padding: 8rem 0;
         }
@@ -185,20 +205,28 @@
 
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
             margin-top: 4rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .service-card {
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            border-radius: 20px;
-            padding: 2.5rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(0, 20, 40, 0.8));
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            border-radius: 25px;
+            padding: 1.5rem 1.2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
+            cursor: pointer;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .service-card::before {
@@ -207,45 +235,164 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #00ffff, #ff00ff, #ffff00);
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(0, 255, 255, 0.1) 0%, 
+                rgba(255, 0, 255, 0.05) 25%,
+                transparent 50%,
+                rgba(255, 255, 0, 0.05) 75%,
+                rgba(0, 255, 255, 0.1) 100%);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
+            border-radius: 25px;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+            background-size: 400% 400%;
+            animation: gradientShift 6s ease infinite;
+            border-radius: 25px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .service-card:hover::before {
             opacity: 1;
         }
 
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
         .service-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0, 255, 255, 0.6);
-            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.2);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 
+                0 25px 60px rgba(0, 255, 255, 0.2),
+                0 5px 20px rgba(255, 0, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
         }
 
         .service-icon {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
+            font-size: 3.5rem;
             background: linear-gradient(45deg, #00ffff, #ff00ff);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.6));
+        }
+
+        .service-price {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(255, 0, 255, 0.2));
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 15px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .service-card h3 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             margin-bottom: 1rem;
-            color: #00ffff;
+            color: #ffffff;
+            background: linear-gradient(45deg, #ffffff, #00ffff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 255, 255, 0.3);
         }
 
         .service-card p {
             color: #b0b0b0;
             line-height: 1.6;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .service-features li {
+            color: #e0e0e0;
+            margin-bottom: 0.6rem;
+            position: relative;
+            padding-left: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .service-features li::before {
+            content: '✦';
+            color: #00ffff;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.8);
+        }
+
+        .service-cta {
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            color: #000;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            text-align: center;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .service-cta:hover::before {
+            left: 100%;
+        }
+
+        .service-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.5);
         }
 
         /* Footer */
         .footer {
-            padding: 4rem 0;
+            padding: 2rem 0;
             border-top: 1px solid rgba(0, 255, 255, 0.2);
             text-align: center;
             background: rgba(0, 0, 0, 0.8);
@@ -253,6 +400,7 @@
 
         .footer p {
             color: #666;
+            font-size: 0.9rem;
         }
 
         /* Responsive */
@@ -296,7 +444,9 @@
 
     <header class="header">
         <nav class="nav container">
-            <div class="logo">CYBER.DEV</div>
+            <div class="logo">
+                <img src="herald.png" alt="Web Herald Logo">
+            </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#services">Services</a></li>
@@ -308,9 +458,59 @@
     <main>
         <section class="hero" id="home">
             <div class="container">
-                <h1>Custom Software<br>On Command</h1>
-                <p>We craft cutting-edge digital solutions tailored to your needs. From lightning-fast landing pages to stunning email templates, we transform your vision into reality.</p>
-                <a href="#services" class="cta-button">Explore Services</a>
+                <h1>Web Herald</h1>
+                
+                <div class="hero-services">
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-header">
+                                <div class="service-icon">🎨</div>
+                                <span class="service-price">€500</span>
+                            </div>
+                            <h3>Logo Design</h3>
+                            <p>Professional logo designs that capture your brand's essence and make a lasting impression across all platforms.</p>
+                            <ul class="service-features">
+                                <li>Multiple Concepts</li>
+                                <li>Vector Files Included</li>
+                                <li>Brand Guidelines</li>
+                                <li>Unlimited Revisions</li>
+                            </ul>
+                            <a href="/logos" class="service-cta">Explore</a>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <div class="service-icon">📧</div>
+                                <span class="service-price">€800</span>
+                            </div>
+                            <h3>Email Templates</h3>
+                            <p>Beautifully designed, mobile-responsive email templates that engage your audience and boost your marketing campaigns.</p>
+                            <ul class="service-features">
+                                <li>Mobile-Friendly</li>
+                                <li>High Open Rates</li>
+                                <li>Brand Consistency</li>
+                                <li>Easy Customization</li>
+                            </ul>
+                            <a href="/email-templates" class="service-cta">Explore</a>
+                        </div>
+                        
+                        <div class="service-card">
+                            <div class="service-header">
+                                <div class="service-icon">🚀</div>
+                                <span class="service-price">€1,200</span>
+                            </div>
+                            <h3>Landing Pages</h3>
+                            <p>High-converting, responsive landing pages that capture attention and drive results. Built with modern frameworks and optimized for performance.</p>
+                            <ul class="service-features">
+                                <li>Responsive Design</li>
+                                <li>Fast Loading Times</li>
+                                <li>Conversion Optimization</li>
+                                <li>Analytics Integration</li>
+                            </ul>
+                            <a href="/landing-pages" class="service-cta">Explore</a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- Floating particles -->
             <div class="particle" style="top: 20%; left: 10%; width: 4px; height: 4px; animation-delay: 0s;"></div>
@@ -318,53 +518,13 @@
             <div class="particle" style="top: 30%; left: 70%; width: 3px; height: 3px; animation-delay: 4s;"></div>
         </section>
 
-        <section class="services" id="services">
-            <div class="container">
-                <h2 class="section-title">Our Services</h2>
-                <div class="services-grid">
-                    <div class="service-card">
-                        <div class="service-icon">🚀</div>
-                        <h3>Landing Pages</h3>
-                        <p>High-converting, responsive landing pages that capture attention and drive results. Built with modern frameworks and optimized for performance.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <div class="service-icon">📧</div>
-                        <h3>Email Templates</h3>
-                        <p>Beautifully designed, mobile-responsive email templates that engage your audience and boost your marketing campaigns.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <div class="service-icon">🌐</div>
-                        <h3>Web Applications</h3>
-                        <p>Custom web applications built with cutting-edge technology. From simple tools to complex platforms, we bring your ideas to life.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <div class="service-icon">⚡</div>
-                        <h3>API Development</h3>
-                        <p>Robust, scalable APIs that power your applications. Built with security, performance, and reliability in mind.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <div class="service-icon">🎨</div>
-                        <h3>UI/UX Design</h3>
-                        <p>Stunning user interfaces and seamless user experiences that delight your customers and drive engagement.</p>
-                    </div>
-                    
-                    <div class="service-card">
-                        <div class="service-icon">⚙️</div>
-                        <h3>Custom Solutions</h3>
-                        <p>Bespoke software solutions tailored to your unique business needs. No challenge too complex, no idea too ambitious.</p>
-                    </div>
-                </div>
-            </div>
+        <section class="services" id="services" style="display: none;">
         </section>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2024 Cyber Dev Solutions. Crafting the future, one line of code at a time.</p>
+            <p>&copy; 2025 Web Herald</p>
         </div>
     </footer>
 
@@ -405,25 +565,30 @@
             trail.style.position = 'fixed';
             trail.style.left = e.clientX + 'px';
             trail.style.top = e.clientY + 'px';
-            trail.style.width = '6px';
-            trail.style.height = '6px';
-            trail.style.background = '#00ffff';
+            trail.style.width = '4px';
+            trail.style.height = '4px';
+            trail.style.background = 'radial-gradient(circle, #00ffff, #0099cc)';
             trail.style.borderRadius = '50%';
             trail.style.pointerEvents = 'none';
-            trail.style.opacity = '0.7';
+            trail.style.opacity = '0.8';
             trail.style.zIndex = '9999';
-            trail.style.transition = 'all 0.5s ease';
+            trail.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            trail.style.transform = 'scale(1)';
+            trail.style.boxShadow = '0 0 10px rgba(0, 255, 255, 0.6)';
             
             document.body.appendChild(trail);
             
-            setTimeout(() => {
+            // Immediate fade and scale animation
+            requestAnimationFrame(() => {
                 trail.style.opacity = '0';
-                trail.style.transform = 'scale(0)';
-            }, 100);
+                trail.style.transform = 'scale(0.1)';
+            });
             
             setTimeout(() => {
-                trail.remove();
-            }, 500);
+                if (trail.parentNode) {
+                    trail.remove();
+                }
+            }, 800);
         });
     </script>
 </body>
