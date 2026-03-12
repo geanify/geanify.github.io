@@ -1,35 +1,46 @@
 /* ============================================
-   TECH APOCALYPSE - Magenta & Cyan Neon
+   TECH APOCALYPSE - Email Template Color Scheme
+   Red #ef5777 | Yellow #ffdd59 | Green #0be881
    ============================================ */
 :root {
-  /* Magenta */
-  --color-magenta: #ff00ff;
-  --color-magenta-light: #ff6ec7;
-  --color-magenta-dim: #c026d3;
+  /* Red (name, email, phone) */
+  --color-red: #ef5777;
+  --color-red-light: #ff7a96;
+  --color-red-dim: #d94a6a;
   
-  /* Cyan */
-  --color-cyan: #00ffff;
-  --color-cyan-light: #67e8f9;
-  --color-cyan-dim: #06b6d4;
+  /* Yellow (tagline, hero CTA) */
+  --color-yellow: #ffdd59;
+  --color-yellow-light: #ffe066;
+  --color-yellow-dim: #e6c750;
+  
+  /* Green (links: Web Herald, GitHub) */
+  --color-green: #0be881;
+  --color-green-light: #2ef99a;
+  --color-green-dim: #09c96a;
   
   /* Neutrals */
-  --color-bg: #0a0a0a;
-  --color-bg-card: #141414;
+  --color-bg: #1e272e;
+  --color-bg-card: #252d35;
   --color-grey-solid: #2a2a2a;
-  --color-grey-card: #1a1a1a;
+  --color-grey-card: #2a333b;
   
   --color-text: #e8e8e8;
-  --color-text-muted: var(--color-cyan);
+  --color-text-muted: var(--color-text);
   
-  /* Semantic */
-  --color-primary: var(--color-magenta);
-  --color-primary-hover: var(--color-magenta-light);
-  --color-accent: var(--color-cyan);
-  --color-accent-hover: var(--color-cyan-light);
-  --color-highlight: var(--color-magenta-light);
-  --color-warm: var(--color-cyan);
+  /* Semantic - map to email scheme */
+  --color-primary: var(--color-red);
+  --color-primary-hover: var(--color-red-light);
+  --color-accent: var(--color-green);
+  --color-accent-hover: var(--color-green-light);
+  --color-highlight: var(--color-yellow);
+  --color-warm: var(--color-yellow);
   
-  --color-brown: var(--color-cyan);
+  /* Legacy aliases */
+  --color-magenta: var(--color-red);
+  --color-magenta-light: var(--color-red-light);
+  --color-cyan: var(--color-green);
+  --color-cyan-light: var(--color-green-light);
+  --color-brown: var(--color-green);
 }
 
 /* Scan line overlay - subtle apocalypse effect */
@@ -59,77 +70,74 @@ body {
 
 /* Header */
 .site-title {
-  background: linear-gradient(135deg, var(--color-magenta) 0%, var(--color-cyan) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 8px rgba(255, 0, 255, 0.8)) drop-shadow(0 0 20px rgba(0, 255, 255, 0.5));
+  color: var(--color-red);
+  text-shadow: 0 0 8px rgba(239, 87, 119, 0.8), 0 0 20px rgba(239, 87, 119, 0.5);
 }
 
 .tagline {
-  color: var(--color-cyan);
+  color: var(--color-yellow);
 }
 
 .hero-cta {
-  color: var(--color-magenta) !important;
-  text-shadow: 0 0 10px rgba(255, 0, 255, 0.8), 0 0 20px rgba(255, 0, 255, 0.5);
+  color: var(--color-yellow) !important;
+  text-shadow: 0 0 10px rgba(255, 221, 89, 0.8), 0 0 20px rgba(255, 221, 89, 0.5);
 }
 
 a:hover .hero-cta {
-  color: var(--color-magenta-light) !important;
-  text-shadow: 0 0 15px rgba(255, 0, 255, 1), 0 0 30px rgba(255, 0, 255, 0.6);
+  color: var(--color-yellow-light) !important;
+  text-shadow: 0 0 15px rgba(255, 221, 89, 1), 0 0 30px rgba(255, 221, 89, 0.6);
 }
 
 /* Sections - neon titles */
 .section-title {
-  color: var(--color-magenta);
-  border-bottom-color: var(--color-cyan);
-  text-shadow: 0 0 10px rgba(255, 0, 255, 0.9), 0 0 20px rgba(255, 0, 255, 0.5);
+  color: var(--color-red);
+  border-bottom-color: var(--color-green);
+  text-shadow: 0 0 10px rgba(239, 87, 119, 0.9), 0 0 20px rgba(239, 87, 119, 0.5);
 }
 
 /* Quote block */
 .quote-block {
   background: var(--color-grey-card);
-  border-left-color: var(--color-magenta);
+  border-left-color: var(--color-red);
   color: var(--color-text-muted);
 }
 
 .quote-block strong {
-  color: var(--color-cyan);
+  color: var(--color-green);
 }
 
 /* Timeline */
 .timeline::before {
-  background: var(--color-cyan);
-  box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  background: var(--color-green);
+  box-shadow: 0 0 8px rgba(11, 232, 129, 0.5);
 }
 
 .timeline-marker {
-  background: var(--color-cyan);
+  background: var(--color-green);
   border-color: var(--color-bg);
-  box-shadow: 0 0 0 2px var(--color-cyan), 0 0 12px rgba(0, 255, 255, 0.6);
+  box-shadow: 0 0 0 2px var(--color-green), 0 0 12px rgba(11, 232, 129, 0.6);
 }
 
 .timeline-content {
   background: var(--color-bg-card);
-  border-left-color: var(--color-cyan);
+  border-left-color: var(--color-green);
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .timeline-item:hover .timeline-content {
-  border-left-color: var(--color-magenta);
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+  border-left-color: var(--color-red);
+  box-shadow: 0 0 20px rgba(239, 87, 119, 0.2);
 }
 
 /* Cards */
 .card-title {
-  color: var(--color-cyan);
-  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+  color: var(--color-green);
+  text-shadow: 0 0 8px rgba(11, 232, 129, 0.6);
 }
 
 .card-meta,
 .timeline-content .card-meta {
-  color: var(--color-magenta-light);
+  color: var(--color-yellow);
 }
 
 .card p,
@@ -139,47 +147,47 @@ a:hover .hero-cta {
 
 /* Skills */
 .skill-tag {
-  background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(0, 255, 255, 0.06) 100%);
-  border: 1px solid rgba(0, 255, 255, 0.4);
-  color: var(--color-cyan);
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(11, 232, 129, 0.06) 100%);
+  border: 1px solid rgba(11, 232, 129, 0.4);
+  color: var(--color-green);
 }
 
 .skill-tag:hover {
-  background: rgba(0, 255, 255, 0.12);
-  border-color: var(--color-cyan);
-  box-shadow: 0 0 12px rgba(0, 255, 255, 0.3);
+  background: rgba(11, 232, 129, 0.12);
+  border-color: var(--color-green);
+  box-shadow: 0 0 12px rgba(11, 232, 129, 0.3);
 }
 
 /* Contact buttons */
 .contact-link {
-  background: var(--color-magenta);
-  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+  background: var(--color-red);
+  box-shadow: 0 0 15px rgba(239, 87, 119, 0.5);
 }
 
 .contact-link:hover {
-  background: var(--color-magenta-light);
-  box-shadow: 0 0 25px rgba(255, 0, 255, 0.7);
+  background: var(--color-red-light);
+  box-shadow: 0 0 25px rgba(239, 87, 119, 0.7);
 }
 
 .contact-link.secondary {
-  border-color: var(--color-cyan);
-  color: var(--color-cyan) !important;
+  border-color: var(--color-green);
+  color: var(--color-green) !important;
 }
 
 .contact-link.secondary:hover {
-  background: rgba(0, 255, 255, 0.15);
-  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+  background: rgba(11, 232, 129, 0.15);
+  box-shadow: 0 0 15px rgba(11, 232, 129, 0.4);
 }
 
 /* Footer */
 .site-footer {
-  color: var(--color-cyan);
+  color: var(--color-green);
 }
 
 .site-footer a {
-  color: var(--color-cyan-light);
+  color: var(--color-green-light);
 }
 
 .site-footer a:hover {
-  color: var(--color-magenta-light);
+  color: var(--color-yellow);
 }
