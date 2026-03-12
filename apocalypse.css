@@ -1,0 +1,187 @@
+/* ============================================
+   TECH APOCALYPSE - Herald Logo Color Scheme
+   Dark, dystopian, neon-accented
+   ============================================ */
+:root {
+  /* Logo colors from herald.png */
+  --color-red: #EA4C6D;
+  --color-red-light: #F47395;
+  --color-red-dark: #D8415F;
+  
+  --color-teal: #2EE08D;
+  --color-teal-light: #5AE8A8;
+  
+  --color-yellow: #FDEB60;
+  --color-yellow-light: #FFF5A7;
+  
+  --color-orange: #F6A623;
+  
+  /* Apocalypse neutrals */
+  --color-bg: #0a0a0a;
+  --color-bg-card: #141414;
+  --color-grey-solid: #2a2a2a;
+  --color-grey-card: #1a1a1a;
+  
+  --color-text: #e8e8e8;
+  --color-text-muted: var(--color-teal);
+  
+  /* Semantic - danger/tech vibe */
+  --color-primary: var(--color-red);
+  --color-primary-hover: var(--color-red-light);
+  --color-accent: var(--color-teal);
+  --color-accent-hover: var(--color-teal-light);
+  --color-highlight: var(--color-yellow);
+  --color-warm: var(--color-orange);
+  
+  /* Brown override for dates/buttons */
+  --color-brown: var(--color-orange);
+}
+
+/* Scan line overlay - subtle apocalypse effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Typography - slightly more tech */
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Header */
+.site-title {
+  background: linear-gradient(135deg, var(--color-red) 0%, var(--color-orange) 50%, var(--color-yellow) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  color: var(--color-teal);
+}
+
+.hero-cta {
+  color: var(--color-yellow) !important;
+  text-shadow: 0 0 10px rgba(253, 235, 96, 0.5);
+}
+
+a:hover .hero-cta {
+  color: var(--color-yellow-light) !important;
+  text-shadow: 0 0 15px rgba(253, 235, 96, 0.8);
+}
+
+/* Sections */
+.section-title {
+  color: var(--color-yellow);
+  border-bottom-color: var(--color-teal);
+}
+
+/* Quote block */
+.quote-block {
+  background: var(--color-grey-card);
+  border-left-color: var(--color-red);
+  color: var(--color-text-muted);
+}
+
+.quote-block strong {
+  color: var(--color-yellow);
+}
+
+/* Timeline */
+.timeline::before {
+  background: var(--color-teal);
+  box-shadow: 0 0 8px rgba(46, 224, 141, 0.4);
+}
+
+.timeline-marker {
+  background: var(--color-teal);
+  border-color: var(--color-bg);
+  box-shadow: 0 0 0 2px var(--color-teal), 0 0 12px rgba(46, 224, 141, 0.5);
+}
+
+.timeline-content {
+  background: var(--color-bg-card);
+  border-left-color: var(--color-teal);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-item:hover .timeline-content {
+  border-left-color: var(--color-yellow);
+  box-shadow: 0 0 20px rgba(46, 224, 141, 0.15);
+}
+
+/* Cards */
+.card-title {
+  color: var(--color-teal);
+}
+
+.card-meta,
+.timeline-content .card-meta {
+  color: var(--color-orange);
+}
+
+.card p,
+.timeline-content p:not(.card-meta) {
+  color: var(--color-text-muted);
+}
+
+/* Skills */
+.skill-tag {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(46, 224, 141, 0.08) 100%);
+  border: 1px solid rgba(46, 224, 141, 0.3);
+  color: var(--color-teal);
+}
+
+.skill-tag:hover {
+  background: rgba(46, 224, 141, 0.15);
+  border-color: var(--color-teal);
+  box-shadow: 0 0 12px rgba(46, 224, 141, 0.2);
+}
+
+/* Contact buttons */
+.contact-link {
+  background: var(--color-red);
+  box-shadow: 0 0 15px rgba(234, 76, 109, 0.4);
+}
+
+.contact-link:hover {
+  background: var(--color-red-light);
+  box-shadow: 0 0 20px rgba(234, 76, 109, 0.6);
+}
+
+.contact-link.secondary {
+  border-color: var(--color-teal);
+  color: var(--color-teal) !important;
+}
+
+.contact-link.secondary:hover {
+  background: rgba(46, 224, 141, 0.15);
+  box-shadow: 0 0 15px rgba(46, 224, 141, 0.3);
+}
+
+/* Footer */
+.site-footer {
+  color: var(--color-teal);
+}
+
+.site-footer a {
+  color: var(--color-teal-light);
+}
+
+.site-footer a:hover {
+  color: var(--color-yellow);
+}
