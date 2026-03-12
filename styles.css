@@ -137,6 +137,37 @@ section {
   display: inline-block;
 }
 
+/* Short Version - photo above quote */
+.short-version {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.short-version-photo-wrap {
+  width: 100%;
+  height: 280px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.short-version-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  display: block;
+}
+
+.short-version-content {
+  width: 100%;
+}
+
+.short-version .quote-block {
+  padding: var(--space-lg);
+  font-size: 0.95rem;
+}
+
 /* ============================================
    Cards
    ============================================ */
