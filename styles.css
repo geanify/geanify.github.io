@@ -272,6 +272,11 @@ section {
   transition: all 0.2s ease;
 }
 
+a.skill-tag {
+  text-decoration: none;
+  color: inherit;
+}
+
 .skill-tag:hover {
   background: rgba(159, 197, 232, 0.2);
   border-color: var(--color-blue-light);
