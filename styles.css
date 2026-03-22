@@ -110,6 +110,10 @@ body {
   margin: 0 0 var(--space-md);
 }
 
+.tagline-green {
+  color: #09c96a;
+}
+
 .site-header a {
   text-decoration: none;
 }
@@ -141,6 +145,14 @@ section {
   padding-bottom: var(--space-sm);
   border-bottom: 2px solid var(--color-blue);
   display: inline-block;
+}
+
+.section-tagline {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--color-blue-light);
+  font-style: italic;
+  margin: 0 0 var(--space-lg);
 }
 
 /* Short Version - photo above quote */
@@ -366,6 +378,33 @@ a.skill-tag {
 .site-footer a:hover {
   color: var(--color-blue-light);
   text-decoration: underline;
+}
+
+/* ============================================
+   Contact bubble (floating, mobile-friendly)
+   ============================================ */
+.contact-bubble {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, background 0.2s ease;
+  z-index: 1000;
+}
+
+.contact-bubble:hover {
+  background: var(--color-primary-hover);
+  transform: scale(1.05);
 }
 
 /* ============================================
