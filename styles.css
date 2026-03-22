@@ -352,6 +352,9 @@ a.skill-tag {
   border-radius: var(--radius-md);
   font-weight: 500;
   transition: background 0.2s ease, transform 0.2s ease;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
 }
 
 .contact-link:hover {

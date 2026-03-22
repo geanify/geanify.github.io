@@ -163,7 +163,7 @@
       <h2 class="section-title">Let's Talk</h2>
       <p class="tagline">Bucharest, Romania · Available for contracting</p>
       <div class="contact-links">
-        <a href="mailto:stefan.serb15@gmail.com" class="contact-link">📧 Email</a>
+        <button type="button" class="contact-link contact-copy" data-email="stefan.serb15@gmail.com">📧 stefan.serb15@gmail.com</button>
         <a href="https://github.com/geanify" class="contact-link secondary" target="_blank" rel="noopener">GitHub</a>
         <a href="#top" class="contact-link secondary">↑ Back to top</a>
       </div>
@@ -175,5 +175,18 @@
   </footer>
 
   <a href="mailto:stefan.serb15@gmail.com" class="contact-bubble" aria-label="Email stefan.serb15@gmail.com">📧</a>
+
+  <script>
+    document.querySelectorAll('.contact-copy').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var email = this.getAttribute('data-email');
+        navigator.clipboard.writeText(email).then(function() {
+          var orig = btn.textContent;
+          btn.textContent = '✓ Copied!';
+          setTimeout(function() { btn.textContent = orig; }, 1500);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
