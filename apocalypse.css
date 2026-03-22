@@ -156,10 +156,26 @@ a:hover .hero-cta {
   color: var(--color-green);
 }
 
+a.skill-tag {
+  cursor: pointer;
+}
+
 .skill-tag:hover {
   background: rgba(11, 232, 129, 0.12);
   border-color: var(--color-green);
   box-shadow: 0 0 12px rgba(11, 232, 129, 0.3);
+}
+
+.skill-chip {
+  background: var(--color-bg-card);
+  border-color: rgba(11, 232, 129, 0.4);
+  color: var(--color-green);
+}
+
+.skill-chip:hover {
+  background: rgba(11, 232, 129, 0.12);
+  border-color: var(--color-green);
+  box-shadow: 0 0 8px rgba(11, 232, 129, 0.3);
 }
 
 /* Contact buttons */
@@ -176,11 +192,12 @@ a:hover .hero-cta {
 .contact-link.secondary {
   border-color: var(--color-green);
   color: var(--color-green) !important;
+  box-shadow: 0 0 12px rgba(11, 232, 129, 0.4);
 }
 
 .contact-link.secondary:hover {
   background: rgba(11, 232, 129, 0.15);
-  box-shadow: 0 0 15px rgba(11, 232, 129, 0.4);
+  box-shadow: 0 0 20px rgba(11, 232, 129, 0.6);
 }
 
 .contact-bubble {
