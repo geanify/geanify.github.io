@@ -251,18 +251,37 @@ const Browser: React.FC = () => {
             
             const script = doc.createElement('script');
             script.textContent = `
-                function handleNavigation(e) {
-                    const a = e.target.closest('a');
-                    if (a) {
+                // Inject styles for fake links to keep them looking like links but without href
+                const style = document.createElement('style');
+                style.textContent = 'a[data-href] { cursor: pointer; text-decoration: underline; color: inherit; } a[data-href]:hover { color: #0066cc; }';
+                document.head.appendChild(style);
+
+                // Modify all links to prevent native browser navigation completely
+                const modifyLinks = () => {
+                    document.querySelectorAll('a[href]').forEach(a => {
                         const href = a.getAttribute('href');
-                        if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                        if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                            a.setAttribute('data-href', href);
+                            a.removeAttribute('href'); // This strictly kills the browser's ability to "Middle Click -> New Tab"
+                            a.setAttribute('tabindex', '0'); // make it focusable
+                        }
+                    });
+                };
+                
+                // Run once on load
+                modifyLinks();
+
+                // Observe dynamically added links
+                const observer = new MutationObserver(modifyLinks);
+                observer.observe(document.body, { childList: true, subtree: true });
+
+                function handleNavigation(e) {
+                    const a = e.target.closest('a[data-href]');
+                    if (a) {
+                        const href = a.getAttribute('data-href');
+                        if (href) {
                             e.preventDefault();
                             e.stopPropagation();
-                            
-                            if (e.type === 'click' && (e.button === 1 || e.ctrlKey || e.metaKey)) {
-                                // Handled by auxclick or early click interception
-                                return;
-                            }
                             
                             // Only trigger normal navigation on standard left click
                             if (e.type === 'click' && e.button === 0 && !e.ctrlKey && !e.metaKey) {
@@ -277,48 +296,37 @@ const Browser: React.FC = () => {
                 }
 
                 // Standard left click
-                document.body.addEventListener('click', handleNavigation);
+                document.body.addEventListener('click', handleNavigation, { capture: true });
 
-                // Crucial: prevent middle-click default behaviors (like auto-scroll or opening real new tabs)
+                // Prevent middle click auto-scroll and native new tab
                 document.body.addEventListener('mousedown', function(e) {
-                    if (e.button === 1 || e.ctrlKey || e.metaKey) {
-                        const a = e.target.closest('a');
-                        if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
+                    if (e.button === 1) {
+                        e.preventDefault();
                     }
                 }, { capture: true });
 
-                document.body.addEventListener('click', function(e) {
-                    if (e.button === 1 || e.ctrlKey || e.metaKey) {
-                        const a = e.target.closest('a');
-                        if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                        }
-                    } else {
-                        window.parent.postMessage({ type: 'POTATO_CLOSE_CONTEXT_MENU' }, '*');
-                    }
-                }, { capture: true });
-
+                // Middle click / Aux click
                 document.body.addEventListener('auxclick', function(e) {
                     if (e.button === 1) {
+                        e.preventDefault();
                         const a = e.target.closest('a');
-                        if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            window.parent.postMessage({ 
-                                type: 'POTATO_NAVIGATE', 
-                                href: a.getAttribute('href'),
-                                newTab: true
-                            }, '*');
+                        if (a) {
+                            const href = a.getAttribute('data-href') || a.getAttribute('href');
+                            if (href && !href.startsWith('javascript:')) {
+                                e.stopPropagation();
+                                window.parent.postMessage({ 
+                                    type: 'POTATO_NAVIGATE', 
+                                    href: href,
+                                    newTab: true
+                                }, '*');
+                            }
                         }
                     }
                 }, { capture: true });
 
+                // Context menu
                 document.body.addEventListener('contextmenu', function(e) {
-                    const a = e.target.closest('a');
+                    const a = e.target.closest('a[data-href]');
                     const img = e.target.closest('img');
                     
                     if (a || img) {
@@ -327,7 +335,7 @@ const Browser: React.FC = () => {
                             type: 'POTATO_CONTEXT_MENU',
                             x: e.clientX,
                             y: e.clientY,
-                            href: a ? a.getAttribute('href') : undefined,
+                            href: a ? a.getAttribute('data-href') : undefined,
                             imgSrc: img ? img.getAttribute('src') : undefined
                         }, '*');
                     }
@@ -368,6 +376,15 @@ const Browser: React.FC = () => {
                         key={tab.id} 
                         className={`browser-tab ${activeTabId === tab.id ? 'active' : ''}`}
                         onClick={() => setActiveTabId(tab.id)}
+                        onMouseDown={(e) => {
+                            if (e.button === 1) e.preventDefault();
+                        }}
+                        onAuxClick={(e) => {
+                            if (e.button === 1) {
+                                e.preventDefault();
+                                closeTab(e, tab.id);
+                            }
+                        }}
                     >
                         <span className="tab-title">
                             {tab.history[tab.currentIndex].isHome ? 'New Tab' : tab.history[tab.currentIndex].url || 'Loading...'}
@@ -437,6 +454,13 @@ const Browser: React.FC = () => {
                                                     }} onClick={(e) => {
                                                         e.preventDefault();
                                                         navigateTo(domain, tab.id);
+                                                    }} onMouseDown={(e) => {
+                                                        if (e.button === 1) e.preventDefault();
+                                                    }} onAuxClick={(e) => {
+                                                        if (e.button === 1) {
+                                                            e.preventDefault();
+                                                            addNewTab(domain);
+                                                        }
                                                     }}>{domain}</a> - {potatoLinks[domain]}
                                                 </li>
                                             ))}
