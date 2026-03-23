@@ -1,0 +1,67 @@
+.desktop {
+    width: 100vw;
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=3270&auto=format&fit=crop') center/cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.top-bar {
+    height: 28px;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    font-size: 14px;
+    user-select: none;
+    z-index: 10000;
+}
+
+.top-bar-left .activities-btn {
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.top-bar-left .activities-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-bar-center .date-time {
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.top-bar-center .date-time:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.top-bar-right .status-icons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.top-bar-right .status-icons:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.power-icon {
+    margin-left: 4px;
+}
+
+.desktop-content {
+    flex: 1;
+    position: relative;
+}
