@@ -55,7 +55,7 @@ const Browser: React.FC = () => {
     const navigateTo = (url: string, tabId: string = activeTabId) => {
         if (!url) return;
         
-        if (url === 'torr://home') {
+        if (url === 'crisp://home') {
             updateTab(tabId, (tab) => {
                 const newHistory = tab.history.slice(0, tab.currentIndex + 1);
                 newHistory.push(getHomeEntry());
@@ -63,7 +63,7 @@ const Browser: React.FC = () => {
                     ...tab,
                     history: newHistory,
                     currentIndex: newHistory.length - 1,
-                    urlInput: 'torr://home'
+                    urlInput: 'crisp://home'
                 };
             });
             return;
