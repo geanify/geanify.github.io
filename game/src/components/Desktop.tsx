@@ -10,6 +10,7 @@ interface DesktopProps {
 const Desktop: React.FC<DesktopProps> = ({ onExit }) => {
     const [time, setTime] = useState(new Date());
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -73,7 +74,7 @@ const Desktop: React.FC<DesktopProps> = ({ onExit }) => {
                             </div>
                             <div className="dropdown-divider"></div>
                             <div className="dropdown-section">
-                                <div className="dropdown-item" onClick={onExit}>
+                                <div className="dropdown-item" onClick={() => { setShowLogoutConfirm(true); setIsMenuOpen(false); }}>
                                     <LogOut size={16} />
                                     <span>Log off</span>
                                 </div>
@@ -86,6 +87,19 @@ const Desktop: React.FC<DesktopProps> = ({ onExit }) => {
             <div className="desktop-content">
                 <WindowManager />
             </div>
+
+            {showLogoutConfirm && (
+                <div className="logout-overlay">
+                    <div className="logout-dialog">
+                        <h2>Log Off</h2>
+                        <p>Are you sure you want to log off? All progress will be lost.</p>
+                        <div className="logout-dialog-buttons">
+                            <button className="btn-cancel" onClick={() => setShowLogoutConfirm(false)}>Cancel</button>
+                            <button className="btn-confirm" onClick={onExit}>Log Off</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
