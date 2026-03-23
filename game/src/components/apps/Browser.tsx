@@ -17,6 +17,14 @@ interface TabData {
     urlInput: string;
 }
 
+interface ContextMenuData {
+    visible: boolean;
+    x: number;
+    y: number;
+    href?: string;
+    imgSrc?: string;
+}
+
 const Browser: React.FC = () => {
     const [tabs, setTabs] = useState<TabData[]>([{
         id: `tab-${Date.now()}`,
@@ -25,6 +33,7 @@ const Browser: React.FC = () => {
         urlInput: ''
     }]);
     const [activeTabId, setActiveTabId] = useState<string>(tabs[0].id);
+    const [contextMenu, setContextMenu] = useState<ContextMenuData>({ visible: false, x: 0, y: 0 });
 
     const activeTab = tabs.find(t => t.id === activeTabId)!;
     const currentEntry = activeTab.history[activeTab.currentIndex];
@@ -170,27 +179,30 @@ const Browser: React.FC = () => {
         }
     };
 
+    const resolveRelativeOrAbsolute = (href: string) => {
+        const parts = href.split('/');
+        const siteName = parts[0];
+        const path = parts.slice(1).join('/');
+        
+        const domain = reversePotatoLinks[siteName];
+        if (domain) {
+            return path ? `${domain}/${path}` : domain;
+        } else {
+            const currentDomain = currentEntry.url.split('/')[0];
+            if (currentDomain) {
+                return `${currentDomain}/${href}`;
+            }
+        }
+        return href;
+    };
+
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
             if (event.data?.type === 'POTATO_NAVIGATE') {
                 const href = event.data.href; 
                 if (!href) return;
                 
-                const parts = href.split('/');
-                const siteName = parts[0];
-                const path = parts.slice(1).join('/');
-                
-                const domain = reversePotatoLinks[siteName];
-                let targetUrl = '';
-                if (domain) {
-                    targetUrl = path ? `${domain}/${path}` : domain;
-                } else {
-                    const currentDomain = currentEntry.url.split('/')[0];
-                    if (currentDomain) {
-                        targetUrl = `${currentDomain}/${href}`;
-                    }
-                }
-                
+                const targetUrl = resolveRelativeOrAbsolute(href);
                 if (targetUrl) {
                     if (event.data.newTab) {
                         addNewTab(targetUrl);
@@ -198,12 +210,38 @@ const Browser: React.FC = () => {
                         navigateTo(targetUrl, activeTabId);
                     }
                 }
+            } else if (event.data?.type === 'POTATO_CONTEXT_MENU') {
+                const iframe = iframeRefs.current[activeTabId];
+                let offsetX = 0;
+                let offsetY = 0;
+                if (iframe) {
+                    const rect = iframe.getBoundingClientRect();
+                    offsetX = rect.left;
+                    offsetY = rect.top;
+                }
+                setContextMenu({
+                    visible: true,
+                    x: offsetX + event.data.x,
+                    y: offsetY + event.data.y,
+                    href: event.data.href,
+                    imgSrc: event.data.imgSrc
+                });
+            } else if (event.data?.type === 'POTATO_CLOSE_CONTEXT_MENU') {
+                setContextMenu(prev => prev.visible ? { ...prev, visible: false } : prev);
             }
         };
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
     }, [activeTabId, currentEntry, tabs]);
+
+    useEffect(() => {
+        const handleClickOutside = () => {
+            setContextMenu(prev => prev.visible ? { ...prev, visible: false } : prev);
+        };
+        window.addEventListener('click', handleClickOutside);
+        return () => window.removeEventListener('click', handleClickOutside);
+    }, []);
 
     const handleIframeLoad = (tabId: string) => {
         const iframe = iframeRefs.current[tabId];
@@ -221,28 +259,25 @@ const Browser: React.FC = () => {
                             e.preventDefault();
                             e.stopPropagation();
                             
-                            // Only trigger navigation on actual click or auxclick, not mousedown
-                            if (e.type === 'click' || e.type === 'auxclick') {
-                                const isNewTab = e.button === 1 || e.ctrlKey || e.metaKey;
+                            if (e.type === 'click' && (e.button === 1 || e.ctrlKey || e.metaKey)) {
+                                // Handled by auxclick or early click interception
+                                return;
+                            }
+                            
+                            // Only trigger normal navigation on standard left click
+                            if (e.type === 'click' && e.button === 0 && !e.ctrlKey && !e.metaKey) {
                                 window.parent.postMessage({ 
                                     type: 'POTATO_NAVIGATE', 
                                     href: href,
-                                    newTab: isNewTab
+                                    newTab: false
                                 }, '*');
                             }
                         }
                     }
                 }
 
-                // Standard left click and ctrl/cmd click
+                // Standard left click
                 document.body.addEventListener('click', handleNavigation);
-                
-                // Middle click
-                document.body.addEventListener('auxclick', function(e) {
-                    if (e.button === 1) {
-                        handleNavigation(e);
-                    }
-                });
 
                 // Crucial: prevent middle-click default behaviors (like auto-scroll or opening real new tabs)
                 document.body.addEventListener('mousedown', function(e) {
@@ -250,14 +285,79 @@ const Browser: React.FC = () => {
                         const a = e.target.closest('a');
                         if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
                             e.preventDefault();
+                            e.stopPropagation();
                         }
                     }
+                }, { capture: true });
+
+                document.body.addEventListener('click', function(e) {
+                    if (e.button === 1 || e.ctrlKey || e.metaKey) {
+                        const a = e.target.closest('a');
+                        if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    } else {
+                        window.parent.postMessage({ type: 'POTATO_CLOSE_CONTEXT_MENU' }, '*');
+                    }
+                }, { capture: true });
+
+                document.body.addEventListener('auxclick', function(e) {
+                    if (e.button === 1) {
+                        const a = e.target.closest('a');
+                        if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.parent.postMessage({ 
+                                type: 'POTATO_NAVIGATE', 
+                                href: a.getAttribute('href'),
+                                newTab: true
+                            }, '*');
+                        }
+                    }
+                }, { capture: true });
+
+                document.body.addEventListener('contextmenu', function(e) {
+                    const a = e.target.closest('a');
+                    const img = e.target.closest('img');
+                    
+                    if (a || img) {
+                        e.preventDefault();
+                        window.parent.postMessage({
+                            type: 'POTATO_CONTEXT_MENU',
+                            x: e.clientX,
+                            y: e.clientY,
+                            href: a ? a.getAttribute('href') : undefined,
+                            imgSrc: img ? img.getAttribute('src') : undefined
+                        }, '*');
+                    }
+                });
+
+                document.body.addEventListener('click', function() {
+                    window.parent.postMessage({ type: 'POTATO_CLOSE_CONTEXT_MENU' }, '*');
                 });
             `;
             doc.body.appendChild(script);
         } catch (err) {
             console.error("Could not inject script into iframe:", err);
         }
+    };
+
+    const handleCopy = async (text: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+        } catch (err) {
+            console.error('Failed to copy', err);
+        }
+        setContextMenu(prev => ({ ...prev, visible: false }));
+    };
+
+    const handleOpenContextMenuTab = (url: string) => {
+        const targetUrl = resolveRelativeOrAbsolute(url);
+        if (targetUrl) {
+            addNewTab(targetUrl);
+        }
+        setContextMenu(prev => ({ ...prev, visible: false }));
     };
 
     return (
@@ -326,7 +426,15 @@ const Browser: React.FC = () => {
                                         <ul>
                                             {Object.keys(potatoLinks).map(domain => (
                                                 <li key={domain}>
-                                                    <a href="#" onClick={(e) => {
+                                                    <a href="#" onContextMenu={(e) => {
+                                                        e.preventDefault();
+                                                        setContextMenu({
+                                                            visible: true,
+                                                            x: e.clientX,
+                                                            y: e.clientY,
+                                                            href: domain
+                                                        });
+                                                    }} onClick={(e) => {
                                                         e.preventDefault();
                                                         navigateTo(domain, tab.id);
                                                     }}>{domain}</a> - {potatoLinks[domain]}
@@ -354,6 +462,41 @@ const Browser: React.FC = () => {
                     );
                 })}
             </div>
+            
+            {contextMenu.visible && (
+                <div 
+                    className="browser-context-menu"
+                    style={{ left: contextMenu.x, top: contextMenu.y }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {contextMenu.href && (
+                        <>
+                            <div className="context-menu-item" onClick={() => handleOpenContextMenuTab(contextMenu.href!)}>
+                                Open link in new tab
+                            </div>
+                            <div className="context-menu-item" onClick={() => handleCopy(resolveRelativeOrAbsolute(contextMenu.href!) || contextMenu.href!)}>
+                                Copy link address
+                            </div>
+                        </>
+                    )}
+                    {contextMenu.href && contextMenu.imgSrc && <div className="context-menu-divider" />}
+                    {contextMenu.imgSrc && (
+                        <>
+                            <div className="context-menu-item" onClick={() => handleOpenContextMenuTab(contextMenu.imgSrc!)}>
+                                Open image in new tab
+                            </div>
+                            <div className="context-menu-item" onClick={() => handleCopy(resolveRelativeOrAbsolute(contextMenu.imgSrc!) || contextMenu.imgSrc!)}>
+                                Copy image address
+                            </div>
+                        </>
+                    )}
+                    {!contextMenu.href && !contextMenu.imgSrc && (
+                        <div className="context-menu-item disabled">
+                            No actions available
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

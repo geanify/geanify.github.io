@@ -12,7 +12,6 @@ type MenuState = 'userSelect' | 'login' | 'credits';
 const LoginScreen: React.FC<LoginScreenProps> = ({ onStartGame }) => {
     const [menuState, setMenuState] = useState<MenuState>('userSelect');
     const [selectedUser, setSelectedUser] = useState<string | null>(null);
-    const [password, setPassword] = useState('');
 
     const handleUserSelect = (levelId: string) => {
         setSelectedUser(levelId);
@@ -60,16 +59,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onStartGame }) => {
                             <User size={48} />
                         </div>
                         <h2>{levels.find(l => l.id === selectedUser)?.name}</h2>
+                        <p className="level-description">{levels.find(l => l.id === selectedUser)?.description}</p>
                         
                         <form onSubmit={handleLogin} className="password-form">
                             <div className="password-input-wrapper">
                                 <Lock size={16} className="lock-icon" />
                                 <input 
                                     type="password" 
-                                    autoFocus
-                                    placeholder="Enter password..."
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    readOnly
+                                    value="****************"
+                                    className="prefilled-input"
                                 />
                                 <button type="submit" className="login-submit-btn">
                                     <ArrowRight size={16} />
@@ -79,7 +78,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onStartGame }) => {
 
                         <button className="text-btn mt-4" onClick={() => {
                             setMenuState('userSelect');
-                            setPassword('');
                         }}>
                             Cancel
                         </button>
