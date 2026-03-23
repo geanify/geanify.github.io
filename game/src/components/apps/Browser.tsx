@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, ArrowLeft, ArrowRight, RotateCw, Home } from 'lucide-react';
-import { resolvePotatoLink, potatoLinks } from '../../utils/potatoLinks';
+import { resolvePotatoLink, potatoLinks, reversePotatoLinks } from '../../utils/potatoLinks';
 import './Browser.css';
 
 const Browser: React.FC = () => {
@@ -9,15 +9,16 @@ const Browser: React.FC = () => {
     const [iframeSrc, setIframeSrc] = useState('');
     const [isHome, setIsHome] = useState(true);
     const [error, setError] = useState('');
+    const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const navigateTo = (url: string) => {
         if (!url) return;
         
         const mappedUrl = resolvePotatoLink(url);
         if (mappedUrl) {
-            setIframeSrc(mappedUrl);
-            setCurrentUrl(url);
-            setUrlInput(url);
+            setIframeSrc(mappedUrl.src);
+            setCurrentUrl(mappedUrl.displayUrl);
+            setUrlInput(mappedUrl.displayUrl);
             setIsHome(false);
             setError('');
         } else {
@@ -41,6 +42,59 @@ const Browser: React.FC = () => {
         setCurrentUrl('');
         setIframeSrc('');
         setError('');
+    };
+
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            if (event.data?.type === 'POTATO_NAVIGATE') {
+                const href = event.data.href; // e.g. "blog/article.html"
+                if (!href) return;
+                
+                const parts = href.split('/');
+                const siteName = parts[0];
+                const path = parts.slice(1).join('/');
+                
+                const domain = reversePotatoLinks[siteName];
+                if (domain) {
+                    const targetUrl = path ? `${domain}/${path}` : domain;
+                    navigateTo(targetUrl);
+                } else {
+                    // Try to treat it as a relative link from the current domain
+                    const currentDomain = currentUrl.split('/')[0];
+                    if (currentDomain) {
+                        navigateTo(`${currentDomain}/${href}`);
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, [currentUrl]);
+
+    const handleIframeLoad = () => {
+        if (!iframeRef.current || !iframeRef.current.contentWindow) return;
+        try {
+            const doc = iframeRef.current.contentWindow.document;
+            
+            // Inject a script to handle link clicks natively within the iframe
+            const script = doc.createElement('script');
+            script.textContent = `
+                document.body.addEventListener('click', function(e) {
+                    const a = e.target.closest('a');
+                    if (a) {
+                        const href = a.getAttribute('href');
+                        if (href && !href.startsWith('http') && !href.startsWith('#')) {
+                            e.preventDefault();
+                            window.parent.postMessage({ type: 'POTATO_NAVIGATE', href: href }, '*');
+                        }
+                    }
+                });
+            `;
+            doc.body.appendChild(script);
+        } catch (err) {
+            console.error("Could not inject script into iframe:", err);
+        }
     };
 
     return (
@@ -75,12 +129,12 @@ const Browser: React.FC = () => {
                         <div className="links-directory">
                             <h3>Hidden Directory (For testing)</h3>
                             <ul>
-                                {Object.keys(potatoLinks).map(link => (
-                                    <li key={link}>
+                                {Object.keys(potatoLinks).map(domain => (
+                                    <li key={domain}>
                                         <a href="#" onClick={(e) => {
                                             e.preventDefault();
-                                            navigateTo(link);
-                                        }}>{link}</a> - {potatoLinks[link]}
+                                            navigateTo(domain);
+                                        }}>{domain}</a> - {potatoLinks[domain]}
                                     </li>
                                 ))}
                             </ul>
@@ -93,7 +147,9 @@ const Browser: React.FC = () => {
                     </div>
                 ) : (
                     <iframe 
+                        ref={iframeRef}
                         src={iframeSrc} 
+                        onLoad={handleIframeLoad}
                         className="browser-iframe" 
                         title="browser-view"
                         sandbox="allow-scripts allow-same-origin"

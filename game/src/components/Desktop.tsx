@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Wifi, Battery, Volume2, Power } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Wifi, Battery, Volume2, Power, LogOut } from 'lucide-react';
 import './Desktop.css';
 import WindowManager from './WindowManager';
 
@@ -9,10 +9,22 @@ interface DesktopProps {
 
 const Desktop: React.FC<DesktopProps> = ({ onExit }) => {
     const [time, setTime] = useState(new Date());
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const timer = setInterval(() => setTime(new Date()), 1000);
         return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const formatTime = (date: Date) => {
@@ -32,13 +44,42 @@ const Desktop: React.FC<DesktopProps> = ({ onExit }) => {
                 <div className="top-bar-center">
                     <span className="date-time">{formatDate(time)} {formatTime(time)}</span>
                 </div>
-                <div className="top-bar-right">
-                    <div className="status-icons">
+                <div className="top-bar-right" ref={menuRef}>
+                    <div 
+                        className={`status-icons ${isMenuOpen ? 'active' : ''}`}
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
                         <Wifi size={16} />
                         <Volume2 size={16} />
                         <Battery size={16} />
-                        <Power size={16} className="power-icon" onClick={onExit} />
+                        <Power size={16} className="power-icon" />
                     </div>
+
+                    {isMenuOpen && (
+                        <div className="status-dropdown">
+                            <div className="dropdown-section">
+                                <div className="dropdown-item">
+                                    <Volume2 size={16} />
+                                    <span>Volume</span>
+                                </div>
+                                <div className="dropdown-item">
+                                    <Wifi size={16} />
+                                    <span>Wi-Fi Connected</span>
+                                </div>
+                                <div className="dropdown-item">
+                                    <Battery size={16} />
+                                    <span>Battery 100%</span>
+                                </div>
+                            </div>
+                            <div className="dropdown-divider"></div>
+                            <div className="dropdown-section">
+                                <div className="dropdown-item" onClick={onExit}>
+                                    <LogOut size={16} />
+                                    <span>Log off</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             
