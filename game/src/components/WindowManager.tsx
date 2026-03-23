@@ -11,6 +11,8 @@ interface OpenApp {
     id: string;
     type: AppType;
     title: string;
+    isMinimized: boolean;
+    isMaximized: boolean;
 }
 
 const WindowManager: React.FC = () => {
@@ -20,7 +22,7 @@ const WindowManager: React.FC = () => {
     const openApp = (type: AppType) => {
         const id = `${type}-${Date.now()}`;
         const title = type === 'notepad' ? 'Text Editor' : 'Web Browser';
-        setOpenApps([...openApps, { id, type, title }]);
+        setOpenApps([...openApps, { id, type, title, isMinimized: false, isMaximized: false }]);
         setActiveAppId(id);
     };
 
@@ -32,18 +34,45 @@ const WindowManager: React.FC = () => {
     };
 
     const focusApp = (id: string) => {
+        setOpenApps(apps => apps.map(app => 
+            app.id === id ? { ...app, isMinimized: false } : app
+        ));
         setActiveAppId(id);
+    };
+
+    const toggleMinimize = (id: string) => {
+        setOpenApps(apps => apps.map(app => {
+            if (app.id === id) {
+                const newMinimized = !app.isMinimized;
+                if (newMinimized && activeAppId === id) {
+                    setActiveAppId(null);
+                }
+                return { ...app, isMinimized: newMinimized };
+            }
+            return app;
+        }));
+    };
+
+    const toggleMaximize = (id: string) => {
+        setOpenApps(apps => apps.map(app => 
+            app.id === id ? { ...app, isMaximized: !app.isMaximized } : app
+        ));
+        setActiveAppId(id);
+    };
+
+    const getAppIcon = (type: AppType, size: number = 24) => {
+        return type === 'notepad' ? <FileText size={size} /> : <Globe size={size} />;
     };
 
     return (
         <div className="window-manager">
             <div className="desktop-icons">
                 <div className="desktop-icon" onDoubleClick={() => openApp('notepad')}>
-                    <FileText size={48} className="icon-img" />
+                    {getAppIcon('notepad', 48)}
                     <span>Notepad</span>
                 </div>
                 <div className="desktop-icon" onDoubleClick={() => openApp('browser')}>
-                    <Globe size={48} className="icon-img" />
+                    {getAppIcon('browser', 48)}
                     <span>Browser</span>
                 </div>
             </div>
@@ -54,8 +83,12 @@ const WindowManager: React.FC = () => {
                     id={app.id}
                     title={app.title}
                     isActive={activeAppId === app.id}
+                    isMinimized={app.isMinimized}
+                    isMaximized={app.isMaximized}
                     onClose={closeApp}
                     onFocus={focusApp}
+                    onMinimize={toggleMinimize}
+                    onMaximize={toggleMaximize}
                     initialWidth={app.type === 'browser' ? 800 : 500}
                     initialHeight={app.type === 'browser' ? 600 : 400}
                     initialX={100 + (Math.random() * 50)}
@@ -65,6 +98,23 @@ const WindowManager: React.FC = () => {
                     {app.type === 'browser' && <Browser />}
                 </Window>
             ))}
+
+            {openApps.length > 0 && (
+                <div className="taskbar">
+                    <div className="taskbar-apps">
+                        {openApps.map(app => (
+                            <div 
+                                key={app.id}
+                                className={`taskbar-item ${activeAppId === app.id ? 'active' : ''} ${app.isMinimized ? 'minimized' : ''}`}
+                                onClick={() => app.isMinimized || activeAppId !== app.id ? focusApp(app.id) : toggleMinimize(app.id)}
+                            >
+                                {getAppIcon(app.type, 16)}
+                                <span className="taskbar-title">{app.title}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -14,6 +14,12 @@
     border: 1px solid rgba(255,255,255,0.2);
 }
 
+.window.maximized {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+}
+
 .window-header {
     height: 36px;
     background-color: #1e1e1e;

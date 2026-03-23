@@ -12,8 +12,12 @@ interface WindowProps {
     initialWidth?: number;
     initialHeight?: number;
     isActive: boolean;
+    isMinimized?: boolean;
+    isMaximized?: boolean;
     onClose: (id: string) => void;
     onFocus: (id: string) => void;
+    onMinimize?: (id: string) => void;
+    onMaximize?: (id: string) => void;
 }
 
 const Window: React.FC<WindowProps> = ({
@@ -25,8 +29,12 @@ const Window: React.FC<WindowProps> = ({
     initialWidth = 600,
     initialHeight = 400,
     isActive,
+    isMinimized = false,
+    isMaximized = false,
     onClose,
-    onFocus
+    onFocus,
+    onMinimize,
+    onMaximize
 }) => {
     const [position, setPosition] = useState({ x: initialX, y: initialY });
     const [isDragging, setIsDragging] = useState(false);
@@ -34,6 +42,7 @@ const Window: React.FC<WindowProps> = ({
     const windowRef = useRef<HTMLDivElement>(null);
 
     const handleMouseDown = (e: React.MouseEvent) => {
+        if (isMaximized) return; // Don't drag if maximized
         if (e.target instanceof HTMLElement && e.target.closest('.window-controls')) return;
         
         onFocus(id);
@@ -69,25 +78,27 @@ const Window: React.FC<WindowProps> = ({
         };
     }, [isDragging, dragOffset]);
 
+    if (isMinimized) return null;
+
     return (
         <div 
             ref={windowRef}
-            className={`window ${isActive ? 'active' : ''}`}
+            className={`window ${isActive ? 'active' : ''} ${isMaximized ? 'maximized' : ''}`}
             style={{
-                left: position.x,
-                top: position.y,
-                width: initialWidth,
-                height: initialHeight,
+                left: isMaximized ? 0 : position.x,
+                top: isMaximized ? 0 : position.y,
+                width: isMaximized ? '100%' : initialWidth,
+                height: isMaximized ? '100%' : initialHeight,
                 zIndex: isActive ? 100 : 10
             }}
             onMouseDown={() => onFocus(id)}
         >
-            <div className="window-header" onMouseDown={handleMouseDown}>
+            <div className="window-header" onMouseDown={handleMouseDown} onDoubleClick={() => onMaximize && onMaximize(id)}>
                 <div className="window-title">{title}</div>
                 <div className="window-controls">
-                    <button className="win-btn minimize"><Minus size={14} /></button>
-                    <button className="win-btn maximize"><Square size={12} /></button>
-                    <button className="win-btn close" onClick={() => onClose(id)}><X size={14} /></button>
+                    <button className="win-btn minimize" onClick={(e) => { e.stopPropagation(); onMinimize && onMinimize(id); }}><Minus size={14} /></button>
+                    <button className="win-btn maximize" onClick={(e) => { e.stopPropagation(); onMaximize && onMaximize(id); }}><Square size={12} /></button>
+                    <button className="win-btn close" onClick={(e) => { e.stopPropagation(); onClose(id); }}><X size={14} /></button>
                 </div>
             </div>
             <div className="window-content">
