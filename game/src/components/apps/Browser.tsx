@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, type MouseEventHandler } from 'react';
 import { Search, ArrowLeft, ArrowRight, RotateCw, Home, Plus, X } from 'lucide-react';
-import { resolvePotatoLink, potatoLinks, reversePotatoLinks } from '../../utils/potatoLinks';
+import { resolvePotatoLink, reversePotatoLinks, currentLevelFolder } from '../../utils/potatoLinks';
 import './Browser.css';
 
 interface HistoryEntry {
@@ -26,11 +26,18 @@ interface ContextMenuData {
 }
 
 const Browser: React.FC = () => {
+    const getHomeEntry = (): HistoryEntry => ({
+        url: 'crisp://home',
+        src: `/websites/${currentLevelFolder}/index.html`,
+        isHome: false,
+        error: ''
+    });
+
     const [tabs, setTabs] = useState<TabData[]>([{
         id: `tab-${Date.now()}`,
-        history: [{ url: '', src: '', isHome: true, error: '' }],
+        history: [getHomeEntry()],
         currentIndex: 0,
-        urlInput: ''
+        urlInput: 'crisp://home'
     }]);
     const [activeTabId, setActiveTabId] = useState<string>(tabs[0].id);
     const [contextMenu, setContextMenu] = useState<ContextMenuData>({ visible: false, x: 0, y: 0 });
@@ -48,6 +55,20 @@ const Browser: React.FC = () => {
     const navigateTo = (url: string, tabId: string = activeTabId) => {
         if (!url) return;
         
+        if (url === 'torr://home') {
+            updateTab(tabId, (tab) => {
+                const newHistory = tab.history.slice(0, tab.currentIndex + 1);
+                newHistory.push(getHomeEntry());
+                return {
+                    ...tab,
+                    history: newHistory,
+                    currentIndex: newHistory.length - 1,
+                    urlInput: 'torr://home'
+                };
+            });
+            return;
+        }
+
         const mappedUrl = resolvePotatoLink(url);
         
         updateTab(tabId, (tab) => {
@@ -90,12 +111,12 @@ const Browser: React.FC = () => {
     const goHome = () => {
         updateTab(activeTabId, (tab) => {
             const newHistory = tab.history.slice(0, tab.currentIndex + 1);
-            newHistory.push({ url: '', src: '', isHome: true, error: '' });
+            newHistory.push(getHomeEntry());
             return {
                 ...tab,
                 history: newHistory,
                 currentIndex: newHistory.length - 1,
-                urlInput: ''
+                urlInput: 'crisp://home'
             };
         });
     };
@@ -129,9 +150,9 @@ const Browser: React.FC = () => {
     const addNewTab = (initialUrl?: string) => {
         const newTabId = `tab-${Date.now()}`;
         
-        let initialHistory: HistoryEntry = { url: '', src: '', isHome: true, error: '' };
+        let initialHistory: HistoryEntry = getHomeEntry();
         
-        if (initialUrl && typeof initialUrl === 'string') {
+        if (initialUrl && typeof initialUrl === 'string' && initialUrl !== 'torr://home') {
             const mappedUrl = resolvePotatoLink(initialUrl);
             if (mappedUrl) {
                 initialHistory = {
@@ -165,9 +186,9 @@ const Browser: React.FC = () => {
             // Reset the only tab if we close it
             setTabs([{
                 id: `tab-${Date.now()}`,
-                history: [{ url: '', src: '', isHome: true, error: '' }],
+                history: [getHomeEntry()],
                 currentIndex: 0,
-                urlInput: ''
+                urlInput: 'crisp://home'
             }]);
             return;
         }
@@ -434,40 +455,7 @@ const Browser: React.FC = () => {
                     const entry = tab.history[tab.currentIndex];
                     return (
                         <div key={tab.id} className="tab-content" style={{ display: activeTabId === tab.id ? 'block' : 'none' }}>
-                            {entry.isHome ? (
-                                <div className="browser-home">
-                                    <h1>Torr Browser</h1>
-                                    <p>Welcome to the decentralized web.</p>
-                                    <div className="links-directory">
-                                        <h3>Hidden Directory (For testing)</h3>
-                                        <ul>
-                                            {Object.keys(potatoLinks).map(domain => (
-                                                <li key={domain}>
-                                                    <a href="#" onContextMenu={(e) => {
-                                                        e.preventDefault();
-                                                        setContextMenu({
-                                                            visible: true,
-                                                            x: e.clientX,
-                                                            y: e.clientY,
-                                                            href: domain
-                                                        });
-                                                    }} onClick={(e) => {
-                                                        e.preventDefault();
-                                                        navigateTo(domain, tab.id);
-                                                    }} onMouseDown={(e) => {
-                                                        if (e.button === 1) e.preventDefault();
-                                                    }} onAuxClick={(e) => {
-                                                        if (e.button === 1) {
-                                                            e.preventDefault();
-                                                            addNewTab(domain);
-                                                        }
-                                                    }}>{domain}</a> - {potatoLinks[domain]}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            ) : entry.error ? (
+                            {entry.error ? (
                                 <div className="browser-error">
                                     <h2>{entry.error}</h2>
                                     <p>Check the address for typing errors such as ww.example.potato instead of www.example.potato</p>
