@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, type MouseEventHandler } from 'react';
 import { Search, ArrowLeft, ArrowRight, RotateCw, Home, Plus, X } from 'lucide-react';
 import { resolvePotatoLink, potatoLinks, reversePotatoLinks } from '../../utils/potatoLinks';
 import './Browser.css';
@@ -117,13 +117,35 @@ const Browser: React.FC = () => {
         }
     };
 
-    const addNewTab = () => {
+    const addNewTab = (initialUrl?: string) => {
         const newTabId = `tab-${Date.now()}`;
-        setTabs([...tabs, {
+        
+        let initialHistory: HistoryEntry = { url: '', src: '', isHome: true, error: '' };
+        
+        if (initialUrl && typeof initialUrl === 'string') {
+            const mappedUrl = resolvePotatoLink(initialUrl);
+            if (mappedUrl) {
+                initialHistory = {
+                    url: mappedUrl.displayUrl,
+                    src: mappedUrl.src,
+                    isHome: false,
+                    error: ''
+                };
+            } else {
+                initialHistory = {
+                    url: initialUrl,
+                    src: '',
+                    isHome: false,
+                    error: 'Server Not Found. The .potato address could not be resolved.'
+                };
+            }
+        }
+        
+        setTabs(currentTabs => [...currentTabs, {
             id: newTabId,
-            history: [{ url: '', src: '', isHome: true, error: '' }],
+            history: [initialHistory],
             currentIndex: 0,
-            urlInput: ''
+            urlInput: initialHistory.url
         }]);
         setActiveTabId(newTabId);
     };
@@ -159,13 +181,21 @@ const Browser: React.FC = () => {
                 const path = parts.slice(1).join('/');
                 
                 const domain = reversePotatoLinks[siteName];
+                let targetUrl = '';
                 if (domain) {
-                    const targetUrl = path ? `${domain}/${path}` : domain;
-                    navigateTo(targetUrl, activeTabId);
+                    targetUrl = path ? `${domain}/${path}` : domain;
                 } else {
                     const currentDomain = currentEntry.url.split('/')[0];
                     if (currentDomain) {
-                        navigateTo(`${currentDomain}/${href}`, activeTabId);
+                        targetUrl = `${currentDomain}/${href}`;
+                    }
+                }
+                
+                if (targetUrl) {
+                    if (event.data.newTab) {
+                        addNewTab(targetUrl);
+                    } else {
+                        navigateTo(targetUrl, activeTabId);
                     }
                 }
             }
@@ -173,7 +203,7 @@ const Browser: React.FC = () => {
 
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
-    }, [activeTabId, currentEntry]);
+    }, [activeTabId, currentEntry, tabs]);
 
     const handleIframeLoad = (tabId: string) => {
         const iframe = iframeRefs.current[tabId];
@@ -183,13 +213,43 @@ const Browser: React.FC = () => {
             
             const script = doc.createElement('script');
             script.textContent = `
-                document.body.addEventListener('click', function(e) {
+                function handleNavigation(e) {
                     const a = e.target.closest('a');
                     if (a) {
                         const href = a.getAttribute('href');
                         if (href && !href.startsWith('http') && !href.startsWith('#')) {
                             e.preventDefault();
-                            window.parent.postMessage({ type: 'POTATO_NAVIGATE', href: href }, '*');
+                            e.stopPropagation();
+                            
+                            // Only trigger navigation on actual click or auxclick, not mousedown
+                            if (e.type === 'click' || e.type === 'auxclick') {
+                                const isNewTab = e.button === 1 || e.ctrlKey || e.metaKey;
+                                window.parent.postMessage({ 
+                                    type: 'POTATO_NAVIGATE', 
+                                    href: href,
+                                    newTab: isNewTab
+                                }, '*');
+                            }
+                        }
+                    }
+                }
+
+                // Standard left click and ctrl/cmd click
+                document.body.addEventListener('click', handleNavigation);
+                
+                // Middle click
+                document.body.addEventListener('auxclick', function(e) {
+                    if (e.button === 1) {
+                        handleNavigation(e);
+                    }
+                });
+
+                // Crucial: prevent middle-click default behaviors (like auto-scroll or opening real new tabs)
+                document.body.addEventListener('mousedown', function(e) {
+                    if (e.button === 1 || e.ctrlKey || e.metaKey) {
+                        const a = e.target.closest('a');
+                        if (a && a.getAttribute('href') && !a.getAttribute('href').startsWith('http')) {
+                            e.preventDefault();
                         }
                     }
                 });
@@ -217,7 +277,7 @@ const Browser: React.FC = () => {
                         </div>
                     </div>
                 ))}
-                <button className="new-tab-btn" onClick={addNewTab}>
+                <button className="new-tab-btn" onClick={addNewTab as unknown as MouseEventHandler<HTMLButtonElement>}>
                     <Plus size={16} />
                 </button>
             </div>
