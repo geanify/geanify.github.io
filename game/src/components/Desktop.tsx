@@ -3,7 +3,11 @@ import { Wifi, Battery, Volume2, Power } from 'lucide-react';
 import './Desktop.css';
 import WindowManager from './WindowManager';
 
-const Desktop: React.FC = () => {
+interface DesktopProps {
+    onExit: () => void;
+}
+
+const Desktop: React.FC<DesktopProps> = ({ onExit }) => {
     const [time, setTime] = useState(new Date());
 
     useEffect(() => {
@@ -33,7 +37,7 @@ const Desktop: React.FC = () => {
                         <Wifi size={16} />
                         <Volume2 size={16} />
                         <Battery size={16} />
-                        <Power size={16} className="power-icon" />
+                        <Power size={16} className="power-icon" onClick={onExit} />
                     </div>
                 </div>
             </div>

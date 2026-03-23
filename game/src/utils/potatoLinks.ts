@@ -7,17 +7,21 @@ export const generateRandomString = (length: number) => {
     return result;
 };
 
-const sites = ['forum', 'marketplace', 'blog'];
 export const potatoLinks: Record<string, string> = {};
 export const reversePotatoLinks: Record<string, string> = {};
 
-// Initialize on load
-sites.forEach(site => {
-    const randomDomain = `${generateRandomString(12)}.potato`;
-    const targetUrl = `/websites/${site}.html`;
-    potatoLinks[randomDomain] = targetUrl;
-    reversePotatoLinks[targetUrl] = randomDomain;
-});
+export const initializeLinks = (levelFolder: string, sites: string[]) => {
+    // Clear existing mappings
+    for (const key in potatoLinks) delete potatoLinks[key];
+    for (const key in reversePotatoLinks) delete reversePotatoLinks[key];
+    
+    sites.forEach(site => {
+        const randomDomain = `${generateRandomString(12)}.potato`;
+        const targetUrl = `/websites/${levelFolder}/${site}.html`;
+        potatoLinks[randomDomain] = targetUrl;
+        reversePotatoLinks[targetUrl] = randomDomain;
+    });
+};
 
 export const resolvePotatoLink = (url: string): string | null => {
     // Basic normalization

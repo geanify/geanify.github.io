@@ -1,0 +1,90 @@
+.login-screen {
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.login-container {
+    background-color: rgba(20, 20, 30, 0.8);
+    border: 1px solid #3a3a5e;
+    padding: 40px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(0, 255, 255, 0.1);
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.game-title {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    letter-spacing: 2px;
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.menu-options h2 {
+    color: #a0a0ff;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.menu-btn {
+    background: transparent;
+    border: 1px solid #4a4a7a;
+    color: #ffffff;
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.menu-btn:hover {
+    background-color: rgba(74, 74, 122, 0.3);
+    border-color: #00ffff;
+    color: #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.level-btn {
+    border-color: #00ffff;
+}
+
+.back-btn {
+    margin-top: 20px;
+    border-color: #555;
+    color: #aaa;
+}
+
+.back-btn:hover {
+    border-color: #fff;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+
+.credits-view p {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
